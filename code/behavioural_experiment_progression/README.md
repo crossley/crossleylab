@@ -154,21 +154,5 @@ If you use this repository in academic work, please cite:
 
 ## License
 
-[MIT or BSD]
-
----
-
-## 4. One important strategic point
-
-You’re doing the right thing:
-
-* **methods paper** = conceptual contribution
-* **repo** = pedagogical artifact
-* **future paper** = teaching progression
-
-Don’t merge them. Each becomes cleaner.
-
-And the progression paper becomes much easier to write later because the material already exists and is tested in teaching.
-
-If you want next, I can outline the **second paper** in about one page — including what the actual contribution claim would be so it doesn’t read like teaching notes.
+MIT License.
 
