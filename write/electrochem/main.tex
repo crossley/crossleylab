@@ -1,0 +1,624 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{natbib}
+\usepackage{fancyvrb}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc}
+
+\usepackage{tcolorbox}
+\tcbset{
+  colback=gray!8,
+  colframe=gray!50,
+  boxrule=0.4pt,
+  arc=2pt,
+  left=4pt,
+  right=4pt,
+  top=4pt,
+  bottom=4pt
+}
+
+\usepackage{etoolbox}
+\AtBeginEnvironment{Verbatim}{\singlespacing}
+
+\renewcommand{\thesection}{}
+\setcounter{secnumdepth}{0}
+
+\onehalfspacing
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue
+}
+
+\newcommand{\CompanionRepo}{https://github.com/crossley/crossleylab/tree/main/code/electrochemical_signals_progression}
+
+\title{From Diffusion to Membrane Potential: A Progressive
+Simulation Framework for Teaching Electrochemical Signalling
+and Dynamical Systems in Computational Neuroscience}
+
+\author{Matthew J. Crossley\\
+\small School of Psychological Sciences, Macquarie University, Sydney, Australia \\
+\small Performance and Expertise Research Centre, Macquarie University, Sydney, Australia \\
+\small Macquarie Minds and Intelligences Initiative, Macquarie University, Sydney, Australia \\
+\small \texttt{matthew.crossley@mq.edu.au}}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Students are commonly introduced to membrane potential through equilibrium
+equations before developing an intuitive understanding of the underlying
+mechanisms that give rise to electrochemical signalling. This often leads to
+procedural understanding without conceptual insight. This paper presents a
+pedagogical framework that introduces membrane potential through a sequence of
+progressively constrained particle-based simulations. The framework is designed
+for undergraduate computational neuroscience teaching and simultaneously
+introduces diffusion, selective permeability, electrochemical forces,
+dynamical systems, and numerical integration via Euler updates. The simulations
+are intentionally simplified and serve as conceptual models rather than
+biophysically accurate representations. The approach allows students to observe
+how membrane potential emerges from interacting dynamical processes before
+formal exposure to equilibrium equations or conductance-based neuron models.
+All accompanying code is provided in an openly available repository to support
+reuse and adaptation in teaching contexts.
+\end{abstract}
+
+\section*{Introduction and Pedagogical Framework}
+
+Membrane potential is a foundational concept in neuroscience and physiology,
+underpinning neuronal signalling, synaptic transmission, and action potential
+generation. Despite its importance, students are frequently introduced to
+membrane potential through equilibrium equations such as the Nernst equation or
+the Goldman--Hodgkin--Katz (GHK) equation before developing an intuitive
+understanding of the underlying mechanisms. While mathematically precise, this
+approach often leads to procedural competence without conceptual insight, as
+students learn to apply equations without understanding how voltage differences
+emerge from ion movement.
+
+A central instructional difficulty arises from the gap between microscopic
+processes and macroscopic descriptions. Diffusion, selective permeability, and
+electrical forces operate simultaneously and interactively, yet traditional
+instruction often presents them in isolation or only at equilibrium. Students
+therefore encounter membrane potential as a static property rather than as the
+result of interacting dynamical processes. This difficulty is compounded in
+computational neuroscience education, where students are also required to
+understand dynamical systems and numerical integration methods before
+developing intuition about how simple update rules produce behaviour over time.
+
+The framework presented here addresses these challenges through a sequence of
+progressively constrained particle-based simulations designed to introduce
+electrochemical signalling as an emergent dynamical phenomenon. Rather than
+beginning with analytical expressions, the approach allows students to observe
+how diffusion, spatial constraints, selective permeability, and electrical
+forces combine to produce stable charge imbalances across a membrane-like
+boundary. Formal equations can then be introduced as compact descriptions of
+behaviour that students have already observed.
+
+The instructional design is guided by three principles. First, new mechanisms
+are introduced incrementally. Each stage of the progression adds a single
+additional constraint or force while preserving previously introduced dynamics,
+allowing students to attribute changes in system behaviour to identifiable
+causes. Second, visual intuition precedes formalism. Animated particle motion
+provides a concrete representation of otherwise abstract processes, reducing
+cognitive load and supporting causal reasoning. Third, numerical methods are
+introduced implicitly through physical interpretation. All simulations evolve
+according to simple Euler-style updates,
+
+\begin{equation}
+x_{t+1} = x_t + f(x_t)\Delta t,
+\end{equation}
+
+allowing students to encounter time-stepped dynamical systems in an intuitive
+setting prior to formal exposure to differential equations.
+
+The simulations are intentionally simplified and do not aim to reproduce the
+biophysical accuracy of real membranes. Instead, they function as conceptual
+models that highlight causal relationships between diffusion, permeability, and
+electrical forces. Within this framework, membrane potential is presented not
+as an imposed property but as a stable outcome emerging from interacting
+dynamical processes.
+
+\section*{Simulation Progression}
+
+The instructional sequence consists of several stages, each introducing one
+additional physical principle.
+
+\subsection*{Diffusion as a Dynamical Process}
+
+The initial simulation introduces diffusion as a stochastic dynamical system in
+which particles undergo Brownian motion in two spatial dimensions. Each
+particle is described by a state vector containing its position,
+
+\begin{equation}
+\mathbf{x}_i(t) = \begin{bmatrix} x_i(t) \\ y_i(t) \end{bmatrix},
+\end{equation}
+
+and the system evolves through time according to random increments drawn from a
+zero-mean Gaussian distribution. The resulting motion corresponds to a discrete
+approximation of a diffusion process in which spatial distributions spread over
+time without directional bias.
+
+The update rule for each particle can be written as
+
+\begin{align}
+x_i(t+\Delta t) &= x_i(t) + \sigma \, \eta_x \sqrt{\Delta t}, \\
+y_i(t+\Delta t) &= y_i(t) + \sigma \, \eta_y \sqrt{\Delta t},
+\end{align}
+
+where $\eta_x$ and $\eta_y$ are independent samples from a standard normal
+distribution and $\sigma$ controls the diffusion strength. In continuous time,
+this corresponds to a stochastic differential equation of the form
+
+\begin{equation}
+\frac{d\mathbf{x}}{dt} = \boldsymbol{\xi}(t),
+\end{equation}
+
+where $\boldsymbol{\xi}(t)$ represents temporally uncorrelated noise.
+
+From a dynamical systems perspective, the simulation introduces three core
+ideas. First, the system possesses a state that evolves over time. Second, the
+future state depends only on the current state and an update rule. Third,
+complex macroscopic behaviour (spatial spreading) emerges from repeated
+application of simple local updates.
+
+The numerical implementation follows a simple Euler-style update in which the
+state at the next timestep is computed directly from the current state and a
+change term. In pseudocode, the update rule can be expressed as:
+
+\begin{tcolorbox}
+\begin{Verbatim}
+for each timestep t:
+    for each particle i:
+        dx <- random_normal(0, sigma)
+        dy <- random_normal(0, sigma)
+
+        x[i] <- x[i] + dx * dt
+        y[i] <- y[i] + dy * dt
+\end{Verbatim}
+\end{tcolorbox}
+
+At this stage no biological interpretation is introduced. The goal is to
+establish an intuitive understanding of diffusion as a dynamical process and to
+familiarize students with state variables, time evolution, and numerical
+integration before additional forces or constraints are introduced in later
+stages of the progression.
+
+It should be noted that the diffusion process implemented here is a simplified
+phenomenological model rather than a physically complete description of
+molecular motion. The random increments represent the net effect of many
+microscopic collisions and are chosen for conceptual clarity rather than
+biophysical accuracy. Spatial and temporal scales are therefore arbitrary, and
+no attempt is made to match physical diffusion constants. These simplifications
+are intentional, allowing students to focus on the dynamical principles of
+state evolution and stochastic change before additional biological constraints
+are introduced in later stages.
+
+\subsection*{Diffusion Through Spatial Constraints}
+
+The second stage introduces spatial constraints by separating the environment
+into two compartments divided by a wall containing a narrow opening (channel).
+Particle motion remains purely diffusive, but movement between compartments is
+restricted by geometry. This allows students to observe how structural
+constraints alone can regulate transport without introducing new forces or
+changes to the underlying diffusion process.
+
+The dynamical update rule from the previous section remains unchanged,
+
+\begin{align}
+x_i(t+\Delta t) &= x_i(t) + \sigma \, \eta_x \sqrt{\Delta t}, \\
+y_i(t+\Delta t) &= y_i(t) + \sigma \, \eta_y \sqrt{\Delta t},
+\end{align}
+
+but an additional boundary condition is introduced. If a particle attempts to
+cross the separating wall outside the channel region, the attempted movement is
+rejected and the particle remains on its previous side. Formally, this can be
+written as
+
+\begin{equation}
+x_i(t+\Delta t) =
+\begin{cases}
+x_i(t), & \text{if crossing outside channel} \\
+x_i(t+\Delta t), & \text{otherwise}.
+\end{cases}
+\end{equation}
+
+From a dynamical systems perspective, this stage introduces the idea that system
+behaviour can change not only through forces but also through constraints on
+state transitions. The underlying stochastic dynamics remain identical, yet the
+macroscopic behaviour differs because certain transitions between states are no
+longer permitted.
+
+In pseudocode, the update rule becomes:
+
+\begin{tcolorbox}
+\begin{Verbatim}
+for each timestep t:
+    for each particle i:
+        dx <- random_normal(0, sigma)
+        dy <- random_normal(0, sigma)
+
+        new_x <- x[i] + dx * dt
+        new_y <- y[i] + dy * dt
+
+        if crossing_wall(new_x) and not in_channel(y[i]):
+            new_x <- x[i]
+
+        x[i] <- new_x
+        y[i] <- new_y
+\end{Verbatim}
+\end{tcolorbox}
+
+This stage introduces the important pedagogical idea that permeability can arise
+from geometry alone. Particles do not change how they move locally; instead, the
+environment constrains which movements are allowed globally. This provides an
+intuitive foundation for later introduction of selective ion channels.
+
+As in the previous section, the environment is intentionally simplified.
+Boundaries are treated as perfectly reflecting outside the channel, and no
+interactions between particles are included. The goal is not to model physical
+membrane structure accurately, but to isolate the effect of spatial constraints
+on diffusive transport before additional mechanisms are introduced.
+
+Channel width is used as a proxy for permeability,
+representing the probability that a particle undergoing
+diffusion both encounters and successfully traverses a
+pathway across the membrane. From a physical perspective,
+permeability here combines geometric accessibility with an
+implicit transmission probability, analogous to
+coarse-graining the effects of diffusive encounter rate,
+pore accessibility, and passage energetics into a single
+effective parameter. The model therefore does not attempt to
+represent the microscopic structure or electrostatic
+selectivity of biological ion channels, but instead captures
+the macroscopic consequence that increased permeability
+corresponds to an increased flux for a given concentration
+difference.
+
+\subsection*{Selective Permeability}
+
+The next stage extends the constrained diffusion model by introducing multiple
+particle types that experience different permeability through the separating
+membrane. Particles continue to undergo identical diffusive motion, but each
+type is restricted to a distinct channel region. This introduces selective
+permeability without introducing additional forces, allowing students to
+observe how differential transport can arise purely from constraints on allowed
+state transitions.
+
+The dynamical update rule for particle motion remains unchanged,
+
+\begin{align}
+x_i(t+\Delta t) &= x_i(t) + \sigma \, \eta_x \sqrt{\Delta t}, \\
+y_i(t+\Delta t) &= y_i(t) + \sigma \, \eta_y \sqrt{\Delta t},
+\end{align}
+
+but the boundary condition now depends on particle type. Let $s_i$ denote the
+species identity of particle $i$, and let the allowed channel region for that
+species be defined by the interval
+$[y_{\min}^{(s_i)}, y_{\max}^{(s_i)}]$. A crossing attempt is permitted only if
+
+\begin{equation}
+y_i(t) \in [y_{\min}^{(s_i)}, y_{\max}^{(s_i)}].
+\end{equation}
+
+Otherwise, the attempted transition is rejected and the particle remains in its
+previous position along the constrained axis.
+
+From a dynamical systems perspective, this stage demonstrates that system
+behaviour may differ between state variables that evolve under identical local
+rules. The stochastic motion governing individual particles is unchanged, yet
+macroscopic transport differs because accessibility of state transitions is now
+species-dependent. This provides an intuitive analogue of ion-selective
+membrane channels, in which permeability differs between ion species despite
+similar underlying thermal motion.
+
+In pseudocode, the update rule becomes:
+
+\begin{tcolorbox}
+\begin{Verbatim}
+for each timestep t:
+    for each particle i:
+        dx <- random_normal(0, sigma)
+        dy <- random_normal(0, sigma)
+
+        new_x <- x[i] + dx * dt
+        new_y <- y[i] + dy * dt
+
+        if crossing_wall(new_x) and
+           not in_channel(y[i], species[i]):
+            new_x <- x[i]
+
+        x[i] <- new_x
+        y[i] <- new_y
+\end{Verbatim}
+\end{tcolorbox}
+
+Pedagogically, this stage introduces the central biological idea that membrane
+transport can differ between species even when underlying motion is governed by
+the same physical processes. Differences in permeability therefore arise from
+constraints on allowed transitions rather than differences in diffusive
+behaviour itself.
+
+As in previous sections, the representation is intentionally simplified.
+Selectivity is implemented geometrically rather than through energetic or
+electrostatic mechanisms, and channel width serves as a coarse-grained proxy
+for permeability. The goal is to isolate the functional consequence of
+selective transport before introducing electrochemical forces in the following
+stage.
+
+\subsection*{Electrochemical Drift}
+
+The next stage introduces electrical forces as a directional bias on otherwise
+diffusive motion. Particles continue to undergo stochastic Brownian motion, but
+their movement is now additionally influenced by an attractive or repulsive
+interaction with a charged region. This allows students to observe how
+deterministic forces interact with stochastic dynamics to produce directed
+transport.
+
+The dynamical update rule is extended by adding a drift term to the diffusive
+update. Let $\mathbf{x}_i(t)$ denote the position of particle $i$, and let
+$\mathbf{x}_q$ denote the position of a fixed charge source. The update rule
+becomes
+
+\begin{equation}
+\mathbf{x}_i(t+\Delta t)
+=
+\mathbf{x}_i(t)
++
+\sigma \boldsymbol{\eta} \sqrt{\Delta t}
++
+\mathbf{F}(\mathbf{x}_i)\Delta t,
+\end{equation}
+
+where $\boldsymbol{\eta}$ is a vector of independent Gaussian random variables
+and $\mathbf{F}(\mathbf{x}_i)$ represents a position-dependent drift term. In
+the present model, the drift is implemented as a distance-normalized attraction
+or repulsion,
+
+\begin{equation}
+\mathbf{F}(\mathbf{x}_i)
+=
+k \frac{\mathbf{x}_q - \mathbf{x}_i}{\lVert \mathbf{x}_q - \mathbf{x}_i \rVert},
+\end{equation}
+
+where $k$ controls the strength of the electrical influence.
+
+From a dynamical systems perspective, this stage introduces the important idea
+that system evolution may arise from the combination of stochastic and
+deterministic components. Diffusion alone produces unbiased spreading, whereas
+the addition of a drift term produces net flux even in the presence of random
+motion. Students therefore observe how directional behaviour can emerge without
+removing stochastic variability.
+
+In pseudocode, the update rule becomes:
+
+\begin{tcolorbox}
+\begin{Verbatim}
+for each timestep t:
+    for each particle i:
+        dx_noise <- random_normal(0, sigma)
+        dy_noise <- random_normal(0, sigma)
+
+        force <- electric_force(position[i])
+
+        new_x <- x[i] + (dx_noise + force.x) * dt
+        new_y <- y[i] + (dy_noise + force.y) * dt
+
+        apply_boundary_conditions()
+
+        x[i] <- new_x
+        y[i] <- new_y
+\end{Verbatim}
+\end{tcolorbox}
+
+Pedagogically, this stage introduces the concept of electrochemical gradients
+as the interaction between random thermal motion and directional forces. Rather
+than presenting electrical influence as an abstract potential, students observe
+how local update rules produce macroscopic transport behaviour over time.
+
+The electrical interaction implemented here is intentionally simplified. The
+force term is not derived from a self-consistent electrostatic field and does
+not model charge redistribution within the medium. Instead, it provides a
+conceptual representation of how electrical forces bias diffusion, allowing the
+role of drift in electrochemical transport to be introduced before more complex
+multi-ion interactions are considered.
+
+\subsection*{Multiple Ion Species and Emergent Membrane Potential}
+
+The final stage of the progression combines selective permeability and
+electrochemical drift by introducing multiple particle species with different
+charge signs and unequal permeability. Particles continue to evolve according
+to the same underlying dynamical rule, but now experience competing influences
+arising from diffusion, electrical drift, and species-dependent access to the
+membrane channel. This interaction produces a stable imbalance between
+compartments that serves as a qualitative analogue of membrane potential.
+
+The dynamical update rule extends the previous formulation by allowing the
+drift term to depend on particle charge. Let $q_i \in \{-1,+1\}$ denote the
+charge associated with particle $i$. The update rule becomes
+
+\begin{equation}
+\mathbf{x}_i(t+\Delta t)
+=
+\mathbf{x}_i(t)
++
+\sigma \boldsymbol{\eta} \sqrt{\Delta t}
++
+q_i \mathbf{F}(\mathbf{x}_i)\Delta t,
+\end{equation}
+
+where particles of opposite charge experience drift in opposite directions.
+Channel accessibility continues to depend on particle species as described in
+the previous section.
+
+When multiple species are present simultaneously, particles that preferentially
+move in opposite directions compete for access to the membrane channel. Over
+time, this competition produces a steady state in which diffusive motion and
+electrical drift balance one another. The system no longer evolves toward
+uniform spatial mixing, but instead approaches a stable configuration in which
+net flux across the membrane is approximately zero despite ongoing particle
+motion.
+
+From a dynamical systems perspective, this stage introduces the concept of an
+emergent equilibrium or attractor. The steady state is not imposed externally
+but arises from the interaction of previously introduced mechanisms. Students
+therefore observe how stable macroscopic behaviour can emerge from continuous
+microscopic dynamics.
+
+In pseudocode, the update rule becomes:
+
+\begin{tcolorbox}
+\begin{Verbatim}
+for each timestep t:
+    for each particle i:
+        dx_noise <- random_normal(0, sigma)
+        dy_noise <- random_normal(0, sigma)
+
+        force <- electric_force(position[i])
+
+        new_x <- x[i] + (dx_noise + charge[i]*force.x) * dt
+        new_y <- y[i] + (dy_noise + charge[i]*force.y) * dt
+
+        apply_species_specific_channel_rules()
+
+        x[i] <- new_x
+        y[i] <- new_y
+\end{Verbatim}
+\end{tcolorbox}
+
+To provide a measurable quantity analogous to membrane potential, a simple
+proxy is introduced based on the net charge imbalance between compartments.
+Although this measure does not represent physical voltage, it allows students
+to observe how unequal permeability and opposing drift directions produce a
+stable charge difference across the membrane.
+
+The model remains intentionally simplified. Real biological membranes maintain
+near electroneutrality in bulk solution, with voltage arising from charge
+separation confined to a thin region near the membrane surface. In contrast,
+the present simulations allow compartment-wide charge imbalance for
+pedagogical clarity. The goal is to illustrate how permeability-weighted ion
+movement gives rise to stable electrochemical states before introducing formal
+equilibrium descriptions such as the Nernst or Goldman--Hodgkin--Katz
+equations.
+
+\section*{Instructional Context}
+
+The simulation framework is used within an undergraduate computational
+neuroscience unit as a mechanism for revisiting electrochemical signalling that
+students were previously introduced to in an earlier introductory neuroscience
+course. In the introductory setting, membrane potential is presented through
+conceptual diagrams and textbook explanations typical of first-year
+neuroscience instruction. In the later computational neuroscience unit, the
+same biological concepts are revisited through a progression of simulations
+that reframe membrane potential as the outcome of interacting dynamical
+processes.
+
+This progression serves two instructional purposes. First, it reinforces prior
+biological knowledge by providing a mechanistic interpretation of electrical
+signalling in nerve cells. Second, it introduces students to dynamical systems
+thinking through a familiar biological example. Rather than encountering
+dynamical systems as abstract mathematical objects, students observe how system
+state evolves through iterative update rules and how stable behaviour emerges
+from competing processes over time.
+
+In this way, the simulations function as a bridge between qualitative biological
+explanations and computational modelling of physical systems more broadly.
+Students encounter state variables, time evolution, and steady-state behaviour
+in a visually interpretable context, which supports later formal introduction
+of differential equations and Euler integration as mathematical descriptions of
+system dynamics.
+
+All simulation code is provided in an openly available
+companion repository located here:
+
+\url{\CompanionRepo}
+
+This allows instructors to adapt the materials for lecture
+demonstrations, laboratory exercises, or computational
+assignments.
+
+\section*{Limitations}
+
+The simulations presented in this work are intentionally simplified and are not
+intended as biophysically accurate models of membrane electrophysiology. Their
+purpose is pedagogical: to isolate and visually demonstrate the causal
+relationships between diffusion, selective permeability, and electrical
+influences in a form that supports conceptual understanding of dynamical
+processes.
+
+Several simplifying assumptions are particularly important. First, the
+simulations permit net charge imbalance across entire compartments, whereas
+real biological systems maintain near electroneutrality in bulk solution. In
+biological membranes, voltage arises from charge separation confined to a thin
+region near the membrane surface rather than from large-scale redistribution of
+charge throughout intracellular or extracellular space. Allowing compartment-
+wide imbalance in the present model makes the emergence of stable states more
+visually apparent but exaggerates the spatial scale at which charge separation
+occurs.
+
+Second, electrical forces are implemented as externally specified drift terms
+rather than being derived from self-consistent electrostatic fields. The model
+does not include field generation from charge redistribution, ionic screening,
+or spatial variation in electric potential. The electrical interaction should
+therefore be interpreted as a conceptual bias on diffusive motion rather than a
+solution to Poisson-type field equations.
+
+Third, channel selectivity is represented geometrically through channel width,
+which serves as a coarse-grained proxy for permeability. In biological ion
+channels, permeability arises from a combination of structural constraints,
+electrostatic interactions, and energetic selectivity. The present
+representation intentionally compresses these mechanisms into a single
+effective parameter in order to isolate their macroscopic consequences for
+transport.
+
+These simplifications are deliberate and reflect the instructional goal of
+introducing dynamical intuition before physical realism. More detailed
+biophysical models, including conductance-based descriptions and
+self-consistent electrical dynamics, can be introduced subsequently once
+students have developed an understanding of how membrane potential emerges from
+interacting dynamical processes.
+
+\section*{Conclusion}
+
+This paper presents a progressive simulation framework for teaching
+electrochemical signalling and membrane potential through dynamical intuition.
+By introducing diffusion, spatial constraints, selective permeability, and
+electrical drift incrementally, the framework allows students to observe how
+stable electrochemical behaviour emerges from simple update rules. Membrane
+potential is therefore encountered as the outcome of interacting dynamical
+processes rather than as a quantity defined solely by equilibrium equations.
+
+The approach addresses a common instructional challenge in neuroscience
+education, namely the introduction of analytical descriptions prior to
+mechanistic understanding. By reversing this order and emphasizing visual and
+computational intuition, students develop a causal understanding of how
+permeability and electrochemical forces give rise to stable states. This
+provides a foundation upon which formal treatments, including Nernst and
+Goldman--Hodgkin--Katz descriptions and conductance-based neuron models, can be
+introduced more effectively.
+
+Beyond its biological application, the framework provides a natural entry point
+to dynamical systems thinking and computational modelling of physical systems.
+Students encounter state evolution, steady states, and iterative numerical
+updates in a concrete setting before engaging with formal mathematical
+representations. In this way, the progression supports both neuroscience and
+computational learning objectives.
+
+The simulations are intended as complementary teaching tools rather than
+replacements for analytical approaches. When integrated with traditional
+instruction, they provide an intuitive bridge between qualitative explanation
+and quantitative modelling, supporting deeper conceptual understanding of
+electrochemical signalling in nerve cells.
+
+\end{document}
+
