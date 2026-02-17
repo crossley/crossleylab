@@ -1,3 +1,42 @@
+"""
+Electrically biased diffusion with particle–particle repulsion through a channel.
+
+This script simulates a population of (conceptually) positive ions moving in a
+2D box split into left/right compartments by a central wall (membrane) with a
+single open channel (channel_y_range). Particles start on the right side and
+move each timestep according to three components:
+
+    1) Brownian motion: independent Gaussian noise in x and y.
+    2) Electrical attraction: drift toward a fixed negative point charge
+       (neg_charge_pos), scaled by electric_strength and normalised by distance.
+    3) Mutual repulsion: a simple pairwise repulsive term computed for each
+       particle from all others, scaled by repulsion_strength and decaying with
+       squared distance (∝ 1 / r^2). This prevents unrealistic clustering near
+       the attractor and introduces crowding/spacing effects.
+
+Crossing rule (membrane + channel):
+    - Particles may cross the wall only when their y-position lies within
+      channel_y_range = (-10, 10).
+    - If a particle attempts to cross outside that opening, its x-position is
+      reverted (blocked/reflected), keeping it on the original side.
+
+Other constraints / simplifications:
+    - Top/bottom boundaries: y is clamped to [-box_height/2, box_height/2].
+    - Forces are heuristic “cartoon physics” (not a full electrostatics solver).
+    - Repulsion is computed with an O(N^2) loop (fine for 100 particles, but
+      becomes slow for much larger counts).
+
+Visual output:
+    - Animates particle motion with the membrane/channel drawn and the negative
+      charge marked as a blue dot.
+    - Saves 'repulsion_and_gradient.mp4' using ffmpeg.
+
+Conceptual focus:
+    - Diffusion + external electrical drift produces directed transport.
+    - Adding repulsion yields more realistic spatial distributions by resisting
+      aggregation around the attractor and reducing particle crowding.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation

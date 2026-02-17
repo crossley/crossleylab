@@ -1,3 +1,30 @@
+"""
+2D Brownian diffusion animation (no barriers, no forces).
+
+This script simulates an ensemble of particles undergoing 2D diffusion using a
+simple random walk (Brownian motion) model. Particle positions are updated
+with an Euler step at each millisecond, where the x/y increments are drawn
+independently from a zero-mean Gaussian distribution. The initial condition is
+a small Gaussian cluster around the origin, which spreads over time.
+
+The result is visualised as a Matplotlib scatter animation and saved to an MP4
+file using ffmpeg.
+
+Model assumptions / simplifications:
+    - Pure diffusion only (no drift, no external forces, no boundaries).
+    - Particles do not interact (no collisions / repulsion).
+    - Independent Gaussian steps in x and y (isotropic diffusion).
+
+Key parameters:
+    - T: total simulated time (ms)
+    - dt: timestep / sample interval (ms)
+    - num_particles: number of simulated particles
+    - step scale (0.5): controls effective diffusion rate
+
+Output:
+    - Writes 'diffusion_simulation.mp4' in the working directory.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -38,6 +65,8 @@ fig, ax = plt.subplots()
 scat = ax.scatter(x[0], y[0], s=10)
 ax.set_xlim(-50, 50)
 ax.set_ylim(-50, 50)
+ax.set_xticks([])
+ax.set_yticks([])
 ax.set_title("2D Diffusion of Particles")
 
 def update(frame):

@@ -1,3 +1,58 @@
+"""
+Two-ion selective permeability model with a Goldman-style “potential” readout.
+
+This script extends the channel + electro-diffusion toy model to TWO particle
+types with opposite charge signs and different membrane permeabilities
+(represented by different channel geometries). A central wall (membrane) splits
+the box into left/right compartments; particles may cross only through the
+channel assigned to their type.
+
+Ion types:
+    - Type 0 (“Ion A”, orange): charge +1, allowed through a very narrow top
+      channel (y in [30, 31]) → low permeability.
+    - Type 1 (“Ion B”, blue):   charge −1, allowed through a wider bottom
+      channel (y in [-40, -10]) → higher permeability.
+
+Dynamics per timestep:
+    1) Brownian motion (Gaussian noise in x and y).
+    2) Electrical drift toward a fixed negative attractor on the left
+       (neg_charge_pos), scaled by electric_strength and multiplied by each
+       particle’s charge sign (charges). This makes + ions drift toward the
+       negative source and − ions drift away from it.
+    3) Mutual repulsion between particles (∝ 1 / r^2), scaled by
+       repulsion_strength, to reduce clustering and introduce crowding effects.
+
+Membrane / channel rule:
+    - A particle attempting to cross the membrane (across left_wall/right_wall)
+      is allowed only if its y-position lies within its type’s channel window.
+    - Otherwise its x-position is reverted (blocked/reflected).
+
+Initial condition:
+    - Each ion type is placed on both sides of the membrane (≈60% left, 40%
+      right for each type) and clustered in y near its own channel region to
+      encourage channel encounters.
+
+“Membrane potential” proxy:
+    - For each type, a compartment imbalance is computed each timestep:
+          V_A = (#Ion A on left) − (#Ion A on right)
+          V_B = (#Ion B on left) − (#Ion B on right)
+      and the total is:
+          V_total = V_A + V_B
+      This is a qualitative charge-imbalance indicator (Δcharge), not a
+      physically calibrated voltage in mV.
+
+Visual output:
+    - Left panel: particle animation with the two selective channels shaded and
+      the negative attractor marked (red dot).
+    - Right panel: three time series (Ion A, Ion B, and total) plotted live.
+    - Saves 'goldman_multiline_potential.mp4' using ffmpeg.
+
+Conceptual focus:
+    - How opposite charges + unequal permeability can produce distinct
+      contributions to an overall membrane charge imbalance (a cartoon analogue
+      of Goldman-Hodgkin-Katz intuition: permeability-weighted ionic effects).
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation

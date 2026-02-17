@@ -1,4 +1,34 @@
-# Re-run everything after reset to regenerate and save the animation comparing narrow vs wide channels
+"""
+Side-by-side comparison of diffusion through narrow vs wide channels.
+
+This script simulates 2D Brownian motion in a rectangular box split into left
+and right compartments by a vertical wall centered at x=0. Particles begin in
+the left compartment and undergo Gaussian random-walk steps. Cross-compartment
+movement is only allowed through a channel opening (a y-interval); attempted
+crossings outside the channel are blocked by reverting the x-position.
+
+Two simulations are run with identical dynamics except for channel height:
+    1) Narrow channel: y in [-5, 5]
+    2) Wide channel:   y in [-20, 20]
+
+The two runs are animated side-by-side to highlight how channel size (used as a
+proxy for permeability) affects mixing rate and equilibration between
+compartments.
+
+Model details:
+    - Motion: pure diffusion (no drift, no electric forces, no interactions).
+    - Top/bottom boundaries: y is clamped to [-box_height/2, box_height/2].
+    - Wall blocking: if a particle attempts to cross x = left_wall/right_wall
+      outside the channel y-range, its x-position is reset (reflection).
+
+Output:
+    - Saves 'compare_narrow_vs_wide_channel.mp4' using ffmpeg.
+
+Conceptual focus:
+    - Permeability depends on channel size.
+    - Wider openings produce faster exchange between compartments under
+      identical diffusive motion.
+"""
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -52,6 +82,8 @@ scat2 = ax2.scatter(x_wide[0], y_wide[0], s=10)
 for ax in (ax1, ax2):
     ax.set_xlim(-box_width/2, box_width/2)
     ax.set_ylim(-box_height/2, box_height/2)
+    ax.set_xticks([])
+    ax.set_yticks([])
 
 ax1.set_title("Narrow Channel")
 ax2.set_title("Wide Channel")

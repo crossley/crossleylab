@@ -1,3 +1,49 @@
+"""
+Toy “resting potential” simulation with a transient depolarizing input.
+
+This script simulates ion-like particles moving in a 2D box split into left and
+right compartments by a central membrane (a vertical wall) containing a single
+shared channel (channel_y_range). Particle motion combines:
+
+    1) Brownian motion (Gaussian diffusion with diffusion_sd),
+    2) attraction toward a fixed negative source on the left (neg_charge_pos),
+    3) mutual particle–particle repulsion (∝ 1 / r^2),
+    4) a *temporary* depolarizing input: during the middle third of the run,
+       a positive “source” at the same location as the negative source repels
+       particles (depol_start → depol_end), opposing the baseline attraction.
+
+Geometry / membrane rule:
+    - Particles can cross the membrane only through the channel opening
+      channel_y_range = (-10, 10).
+    - If a particle attempts to cross the wall outside the channel, its x-step
+      is blocked by reverting x (reflection).
+
+Initial condition:
+    - Particles are split across both sides (≈65% left, ≈35% right) and
+      clustered near the channel in y to encourage exchange across the pore.
+
+Membrane potential proxy:
+    - A simple “membrane potential” time series is computed each timestep as
+      the negative of (count_left - count_right), where counts are determined
+      by whether particles lie fully left of left_wall or right of right_wall.
+      This is a qualitative charge-imbalance indicator, not a biophysical
+      voltage in physical units.
+
+Visual output:
+    - Left panel: particle motion with membrane + channel drawn; the permanent
+      negative source shown as a red dot; the depolarizing input shown as a
+      green dot only during its active window.
+    - Right panel: membrane potential proxy plotted over time as the animation
+      progresses.
+    - Saves 'resting_potential_simulation.mp4' using ffmpeg.
+
+Conceptual focus:
+    - How diffusion + electrical bias + crowding can produce a steady imbalance
+      across a membrane-like barrier.
+    - How a transient opposing drive (depolarizing input) perturbs that balance
+      and how the system relaxes afterward.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation

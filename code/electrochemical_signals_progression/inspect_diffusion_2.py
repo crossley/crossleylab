@@ -1,3 +1,34 @@
+"""
+Diffusion through a membrane-like wall with a single open channel.
+
+This script simulates 2D Brownian motion in a rectangular box that is split
+into left and right compartments by a vertical “wall” of finite thickness.
+Particles begin in the left compartment and undergo a random walk (Gaussian
+steps in x and y). They may cross from left to right only through a central
+channel defined by a y-range; attempted crossings outside that y-range are
+blocked by reflecting the x-position (i.e., the particle stays on its previous
+side of the wall).
+
+Boundaries and constraints:
+    - Top/bottom boundaries: y is clamped into [-box_height/2, box_height/2].
+    - The wall spans x in [left_wall, right_wall] except for the channel gap.
+    - Crossing attempts outside the channel are prevented by reverting x.
+
+Key parameters:
+    - box_width, box_height: size of the rectangular domain.
+    - wall_thickness, left_wall, right_wall: define wall region around x=0.
+    - channel_y_range: vertical extent of the opening (the “pore”).
+    - step scale (0.3): controls the effective diffusion rate.
+
+Visual output:
+    - Draws the wall segments and shades the wall region for context.
+    - Animates particle positions and saves 'diffusion_through_channel.mp4'.
+
+Purpose / intuition:
+    - Illustrates how geometric constraints (a narrow opening) regulate mixing
+      between compartments even when motion is purely diffusive.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -44,6 +75,8 @@ fig, ax = plt.subplots()
 scat = ax.scatter(x[0], y[0], s=10)
 ax.set_xlim(-box_width/2, box_width/2)
 ax.set_ylim(-box_height/2, box_height/2)
+ax.set_xticks([])
+ax.set_yticks([])
 ax.set_title("Diffusion Through a Channel")
 
 def draw_environment():

@@ -1,3 +1,63 @@
+"""
+Two-ion selective permeability simulation with a Goldman-equation-style prediction overlay.
+
+This script simulates two ion species diffusing in a 2D box separated into left
+and right compartments by a membrane (central wall). Each species has its own
+type-selective channel, with channel width used as a permeability proxy. In
+addition to animating particle motion and tracking compartment imbalances, the
+script computes a simple Goldman-like predicted “membrane potential” from the
+instantaneous left/right counts and the channel permeabilities.
+
+Ion types / permeability proxy:
+    - Type 0 (“Ion A”, orange): charge +1, narrow top channel y in [30, 31].
+      Permeability proxy P_A = channel width = 1.
+    - Type 1 (“Ion B”, green):  charge −1, wide bottom channel y in [-40, -10].
+      Permeability proxy P_B = channel width = 30.
+
+Driving field:
+    - A vertical “negative charge wall” at x = neg_wall_x creates a horizontal
+      drift term only (no y-component). The drift direction depends on ion sign:
+        attract_x ∝ electric_strength * charge * (neg_wall_x - x) / |neg_wall_x - x|
+      so + ions drift toward the wall and − ions drift away.
+
+Dynamics per timestep:
+    1) Brownian motion (Gaussian noise in x and y).
+    2) Horizontal electric drift from the negative wall (scaled by charge sign).
+    3) Mutual repulsion between particles (∝ 1 / r^2) to reduce clustering.
+
+Membrane / channel rule:
+    - A particle attempting to cross the membrane (across left_wall/right_wall)
+      is allowed only if its y-position lies within its type’s channel window.
+    - Otherwise the x-position is reverted (blocked/reflected).
+
+Measured “potentials” (qualitative):
+    - Per-type compartment imbalance:
+          V_A = (#Ion A on left) − (#Ion A on right)
+          V_B = (#Ion B on left) − (#Ion B on right)
+      and V_total = V_A + V_B.
+      These are Δcharge-like indicators, not calibrated voltages.
+
+Goldman-like prediction:
+    - A predicted membrane potential proxy is computed as a log ratio of
+      permeability-weighted right vs left “concentrations” (here: particle counts):
+          V_goldman = log( (P_A*A_right + P_B*B_right) / (P_A*A_left + P_B*B_left) )
+      with small epsilons added to avoid divide-by-zero.
+    - For plotting, V_goldman is scaled (multiplied by 20) to roughly match the
+      Δcharge axis.
+
+Visual output:
+    - Left panel: particle animation with selective channels shaded and the
+      negative charge wall drawn as a dashed red line.
+    - Right panel: live plots of V_A, V_B, V_total, and the scaled Goldman
+      prediction (dashed black).
+    - Saves 'goldman_equation_simulation.mp4' using ffmpeg.
+
+Conceptual focus:
+    - Linking selective permeability (channel width) to a Goldman-style
+      permeability-weighted log-ratio prediction, and comparing that prediction
+      to the simulated compartment charge imbalance over time.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation

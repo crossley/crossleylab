@@ -1,3 +1,42 @@
+"""
+Ion-specific diffusion through a shared membrane with type-selective channels.
+
+This script simulates 2D Brownian motion of two particle species in a box split
+into left/right compartments by a vertical wall (a membrane) centered at x=0.
+Particles start on the left side and execute Gaussian random-walk steps. They
+may cross the membrane only if, at the moment of attempting to cross, their
+y-position lies within a channel region that is specific to their particle
+type.
+
+Particle types and channels:
+    - Type 0 (red; labelled Na+): allowed to cross only through a very narrow
+      channel near the top of the membrane (y in [10, 11]).
+    - Type 1 (blue; labelled K+): allowed to cross only through a wider channel
+      near the bottom of the membrane (y in [-30, -10]).
+
+Crossing rule:
+    - A particle is considered "trying to cross" if its x-step would take it
+      across either wall boundary (left_wall or right_wall).
+    - If it tries to cross outside its allowed y-window, the x-position is
+      reverted (blocked/reflected), keeping it on its original side.
+
+Other constraints:
+    - Top/bottom boundaries: y is clamped into [-box_height/2, box_height/2].
+    - No electrical forces, concentration gradients, or particle interactions
+      are included: this is purely diffusion + selective permeability.
+
+Visual output:
+    - Particles are coloured by type (red/blue).
+    - The wall is drawn with coloured translucent spans marking each channel.
+    - Saves 'ion_specific_diffusion.mp4' using ffmpeg.
+
+Conceptual focus:
+    - Selective permeability: different species experience different effective
+      permeability depending on channel placement/width.
+    - Even with identical diffusion dynamics, channel selectivity produces
+      different cross-membrane flux for each species.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -61,6 +100,8 @@ fig, ax = plt.subplots(figsize=(8, 6))
 scat = ax.scatter(x[0], y[0], s=10, c=colors)
 ax.set_xlim(-box_width/2, box_width/2)
 ax.set_ylim(-box_height/2, box_height/2)
+ax.set_xticks([])
+ax.set_yticks([])
 ax.set_title("Ion-Specific Diffusion Through Channels")
 
 # Draw walls and channels
@@ -93,4 +134,3 @@ def update(frame):
 
 ani = animation.FuncAnimation(fig, update, frames=N, interval=30, blit=True)
 ani.save("ion_specific_diffusion.mp4", writer="ffmpeg", fps=30)
-

@@ -1,3 +1,44 @@
+"""
+Selective-channel electro-diffusion with repulsion toward a fixed negative attractor.
+
+This script simulates two particle species diffusing in 2D within a box that is
+split into left/right compartments by a central wall (membrane). Particles
+start on the *right* side and can cross to the left only through channels that
+are selective by particle type.
+
+Dynamics per timestep combine:
+    1) Brownian motion: Gaussian random steps in x and y.
+    2) Electrical drift: attraction toward a fixed negative “source” located on
+       the left side (neg_charge_pos), scaled by electric_strength.
+    3) Mutual repulsion: a simple pairwise repulsion term (∝ 1 / r^2) computed
+       from all other particles, scaled by repulsion_strength, which discourages
+       clustering and introduces crowding effects.
+
+Channel selectivity:
+    - Each particle is randomly assigned a type (0 or 1) and coloured accordingly.
+    - Type 0 (orange) may cross only through a very narrow *top* channel:
+          y in [30, 31]
+    - Type 1 (blue) may cross only through a wider *bottom* channel:
+          y in [-40, -10]
+    - If a particle attempts to cross the wall outside its allowed y-window,
+      its x-position is reverted (blocked/reflected).
+
+Other constraints / simplifications:
+    - Top/bottom boundaries: y is clamped to [-box_height/2, box_height/2].
+    - Electrical attraction is a distance-normalised drift toward a point
+      (heuristic; not a full electrostatics field solver).
+    - Repulsion is computed with an O(N^2) loop (fine for ~200 particles).
+
+Visual output:
+    - Draws membrane segments plus coloured translucent channel regions.
+    - Shows a legend for both ion types and the negative attractor (red dot).
+    - Saves 'selective_channels_gradient.mp4' using ffmpeg.
+
+Conceptual focus:
+    - Combining diffusion, electrical bias, and crowding with selective
+      permeability to produce type-dependent flux across a membrane-like barrier.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation

@@ -1,3 +1,41 @@
+"""
+Diffusion through a channel under a weak vs strong electrical attraction.
+
+This script compares two simulations of particle motion in a 2D box split into
+left/right compartments by a central wall (membrane) with a single channel
+opening (a y-interval). Particles start on the *right* side and move according
+to:
+    - Brownian motion (Gaussian random steps), plus
+    - a drift term that attracts particles toward a fixed negative point charge
+      located near the far-left side of the box.
+
+Two conditions are run with identical geometry and noise, differing only in
+the electrical drift strength:
+    - Weak field:   electric_strength = 0.001
+    - Strong field: electric_strength = 0.1
+
+Crossing rule:
+    - Particles may cross the membrane only when their y-position lies within
+      channel_y_range = (-10, 10).
+    - Attempted crossings outside the channel are blocked by reverting x
+      (reflection).
+
+Other constraints / simplifications:
+    - Top/bottom boundaries: y is clamped to [-box_height/2, box_height/2].
+    - No particle–particle interactions (no repulsion/collisions).
+    - The “electric field” is a simple distance-normalised attraction toward a
+      point charge (heuristic drift, not a full physical electrostatics model).
+
+Visual output:
+    - Side-by-side animation (weak vs strong field), with the membrane/channel
+      drawn and the negative charge marked as a blue dot.
+    - Saves 'electrical_gradient_comparison.mp4' using ffmpeg.
+
+Conceptual focus:
+    - How an external electrical gradient biases diffusive motion and increases
+      directed flux through an otherwise diffusion-limited channel.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
