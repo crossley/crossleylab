@@ -28,6 +28,12 @@ interface ControlRuntime {
   valueEl: HTMLElement;
 }
 
+interface NetworkPreset {
+  key: string;
+  label: string;
+  params: SimParams;
+}
+
 const C = 100;
 const vr = -60;
 const vt = -40;
@@ -45,9 +51,9 @@ const traceSampleDt = 1.0;
 
 const controlSpec: ControlSpec[] = [
   { key: 'I_amp', min: 0, step: 1, label: 'Input I_amp (A, continuous)' },
-  { key: 'w_AB', min: 0, step: 1, label: 'Weight w_AB' },
-  { key: 'w_BC', min: 0, step: 1, label: 'Weight w_BC' },
-  { key: 'w_CA', min: 0, step: 1, label: 'Weight w_CA (feedback)' },
+  { key: 'w_AB', min: -220, step: 1, label: 'Weight w_AB' },
+  { key: 'w_BC', min: -220, step: 1, label: 'Weight w_BC' },
+  { key: 'w_CA', min: -220, step: 1, label: 'Weight w_CA (feedback)' },
   { key: 'E_A', min: -50, step: 1, label: 'Baseline E_A' },
   { key: 'E_B', min: -50, step: 1, label: 'Baseline E_B' },
   { key: 'E_C', min: -50, step: 1, label: 'Baseline E_C' }
@@ -62,6 +68,13 @@ const defaultParams: SimParams = {
   E_B: 0,
   E_C: 0
 };
+
+const presets: NetworkPreset[] = [
+  { key: 'n1', label: 'N1: A -> B -> C', params: { I_amp: 200, w_AB: 80, w_BC: 80, w_CA: 0, E_A: 0, E_B: 0, E_C: 0 } },
+  { key: 'n2', label: 'N2: A -> B -| C', params: { I_amp: 200, w_AB: 80, w_BC: -120, w_CA: 0, E_A: 0, E_B: 300, E_C: 0 } },
+  { key: 'n3', label: 'N3: A -> B(inhib) -| C', params: { I_amp: 200, w_AB: 100, w_BC: -140, w_CA: 0, E_A: 0, E_B: 0, E_C: 0 } },
+  { key: 'n4', label: 'N4: A -> B -> C -> A', params: { I_amp: 200, w_AB: 70, w_BC: 70, w_CA: 70, E_A: 0, E_B: 0, E_C: 0 } }
+];
 
 class Izh3Sim {
   params: SimParams = { ...defaultParams };
@@ -250,6 +263,8 @@ const controlsEl = (() => {
 
 const sim = new Izh3Sim();
 let paused = false;
+let activePresetKey = presets[0].key;
+const customPresetKey = 'custom';
 
 const mobile = window.matchMedia('(max-width: 720px)').matches;
 const historyLength = mobile ? 650 : 1100;
@@ -369,8 +384,16 @@ function applyControlValuesToSim() {
 }
 
 function setControlsToDefaults() {
+  applyPreset(presets[0].key);
+}
+
+function applyPreset(presetKey: string) {
+  const preset = presets.find((p) => p.key === presetKey);
+  if (!preset) return;
+  activePresetKey = preset.key;
+
   for (const runtime of controlRuntimes) {
-    runtime.value = defaultParams[runtime.spec.key];
+    runtime.value = clampToSpec(preset.params[runtime.spec.key], runtime.spec);
     runtime.holdDir = 0;
     runtime.holdMs = 0;
   }
@@ -409,6 +432,18 @@ presetBtn.onclick = () => {
 buttons.append(pauseBtn, resetBtn, presetBtn);
 controlsEl.append(buttons);
 
+addTitle('Network Presets');
+const presetRow = document.createElement('div');
+presetRow.className = 'button-row';
+for (const preset of presets) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = preset.label;
+  btn.onclick = () => applyPreset(preset.key);
+  presetRow.append(btn);
+}
+controlsEl.append(presetRow);
+
 addTitle('Drive + Weights');
 for (const spec of controlSpec.slice(0, 4)) addControl(spec);
 addTitle('Baseline');
@@ -424,13 +459,16 @@ window.addEventListener('pointerup', () => {
 });
 
 function applyNudges(elapsedMs: number) {
+  let changed = false;
   for (const runtime of controlRuntimes) {
     if (runtime.holdDir === 0) continue;
     runtime.holdMs += elapsedMs;
     const accel = 1 + Math.min(8, runtime.holdMs / 450);
     const delta = runtime.holdDir * runtime.spec.step * accel * (elapsedMs / 16.7);
     runtime.value = clampToSpec(runtime.value + delta, runtime.spec);
+    changed = true;
   }
+  if (changed) activePresetKey = customPresetKey;
   applyControlValuesToSim();
 }
 
@@ -577,11 +615,13 @@ function drawDualAxisPlot(
 }
 
 function drawEdge(ctx: CanvasRenderingContext2D, from: [number, number], to: [number, number], weight: number, g: number) {
-  const activity = clamp((weight * g) / 150000, 0, 1);
-  ctx.strokeStyle = colormap(activity);
+  const activity = clamp((Math.abs(weight) * g) / 150000, 0, 1);
+  const edgeColor = weight >= 0 ? colormap(activity) : `rgba(255, ${Math.round(130 - 80 * activity)}, ${Math.round(170 - 120 * activity)}, 1)`;
+  ctx.strokeStyle = edgeColor;
   ctx.lineWidth = 2 + activity * 8;
-  ctx.shadowColor = colormap(activity);
+  ctx.shadowColor = edgeColor;
   ctx.shadowBlur = 10 + 26 * activity;
+  ctx.setLineDash(weight >= 0 ? [] : [8, 6]);
 
   const [x1, y1] = from;
   const [x2, y2] = to;
@@ -605,9 +645,10 @@ function drawEdge(ctx: CanvasRenderingContext2D, from: [number, number], to: [nu
   ctx.lineTo(ax + px * 6, ay + py * 6);
   ctx.lineTo(ax - px * 6, ay - py * 6);
   ctx.closePath();
-  ctx.fillStyle = colormap(activity);
+  ctx.fillStyle = edgeColor;
   ctx.fill();
 
+  ctx.setLineDash([]);
   ctx.shadowBlur = 0;
 }
 
@@ -669,7 +710,9 @@ function drawNetwork() {
   netCtx.fillStyle = 'rgba(125, 157, 183, 0.85)';
   netCtx.font = '12px "Avenir Next", sans-serif';
   netCtx.textAlign = 'left';
-  netCtx.fillText(`Simulation time: ${Math.round(sim.t)} ms`, 12, h - 12);
+  const activePreset = presets.find((p) => p.key === activePresetKey);
+  const label = activePreset ? activePreset.label : 'Custom';
+  netCtx.fillText(`${label}  |  t = ${Math.round(sim.t)} ms`, 12, h - 12);
 }
 
 let last = performance.now();
