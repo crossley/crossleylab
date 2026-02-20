@@ -92,11 +92,31 @@
       </p>
 
       <section class="cards">
-        <a class="card" href="./iz-nets/">
-          <h2>Izhikevich Network Explorer (A -> B -> C)</h2>
+        <a class="card" href="./iz-nets/?preset=n1">
+          <h2>Network 1: A -> B -> C</h2>
           <p>
-            Interactive three-neuron network with continuous drive, adjustable weights,
-            neurotransmitter dynamics, and live traces.
+            Feedforward excitation chain. A drives B, B drives C.
+          </p>
+          <span class="tag">Open simulation</span>
+        </a>
+        <a class="card" href="./iz-nets/?preset=n2">
+          <h2>Network 2: A -> B -| C (B tonic)</h2>
+          <p>
+            B is tonically active and inhibits C; A further excites B.
+          </p>
+          <span class="tag">Open simulation</span>
+        </a>
+        <a class="card" href="./iz-nets/?preset=n3">
+          <h2>Network 3: A -> B(inhib) -| C</h2>
+          <p>
+            B is recruited by A and suppresses C during input.
+          </p>
+          <span class="tag">Open simulation</span>
+        </a>
+        <a class="card" href="./iz-nets/?preset=n4">
+          <h2>Network 4: A -> B -> C -> A</h2>
+          <p>
+            Recurrent excitatory loop with feedback from C back to A.
           </p>
           <span class="tag">Open simulation</span>
         </a>

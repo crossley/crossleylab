@@ -264,7 +264,6 @@ const controlsEl = (() => {
 const sim = new Izh3Sim();
 let paused = false;
 let activePresetKey = presets[0].key;
-const customPresetKey = 'custom';
 
 const mobile = window.matchMedia('(max-width: 720px)').matches;
 const historyLength = mobile ? 650 : 1100;
@@ -383,10 +382,6 @@ function applyControlValuesToSim() {
   }
 }
 
-function setControlsToDefaults() {
-  applyPreset(presets[0].key);
-}
-
 function applyPreset(presetKey: string) {
   const preset = presets.find((p) => p.key === presetKey);
   if (!preset) return;
@@ -424,25 +419,13 @@ resetBtn.onclick = () => {
 };
 
 const presetBtn = document.createElement('button');
-presetBtn.textContent = 'Preset A->B->C';
+presetBtn.textContent = 'Reset Parameters';
 presetBtn.onclick = () => {
-  setControlsToDefaults();
+  applyPreset(activePresetKey);
 };
 
 buttons.append(pauseBtn, resetBtn, presetBtn);
 controlsEl.append(buttons);
-
-addTitle('Network Presets');
-const presetRow = document.createElement('div');
-presetRow.className = 'button-row';
-for (const preset of presets) {
-  const btn = document.createElement('button');
-  btn.type = 'button';
-  btn.textContent = preset.label;
-  btn.onclick = () => applyPreset(preset.key);
-  presetRow.append(btn);
-}
-controlsEl.append(presetRow);
 
 addTitle('Drive + Weights');
 for (const spec of controlSpec.slice(0, 4)) addControl(spec);
@@ -450,6 +433,12 @@ addTitle('Baseline');
 for (const spec of controlSpec.slice(4, 7)) addControl(spec);
 
 applyControlValuesToSim();
+const presetFromUrl = new URLSearchParams(window.location.search).get('preset');
+if (presetFromUrl) {
+  applyPreset(presetFromUrl);
+} else {
+  applyPreset(presets[0].key);
+}
 
 window.addEventListener('pointerup', () => {
   for (const runtime of controlRuntimes) {
@@ -459,16 +448,13 @@ window.addEventListener('pointerup', () => {
 });
 
 function applyNudges(elapsedMs: number) {
-  let changed = false;
   for (const runtime of controlRuntimes) {
     if (runtime.holdDir === 0) continue;
     runtime.holdMs += elapsedMs;
     const accel = 1 + Math.min(8, runtime.holdMs / 450);
     const delta = runtime.holdDir * runtime.spec.step * accel * (elapsedMs / 16.7);
     runtime.value = clampToSpec(runtime.value + delta, runtime.spec);
-    changed = true;
   }
-  if (changed) activePresetKey = customPresetKey;
   applyControlValuesToSim();
 }
 
@@ -711,7 +697,7 @@ function drawNetwork() {
   netCtx.font = '12px "Avenir Next", sans-serif';
   netCtx.textAlign = 'left';
   const activePreset = presets.find((p) => p.key === activePresetKey);
-  const label = activePreset ? activePreset.label : 'Custom';
+  const label = activePreset ? activePreset.label : presets[0].label;
   netCtx.fillText(`${label}  |  t = ${Math.round(sim.t)} ms`, 12, h - 12);
 }
 
