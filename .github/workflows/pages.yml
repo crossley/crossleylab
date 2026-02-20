@@ -36,10 +36,17 @@ jobs:
         run: npm run build
         working-directory: code/iz_nets_web
 
+      - name: Assemble site
+        run: |
+          rm -rf _site
+          mkdir -p _site/iz-nets
+          cp -R site/. _site/
+          cp -R code/iz_nets_web/dist/. _site/iz-nets/
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: code/iz_nets_web/dist
+          path: _site
 
   deploy:
     needs: build
