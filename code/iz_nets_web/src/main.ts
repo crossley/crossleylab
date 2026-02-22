@@ -3,10 +3,11 @@ import './style.css';
 type Cell = 0 | 1 | 2;
 
 interface SimParams {
-  I_amp: number;
+  w_IA: number;
   w_AB: number;
   w_BC: number;
-  w_CA: number;
+  pulse_amp: number;
+  pulse_width: number;
   E_A: number;
   E_B: number;
   E_C: number;
@@ -25,13 +26,7 @@ interface ControlRuntime {
   value: number;
   holdDir: -1 | 0 | 1;
   holdMs: number;
-  valueEl: HTMLElement;
-}
-
-interface NetworkPreset {
-  key: string;
-  label: string;
-  params: SimParams;
+  valueInput: HTMLInputElement;
 }
 
 const C = 100;
@@ -48,33 +43,36 @@ const pspDecay = 100;
 
 const solverDt = 0.01;
 const traceSampleDt = 1.0;
+const pulsePeriodMs = 3000;
 
 const controlSpec: ControlSpec[] = [
-  { key: 'I_amp', min: 0, step: 1, label: 'Input I_amp (A, continuous)' },
+  { key: 'w_IA', min: 0, step: 0.1, label: 'Weight w_IA' },
   { key: 'w_AB', min: -220, step: 1, label: 'Weight w_AB' },
   { key: 'w_BC', min: -220, step: 1, label: 'Weight w_BC' },
-  { key: 'w_CA', min: -220, step: 1, label: 'Weight w_CA (feedback)' },
+  { key: 'pulse_amp', min: 0, step: 1, label: 'Pulse amplitude' },
+  { key: 'pulse_width', min: 50, max: pulsePeriodMs - 50, step: 10, label: 'Pulse width (ms)' },
   { key: 'E_A', min: -50, step: 1, label: 'Baseline E_A' },
   { key: 'E_B', min: -50, step: 1, label: 'Baseline E_B' },
   { key: 'E_C', min: -50, step: 1, label: 'Baseline E_C' }
 ];
 
 const defaultParams: SimParams = {
-  I_amp: 200,
+  w_IA: 1.0,
   w_AB: 80,
   w_BC: 80,
-  w_CA: 0,
+  pulse_amp: 220,
+  pulse_width: 1000,
   E_A: 0,
   E_B: 0,
   E_C: 0
 };
 
-const presets: NetworkPreset[] = [
-  { key: 'n1', label: 'N1: A -> B -> C', params: { I_amp: 200, w_AB: 80, w_BC: 80, w_CA: 0, E_A: 0, E_B: 0, E_C: 0 } },
-  { key: 'n2', label: 'N2: A -> B -| C', params: { I_amp: 200, w_AB: 80, w_BC: -120, w_CA: 0, E_A: 0, E_B: 300, E_C: 0 } },
-  { key: 'n3', label: 'N3: A -> B(inhib) -| C', params: { I_amp: 200, w_AB: 100, w_BC: -140, w_CA: 0, E_A: 0, E_B: 0, E_C: 0 } },
-  { key: 'n4', label: 'N4: A -> B -> C -> A', params: { I_amp: 200, w_AB: 70, w_BC: 70, w_CA: 70, E_A: 0, E_B: 0, E_C: 0 } }
-];
+function squarePulse(tMs: number, amp: number, widthMs: number): number {
+  const pulseOnStartMs = pulsePeriodMs / 3;
+  const pulseOnEndMs = Math.min(pulsePeriodMs, pulseOnStartMs + Math.max(1, widthMs));
+  const phase = tMs % pulsePeriodMs;
+  return phase >= pulseOnStartMs && phase < pulseOnEndMs ? amp : 0;
+}
 
 class Izh3Sim {
   params: SimParams = { ...defaultParams };
@@ -105,9 +103,9 @@ class Izh3Sim {
   }
 
   step() {
-    const { w_AB, w_BC, w_CA, E_A, E_B, E_C } = this.params;
+    const { w_IA, w_AB, w_BC, pulse_amp, pulse_width, E_A, E_B, E_C } = this.params;
 
-    const I_A = this.params.I_amp + w_CA * this.g[2] + E_A;
+    const I_A = w_IA * squarePulse(this.t, pulse_amp, pulse_width) + E_A;
     const I_B = w_AB * this.g[0] + E_B;
     const I_C = w_BC * this.g[1] + E_C;
     const I = [I_A, I_B, I_C];
@@ -171,6 +169,7 @@ class RingBuffer {
 
 interface Channels {
   t: RingBuffer;
+  iA: RingBuffer;
   vA: RingBuffer;
   vB: RingBuffer;
   vC: RingBuffer;
@@ -182,6 +181,7 @@ interface Channels {
 function initChannels(n: number): Channels {
   return {
     t: new RingBuffer(n),
+    iA: new RingBuffer(n),
     vA: new RingBuffer(n),
     vB: new RingBuffer(n),
     vC: new RingBuffer(n),
@@ -189,22 +189,6 @@ function initChannels(n: number): Channels {
     gB: new RingBuffer(n),
     gC: new RingBuffer(n)
   };
-}
-
-function colormap(value: number): string {
-  const x = Math.max(0, Math.min(1, value));
-  const r = Math.floor(255 * Math.max(0, Math.min(1, 1.4 * x - 0.2)));
-  const g = Math.floor(255 * Math.max(0, Math.min(1, 1.6 - Math.abs(2.2 * x - 1.1))));
-  const b = Math.floor(255 * Math.max(0, Math.min(1, 1.2 - 1.6 * x)));
-  return `rgb(${r}, ${g}, ${b})`;
-}
-
-function normV(v: number): number {
-  return (v + 80) / 120;
-}
-
-function clamp(x: number, lo: number, hi: number): number {
-  return Math.min(hi, Math.max(lo, x));
 }
 
 function clampToSpec(v: number, spec: ControlSpec): number {
@@ -219,51 +203,85 @@ if (!app) throw new Error('Missing app root');
 
 app.innerHTML = `
   <h1>IZ Nets Interactive: A -> B -> C</h1>
-  <p class="subtitle">Three-neuron feedforward excitatory network (A -> B -> C) with optional recurrent feedback (C -> A) and continuous drive to A.</p>
-  <div class="layout">
-    <section class="panel controls" id="controls"></section>
-    <section class="canvas-stack">
-      <div class="panel canvas-wrap">
-        <span class="canvas-title">Neuron A: v (left axis) and g (right axis)</span>
-        <canvas id="a-canvas"></canvas>
-        <div class="legend">
-          <span><span class="swatch" style="background: var(--line-a)"></span>v_A</span>
-          <span><span class="swatch" style="background: var(--g-a)"></span>g_A</span>
+  <p class="subtitle">Three-neuron feedforward excitatory network (A -> B -> C) with repeating square-pulse input to A and baseline currents E_A/E_B/E_C.</p>
+  <div class="main-grid">
+    <section class="row-stack">
+      <div class="row-grid">
+        <aside class="panel row-controls" id="ctrl-input"></aside>
+        <div class="panel canvas-wrap">
+          <span class="canvas-title">External Input to Neuron A (I)</span>
+          <canvas id="i-canvas"></canvas>
+          <div class="legend">
+            <span><span class="swatch" style="background: #d8dde4"></span>I_A square pulse</span>
+          </div>
         </div>
       </div>
-      <div class="panel canvas-wrap">
-        <span class="canvas-title">Neuron B: v (left axis) and g (right axis)</span>
-        <canvas id="b-canvas"></canvas>
-        <div class="legend">
-          <span><span class="swatch" style="background: var(--line-b)"></span>v_B</span>
-          <span><span class="swatch" style="background: var(--g-b)"></span>g_B</span>
+      <div class="row-grid">
+        <aside class="panel row-controls" id="ctrl-a"></aside>
+        <div class="panel canvas-wrap">
+          <span class="canvas-title">Neuron A: v (left axis) and g (right axis)</span>
+          <canvas id="a-canvas"></canvas>
+          <div class="legend">
+            <span><span class="swatch" style="background: var(--line-a)"></span>v_A</span>
+            <span><span class="swatch" style="background: var(--g-a)"></span>g_A</span>
+          </div>
         </div>
       </div>
-      <div class="panel canvas-wrap">
-        <span class="canvas-title">Neuron C: v (left axis) and g (right axis)</span>
-        <canvas id="c-canvas"></canvas>
-        <div class="legend">
-          <span><span class="swatch" style="background: var(--line-c)"></span>v_C</span>
-          <span><span class="swatch" style="background: var(--g-c)"></span>g_C</span>
+      <div class="row-grid">
+        <aside class="panel row-controls" id="ctrl-b"></aside>
+        <div class="panel canvas-wrap">
+          <span class="canvas-title">Neuron B: v (left axis) and g (right axis)</span>
+          <canvas id="b-canvas"></canvas>
+          <div class="legend">
+            <span><span class="swatch" style="background: var(--line-b)"></span>v_B</span>
+            <span><span class="swatch" style="background: var(--g-b)"></span>g_B</span>
+          </div>
         </div>
       </div>
-      <div class="panel canvas-wrap">
-        <span class="canvas-title">Animated Network Graph</span>
-        <canvas class="network" id="net-canvas"></canvas>
+      <div class="row-grid">
+        <aside class="panel row-controls" id="ctrl-c"></aside>
+        <div class="panel canvas-wrap">
+          <span class="canvas-title">Neuron C: v (left axis) and g (right axis)</span>
+          <canvas id="c-canvas"></canvas>
+          <div class="legend">
+            <span><span class="swatch" style="background: var(--line-c)"></span>v_C</span>
+            <span><span class="swatch" style="background: var(--g-c)"></span>g_C</span>
+          </div>
+        </div>
       </div>
     </section>
+    <aside class="panel run-controls" id="run-controls"></aside>
   </div>
 `;
 
-const controlsEl = (() => {
-  const el = document.querySelector<HTMLDivElement>('#controls');
-  if (!el) throw new Error('Missing controls root');
+const ctrlInputEl = (() => {
+  const el = document.querySelector<HTMLDivElement>('#ctrl-input');
+  if (!el) throw new Error('Missing input controls root');
+  return el;
+})();
+const ctrlAEl = (() => {
+  const el = document.querySelector<HTMLDivElement>('#ctrl-a');
+  if (!el) throw new Error('Missing A controls root');
+  return el;
+})();
+const ctrlBEl = (() => {
+  const el = document.querySelector<HTMLDivElement>('#ctrl-b');
+  if (!el) throw new Error('Missing B controls root');
+  return el;
+})();
+const ctrlCEl = (() => {
+  const el = document.querySelector<HTMLDivElement>('#ctrl-c');
+  if (!el) throw new Error('Missing C controls root');
+  return el;
+})();
+const runControlsEl = (() => {
+  const el = document.querySelector<HTMLDivElement>('#run-controls');
+  if (!el) throw new Error('Missing run controls root');
   return el;
 })();
 
 const sim = new Izh3Sim();
 let paused = false;
-let activePresetKey = presets[0].key;
 
 const mobile = window.matchMedia('(max-width: 720px)').matches;
 const historyLength = mobile ? 650 : 1100;
@@ -275,6 +293,7 @@ const vSampleMax = new Float32Array(3);
 
 function pushChannels(sampleTime: number) {
   channels.t.push(sampleTime);
+  channels.iA.push(squarePulse(sampleTime, sim.params.pulse_amp, sim.params.pulse_width));
   // Store max V reached since last sample so spike peaks stay clipped/visible.
   channels.vA.push(vSampleMax[0]);
   channels.vB.push(vSampleMax[1]);
@@ -289,6 +308,7 @@ function pushChannels(sampleTime: number) {
 
 function seedHistory() {
   channels.t.clear(0);
+  channels.iA.clear(0);
   channels.vA.clear(vr);
   channels.vB.clear(vr);
   channels.vC.clear(vr);
@@ -312,7 +332,7 @@ function formatValue(spec: ControlSpec, v: number): string {
 
 const controlRuntimes: ControlRuntime[] = [];
 
-function addControl(spec: ControlSpec) {
+function addControl(spec: ControlSpec, parent: HTMLElement) {
   const row = document.createElement('label');
   row.className = 'control';
 
@@ -322,9 +342,13 @@ function addControl(spec: ControlSpec) {
   const l = document.createElement('span');
   l.textContent = spec.label;
 
-  const valueEl = document.createElement('span');
-  valueEl.className = 'value';
-  valueEl.textContent = formatValue(spec, defaultParams[spec.key]);
+  const valueInput = document.createElement('input');
+  valueInput.type = 'number';
+  valueInput.className = 'value-input';
+  valueInput.step = String(spec.step);
+  if (spec.min !== undefined) valueInput.min = String(spec.min);
+  if (spec.max !== undefined) valueInput.max = String(spec.max);
+  valueInput.value = formatValue(spec, defaultParams[spec.key]);
 
   const nudgeRow = document.createElement('div');
   nudgeRow.className = 'nudge-row';
@@ -345,7 +369,17 @@ function addControl(spec: ControlSpec) {
     value: defaultParams[spec.key],
     holdDir: 0,
     holdMs: 0,
-    valueEl
+    valueInput
+  };
+
+  const commitInputValue = () => {
+    const num = Number(valueInput.value);
+    if (!Number.isFinite(num)) {
+      valueInput.value = formatValue(spec, runtime.value);
+      return;
+    }
+    runtime.value = clampToSpec(num, spec);
+    applyControlValuesToSim();
   };
 
   const startHold = (dir: -1 | 1) => {
@@ -367,39 +401,51 @@ function addControl(spec: ControlSpec) {
   minusBtn.addEventListener('pointerleave', stopHold);
   plusBtn.addEventListener('pointerleave', stopHold);
 
-  top.append(l, valueEl);
+  valueInput.addEventListener('change', commitInputValue);
+  valueInput.addEventListener('blur', commitInputValue);
+  valueInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      commitInputValue();
+      valueInput.blur();
+    }
+  });
+
+  top.append(l, valueInput);
   nudgeRow.append(minusBtn, hint, plusBtn);
   row.append(top, nudgeRow);
-  controlsEl.append(row);
+  parent.append(row);
 
   controlRuntimes.push(runtime);
+}
+
+function getControlSpec(key: keyof SimParams): ControlSpec {
+  const spec = controlSpec.find((s) => s.key === key);
+  if (!spec) throw new Error(`Missing control spec for ${key}`);
+  return spec;
+}
+
+function addNeuronControlLayout() {
+  const addSection = (name: string, keys: Array<keyof SimParams>, parent: HTMLElement) => {
+    const nameEl = document.createElement('div');
+    nameEl.className = 'group-title';
+    nameEl.textContent = name;
+    parent.append(nameEl);
+    for (const key of keys) {
+      addControl(getControlSpec(key), parent);
+    }
+  };
+
+  addSection('External Input', ['pulse_width', 'pulse_amp'], ctrlInputEl);
+  addSection('Neuron A', ['w_IA', 'E_A'], ctrlAEl);
+  addSection('Neuron B', ['w_AB', 'E_B'], ctrlBEl);
+  addSection('Neuron C', ['w_BC', 'E_C'], ctrlCEl);
 }
 
 function applyControlValuesToSim() {
   for (const runtime of controlRuntimes) {
     sim.setParam(runtime.spec.key, runtime.value);
-    runtime.valueEl.textContent = formatValue(runtime.spec, runtime.value);
+    runtime.valueInput.value = formatValue(runtime.spec, runtime.value);
   }
-}
-
-function applyPreset(presetKey: string) {
-  const preset = presets.find((p) => p.key === presetKey);
-  if (!preset) return;
-  activePresetKey = preset.key;
-
-  for (const runtime of controlRuntimes) {
-    runtime.value = clampToSpec(preset.params[runtime.spec.key], runtime.spec);
-    runtime.holdDir = 0;
-    runtime.holdMs = 0;
-  }
-  applyControlValuesToSim();
-}
-
-function addTitle(text: string) {
-  const el = document.createElement('div');
-  el.className = 'group-title';
-  el.textContent = text;
-  controlsEl.append(el);
 }
 
 const buttons = document.createElement('div');
@@ -421,24 +467,22 @@ resetBtn.onclick = () => {
 const presetBtn = document.createElement('button');
 presetBtn.textContent = 'Reset Parameters';
 presetBtn.onclick = () => {
-  applyPreset(activePresetKey);
+  for (const runtime of controlRuntimes) {
+    runtime.value = clampToSpec(defaultParams[runtime.spec.key], runtime.spec);
+    runtime.holdDir = 0;
+    runtime.holdMs = 0;
+  }
+  applyControlValuesToSim();
 };
 
 buttons.append(pauseBtn, resetBtn, presetBtn);
-controlsEl.append(buttons);
-
-addTitle('Drive + Weights');
-for (const spec of controlSpec.slice(0, 4)) addControl(spec);
-addTitle('Baseline');
-for (const spec of controlSpec.slice(4, 7)) addControl(spec);
+const runTitle = document.createElement('div');
+runTitle.className = 'group-title';
+runTitle.textContent = 'Run Controls';
+runControlsEl.append(runTitle, buttons);
+addNeuronControlLayout();
 
 applyControlValuesToSim();
-const presetFromUrl = new URLSearchParams(window.location.search).get('preset');
-if (presetFromUrl) {
-  applyPreset(presetFromUrl);
-} else {
-  applyPreset(presets[0].key);
-}
 
 window.addEventListener('pointerup', () => {
   for (const runtime of controlRuntimes) {
@@ -448,14 +492,16 @@ window.addEventListener('pointerup', () => {
 });
 
 function applyNudges(elapsedMs: number) {
+  let changed = false;
   for (const runtime of controlRuntimes) {
     if (runtime.holdDir === 0) continue;
     runtime.holdMs += elapsedMs;
     const accel = 1 + Math.min(8, runtime.holdMs / 450);
     const delta = runtime.holdDir * runtime.spec.step * accel * (elapsedMs / 16.7);
     runtime.value = clampToSpec(runtime.value + delta, runtime.spec);
+    changed = true;
   }
-  applyControlValuesToSim();
+  if (changed) applyControlValuesToSim();
 }
 
 function setupCanvas(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
@@ -475,19 +521,19 @@ function setupCanvas(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
   return ctx;
 }
 
+const iCanvas = document.querySelector<HTMLCanvasElement>('#i-canvas');
 const aCanvas = document.querySelector<HTMLCanvasElement>('#a-canvas');
 const bCanvas = document.querySelector<HTMLCanvasElement>('#b-canvas');
 const cCanvas = document.querySelector<HTMLCanvasElement>('#c-canvas');
-const netCanvas = document.querySelector<HTMLCanvasElement>('#net-canvas');
-if (!aCanvas || !bCanvas || !cCanvas || !netCanvas) throw new Error('Missing canvas nodes');
+if (!iCanvas || !aCanvas || !bCanvas || !cCanvas) throw new Error('Missing canvas nodes');
 
+const iCtx = setupCanvas(iCanvas);
 const aCtx = setupCanvas(aCanvas);
 const bCtx = setupCanvas(bCanvas);
 const cCtx = setupCanvas(cCanvas);
-const netCtx = setupCanvas(netCanvas);
 
 function drawTraceGrid(ctx: CanvasRenderingContext2D, w: number, h: number) {
-  ctx.strokeStyle = 'rgba(170, 220, 255, 0.12)';
+  ctx.strokeStyle = 'rgba(200, 200, 200, 0.13)';
   ctx.lineWidth = 1;
   ctx.beginPath();
   for (let i = 1; i < 5; i += 1) {
@@ -570,8 +616,8 @@ function drawDualAxisPlot(
   const h = ctx.canvas.clientHeight;
 
   const grad = ctx.createLinearGradient(0, 0, 0, h);
-  grad.addColorStop(0, 'rgba(12, 45, 83, 0.55)');
-  grad.addColorStop(1, 'rgba(2, 10, 20, 0.9)');
+  grad.addColorStop(0, 'rgba(18, 18, 20, 0.46)');
+  grad.addColorStop(1, 'rgba(2, 2, 3, 0.97)');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
 
@@ -592,7 +638,7 @@ function drawDualAxisPlot(
   gMax = Math.min(60, Math.max(0.5, gMax * 1.15));
   drawLine(ctx, channels.t, gTrace, 0, gMax, gColor, xStart, xEnd);
 
-  ctx.fillStyle = 'rgba(215, 235, 255, 0.78)';
+  ctx.fillStyle = 'rgba(220, 224, 230, 0.78)';
   ctx.font = '11px "Avenir Next", sans-serif';
   ctx.textAlign = 'left';
   ctx.fillText('v (mV)', 8, 14);
@@ -600,105 +646,32 @@ function drawDualAxisPlot(
   ctx.fillText(`g (a.u., max=${gMax.toFixed(2)})`, w - 8, 14);
 }
 
-function drawEdge(ctx: CanvasRenderingContext2D, from: [number, number], to: [number, number], weight: number, g: number) {
-  const activity = clamp((Math.abs(weight) * g) / 150000, 0, 1);
-  const edgeColor = weight >= 0 ? colormap(activity) : `rgba(255, ${Math.round(130 - 80 * activity)}, ${Math.round(170 - 120 * activity)}, 1)`;
-  ctx.strokeStyle = edgeColor;
-  ctx.lineWidth = 2 + activity * 8;
-  ctx.shadowColor = edgeColor;
-  ctx.shadowBlur = 10 + 26 * activity;
-  ctx.setLineDash(weight >= 0 ? [] : [8, 6]);
+function drawInputPlot(ctx: CanvasRenderingContext2D, iTrace: RingBuffer, nowMs: number) {
+  const w = ctx.canvas.clientWidth;
+  const h = ctx.canvas.clientHeight;
 
-  const [x1, y1] = from;
-  const [x2, y2] = to;
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.stroke();
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, 'rgba(18, 18, 20, 0.46)');
+  grad.addColorStop(1, 'rgba(2, 2, 3, 0.97)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
 
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const len = Math.hypot(dx, dy) || 1;
-  const ux = dx / len;
-  const uy = dy / len;
-  const px = -uy;
-  const py = ux;
-
-  const ax = x2 - ux * 16;
-  const ay = y2 - uy * 16;
-  ctx.beginPath();
-  ctx.moveTo(x2, y2);
-  ctx.lineTo(ax + px * 6, ay + py * 6);
-  ctx.lineTo(ax - px * 6, ay - py * 6);
-  ctx.closePath();
-  ctx.fillStyle = edgeColor;
-  ctx.fill();
-
-  ctx.setLineDash([]);
-  ctx.shadowBlur = 0;
-}
-
-function drawNode(ctx: CanvasRenderingContext2D, x: number, y: number, label: string, vVal: number, spikeVal: number) {
-  const n = clamp(normV(vVal), 0, 1);
-  const color = colormap(n);
-
-  ctx.shadowColor = color;
-  ctx.shadowBlur = 14 + (spikeVal > 0 ? 24 : 0);
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.arc(x, y, 20, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.shadowBlur = 0;
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-  ctx.lineWidth = 1.4;
-  ctx.beginPath();
-  ctx.arc(x, y, 20, 0, Math.PI * 2);
-  ctx.stroke();
-
-  ctx.fillStyle = '#e8f4ff';
-  ctx.font = '12px "Avenir Next", sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(label, x, y + 38);
-}
-
-function drawNetwork() {
-  const w = netCtx.canvas.clientWidth;
-  const h = netCtx.canvas.clientHeight;
-
-  const bg = netCtx.createRadialGradient(w * 0.55, h * 0.1, 10, w * 0.55, h * 0.5, h);
-  bg.addColorStop(0, 'rgba(16, 53, 88, 0.4)');
-  bg.addColorStop(1, 'rgba(4, 12, 24, 0.95)');
-  netCtx.fillStyle = bg;
-  netCtx.fillRect(0, 0, w, h);
-
-  netCtx.fillStyle = 'rgba(98, 193, 255, 0.06)';
-  for (let i = 0; i < 80; i += 1) {
-    const x = ((i * 73) % w) + Math.sin((i + sim.t * 0.01) * 0.7) * 3;
-    const y = ((i * 113) % h) + Math.cos((i + sim.t * 0.013) * 0.8) * 3;
-    netCtx.beginPath();
-    netCtx.arc(x, y, 1.1, 0, Math.PI * 2);
-    netCtx.fill();
+  drawTraceGrid(ctx, w, h);
+  const xEnd = Math.max(plotWindowMs, nowMs);
+  const xStart = xEnd - plotWindowMs;
+  let iMax = 0;
+  const n = iTrace.count();
+  for (let i = 0; i < n; i += 1) {
+    const tx = channels.t.at(i);
+    if (tx < xStart || tx > xEnd) continue;
+    iMax = Math.max(iMax, iTrace.at(i));
   }
+  drawLine(ctx, channels.t, iTrace, 0, Math.max(10, iMax * 1.05), '#d8dde4', xStart, xEnd);
 
-  const pA: [number, number] = [w * 0.2, h * 0.5];
-  const pB: [number, number] = [w * 0.5, h * 0.3];
-  const pC: [number, number] = [w * 0.8, h * 0.5];
-
-  drawEdge(netCtx, pA, pB, sim.params.w_AB, sim.g[0]);
-  drawEdge(netCtx, pB, pC, sim.params.w_BC, sim.g[1]);
-  if (sim.params.w_CA > 0) drawEdge(netCtx, pC, pA, sim.params.w_CA, sim.g[2]);
-
-  drawNode(netCtx, pA[0], pA[1], 'A', sim.v[0], sim.spike[0]);
-  drawNode(netCtx, pB[0], pB[1], 'B', sim.v[1], sim.spike[1]);
-  drawNode(netCtx, pC[0], pC[1], 'C', sim.v[2], sim.spike[2]);
-
-  netCtx.fillStyle = 'rgba(125, 157, 183, 0.85)';
-  netCtx.font = '12px "Avenir Next", sans-serif';
-  netCtx.textAlign = 'left';
-  const activePreset = presets.find((p) => p.key === activePresetKey);
-  const label = activePreset ? activePreset.label : presets[0].label;
-  netCtx.fillText(`${label}  |  t = ${Math.round(sim.t)} ms`, 12, h - 12);
+  ctx.fillStyle = 'rgba(220, 224, 230, 0.78)';
+  ctx.font = '11px "Avenir Next", sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('I_A (a.u.)', 8, 14);
 }
 
 let last = performance.now();
@@ -734,6 +707,11 @@ function frame(now: number) {
     }
   }
 
+  drawInputPlot(
+    iCtx,
+    channels.iA,
+    sim.t
+  );
   drawDualAxisPlot(
     aCtx,
     channels.vA,
@@ -758,7 +736,6 @@ function frame(now: number) {
     getComputedStyle(document.documentElement).getPropertyValue('--g-c').trim(),
     sim.t
   );
-  drawNetwork();
 
   requestAnimationFrame(frame);
 }

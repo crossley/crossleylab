@@ -25,6 +25,6 @@ Deploy the `dist/` folder to GitHub Pages.
 ## Notes
 
 - Rendering is fully client-side (no backend required).
-- Controls include hold-to-nudge `- / +` controls for continuous `I_amp`, `w_AB`, `w_BC`, `w_CA`, and `E_A/E_B/E_C`.
-- Views include per-neuron dual-axis traces (`v` on left axis, `g` on right axis) and an animated network graph.
+- Controls include hold-to-nudge `- / +` controls for `w_AB`, `w_BC`, and `E_A/E_B/E_C`.
+- Views include square-pulse input trace to A plus per-neuron dual-axis traces (`v` on left axis, `g` on right axis).
 - Solver `dt` is fixed at `0.01` internally for stability; traces are sampled on a fixed simulated-time grid.
