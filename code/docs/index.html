@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crossley Lab Code Demos</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #070b14;
+        --panel: #0f1628;
+        --border: #243454;
+        --text: #dce8ff;
+        --muted: #9db0cf;
+        --accent: #58d5ff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: radial-gradient(circle at 20% 10%, #13203d 0%, var(--bg) 55%);
+        color: var(--text);
+      }
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2.5rem 1rem 4rem;
+      }
+      h1 {
+        margin: 0 0 0.5rem;
+        font-size: 2rem;
+      }
+      p {
+        margin: 0 0 1rem;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+      .grid {
+        display: grid;
+        gap: 0.9rem;
+        margin-top: 1.25rem;
+      }
+      .card {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 0.9rem 1rem;
+      }
+      .card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(88, 213, 255, 0.18) inset;
+      }
+      .card strong {
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+      code {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Crossley Lab Code Demos</h1>
+      <p>Browser-hosted simulations and interactive ports.</p>
+      <div class="grid">
+        <a class="card" href="./electrochemical_signals_progression_web/">
+          <strong>Electrochemical Signals Progression (Web)</strong>
+          <span>Diffusion, electrochemical, and resting-potential simulations ported from Python.</span>
+        </a>
+      </div>
+      <p style="margin-top:1.25rem;">Direct app URL: <code>/crossleylab/electrochemical_signals_progression_web/</code></p>
+    </main>
+  </body>
+</html>
