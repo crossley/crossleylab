@@ -26,7 +26,9 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: code/iz_nets_web/package-lock.json
+          cache-dependency-path: |
+            code/iz_nets_web/package-lock.json
+            code/electrochemical_signals_progression_web/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -36,12 +38,22 @@ jobs:
         run: npm run build
         working-directory: code/iz_nets_web
 
+      - name: Install electrochemical app dependencies
+        run: npm ci
+        working-directory: code/electrochemical_signals_progression_web
+
+      - name: Build electrochemical app
+        run: npm run build
+        working-directory: code/electrochemical_signals_progression_web
+
       - name: Assemble site
         run: |
           rm -rf _site
           mkdir -p _site/iz-nets
+          mkdir -p _site/electrochemical-signals
           cp -R site/. _site/
           cp -R code/iz_nets_web/dist/. _site/iz-nets/
+          cp -R code/electrochemical_signals_progression_web/dist/. _site/electrochemical-signals/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
