@@ -115,10 +115,6 @@ When adding material, prioritize:
 - alignment with one of the onboarding tracks (behaviour, imaging, modelling)
 
 
-## Honours Onboarding Docs
-
-Simple markdown-based honours onboarding documentation lives in `honours/` (start with `honours/README.md`).
-
 ## Short-Term Roadmap
 
 1. Add a structured imaging onboarding module.
