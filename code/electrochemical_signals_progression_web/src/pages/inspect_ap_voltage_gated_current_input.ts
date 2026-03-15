@@ -989,18 +989,20 @@ app.innerHTML = `
         </div>
       </aside>
       <section class="panel canvas-panel">
-        <div class="canvas-grid-2" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
+        <div class="canvas-grid-2" style="grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: stretch;">
           <div class="canvas-subpanel">
             <canvas id="particle-canvas"></canvas>
           </div>
-          <div class="canvas-subpanel">
-            <canvas id="trace-canvas"></canvas>
-          </div>
-          <div class="canvas-subpanel">
-            <canvas id="vm-trace-canvas"></canvas>
-          </div>
-          <div class="canvas-subpanel">
-            <canvas id="perm-trace-canvas"></canvas>
+          <div style="display:grid; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 12px;">
+            <div class="canvas-subpanel">
+              <canvas id="trace-canvas"></canvas>
+            </div>
+            <div class="canvas-subpanel">
+              <canvas id="vm-trace-canvas"></canvas>
+            </div>
+            <div class="canvas-subpanel">
+              <canvas id="perm-trace-canvas"></canvas>
+            </div>
           </div>
         </div>
       </section>
