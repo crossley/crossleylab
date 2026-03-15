@@ -24,11 +24,21 @@ Serve the generated `dist/` directory with any static host.
 ```bash
 npm run lint
 npm run check-pages
+npm run deploy-check
 ```
 
 - `lint`: TypeScript strict compile check (`tsc --noEmit`)
 - `check-pages`: validates lesson registry ↔ HTML entrypoints ↔ TS page modules
+- `deploy-check`: runs `lint` + `check-pages` + `build` and prints the GitHub Pages deployment target/workflow
 - GitHub Actions CI runs `lint`, `check-pages`, and `build` on every push and pull request.
+
+## Deployment
+
+```bash
+npm run deploy-check
+```
+
+Then commit and push to `main` in the monorepo root (`crossleylab`). GitHub Pages is deployed by `../../.github/workflows/pages.yml`, which publishes this app to `https://crossley.github.io/crossleylab/electrochemical-signals/`.
 
 ## Teaching Notes
 
