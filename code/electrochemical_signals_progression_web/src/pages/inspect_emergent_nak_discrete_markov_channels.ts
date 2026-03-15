@@ -53,6 +53,7 @@ interface LiveState {
   fixedAnionLayerX: number;
   naChannelY: Float32Array;
   kChannelY: Float32Array;
+  pumpY: Float32Array;
   naOpen: Uint8Array;
   kOpen: Uint8Array;
   naLeft: number;
@@ -110,8 +111,10 @@ class Rng {
 }
 
 const CHANNELS_PER_TYPE = 20;
-const CHANNEL_HALF_HEIGHT = 1.05;
+const PUMP_SITES = 10;
+const CHANNEL_HALF_HEIGHT = 0.35;
 const CHANNEL_PADDING = 5;
+const PUMP_HALF_HEIGHT = 1.2;
 const FIXED_ANION_MEMBRANE_OFFSET = 2;
 
 const defaultSim: SimParams = {
@@ -222,6 +225,18 @@ function layoutInterleavedChannels(
   }
 }
 
+function layoutPumpSites(pumpY: Float32Array, boxHeight: number, rng: Rng): void {
+  const halfH = boxHeight / 2;
+  const yMax = halfH - CHANNEL_PADDING;
+  const yMin = -halfH + CHANNEL_PADDING;
+  const step = (yMax - yMin) / (pumpY.length + 1);
+  const jitter = step * 0.2;
+  for (let i = 0; i < pumpY.length; i += 1) {
+    const baseY = yMax - (i + 1) * step;
+    pumpY[i] = clamp(baseY + rng.uniform(-jitter, jitter), yMin, yMax);
+  }
+}
+
 function normalizeSimParams(params: SimParams): SimParams {
   const boxWidth = clamp(params.boxWidth, 40, 500);
   const boxHeight = clamp(params.boxHeight, 40, 500);
@@ -318,7 +333,9 @@ function createState(params: SimParams, seed: number): LiveState {
 
   const naChannelY = new Float32Array(CHANNELS_PER_TYPE);
   const kChannelY = new Float32Array(CHANNELS_PER_TYPE);
+  const pumpY = new Float32Array(PUMP_SITES);
   layoutInterleavedChannels(naChannelY, kChannelY, p.boxHeight, rng);
+  layoutPumpSites(pumpY, p.boxHeight, rng);
 
   const naOpen = new Uint8Array(CHANNELS_PER_TYPE);
   const kOpen = new Uint8Array(CHANNELS_PER_TYPE);
@@ -346,6 +363,7 @@ function createState(params: SimParams, seed: number): LiveState {
     fixedAnionLayerX: p.fixedAnionLayerX,
     naChannelY,
     kChannelY,
+    pumpY,
     naOpen,
     kOpen,
     naLeft: 0,
@@ -454,38 +472,56 @@ function enforceGeometry(state: LiveState): void {
 function applyPump(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: boolean): void {
   const strength = clamp(params.pumpStrength, 0, 2);
   const rate = clamp(0.7 * strength, 0, 4);
-  const radius = clamp(7 * strength, 1, 20);
+  const membraneReach = clamp(7 * strength, 1, 20);
+  const siteReachY = clamp(2.2 + 1.8 * strength, 1.5, 8);
   if (!pumpEnabled || rate <= 0) return;
-  const pumpY = 0;
-  const naCandidates: number[] = [];
-  const kCandidates: number[] = [];
+  const naCandidatesBySite: number[][] = Array.from({ length: state.pumpY.length }, () => []);
+  const kCandidatesBySite: number[][] = Array.from({ length: state.pumpY.length }, () => []);
   for (let i = 0; i < state.numParticles; i += 1) {
-    const isNearPumpY = Math.abs(state.y[i] - pumpY) <= radius;
-    if (!isNearPumpY) continue;
-    if (state.types[i] === 0 && state.x[i] < state.leftWall && state.leftWall - state.x[i] <= radius) naCandidates.push(i);
-    if (state.types[i] === 1 && state.x[i] > state.rightWall && state.x[i] - state.rightWall <= radius) kCandidates.push(i);
+    let bestSite = -1;
+    let bestDy = Number.POSITIVE_INFINITY;
+    for (let s = 0; s < state.pumpY.length; s += 1) {
+      const dy = Math.abs(state.y[i] - state.pumpY[s]);
+      if (dy <= siteReachY && dy < bestDy) {
+        bestDy = dy;
+        bestSite = s;
+      }
+    }
+    if (bestSite < 0) continue;
+    if (state.types[i] === 0 && state.x[i] < state.leftWall && state.leftWall - state.x[i] <= membraneReach) {
+      naCandidatesBySite[bestSite].push(i);
+    }
+    if (state.types[i] === 1 && state.x[i] > state.rightWall && state.x[i] - state.rightWall <= membraneReach) {
+      kCandidatesBySite[bestSite].push(i);
+    }
   }
-  shuffleInPlace(naCandidates, rng);
-  shuffleInPlace(kCandidates, rng);
+  for (let s = 0; s < state.pumpY.length; s += 1) {
+    shuffleInPlace(naCandidatesBySite[s], rng);
+    shuffleInPlace(kCandidatesBySite[s], rng);
+  }
 
   let cycles = Math.floor(rate * state.dt);
   if (rng.next() < rate * state.dt - cycles) cycles += 1;
   cycles = clamp(cycles, 0, 20);
 
-  let naCursor = 0;
-  let kCursor = 0;
+  const siteOrder = Array.from({ length: state.pumpY.length }, (_, i) => i);
+  shuffleInPlace(siteOrder, rng);
+  const naCursorBySite = new Uint16Array(state.pumpY.length);
+  const kCursorBySite = new Uint16Array(state.pumpY.length);
   for (let c = 0; c < cycles; c += 1) {
+    const siteIndex = siteOrder[c % siteOrder.length];
+    const siteY = state.pumpY[siteIndex];
     for (let i = 0; i < 3; i += 1) {
-      if (naCursor >= naCandidates.length) break;
-      const idx = naCandidates[naCursor++];
-      state.x[idx] = state.rightWall + 1 + rng.uniform(0, radius * 0.5);
-      state.y[idx] = pumpY + rng.uniform(-radius, radius);
+      if (naCursorBySite[siteIndex] >= naCandidatesBySite[siteIndex].length) break;
+      const idx = naCandidatesBySite[siteIndex][naCursorBySite[siteIndex]++];
+      state.x[idx] = state.rightWall + 1 + rng.uniform(0, membraneReach * 0.5);
+      state.y[idx] = siteY + rng.uniform(-siteReachY, siteReachY);
     }
     for (let i = 0; i < 2; i += 1) {
-      if (kCursor >= kCandidates.length) break;
-      const idx = kCandidates[kCursor++];
-      state.x[idx] = state.leftWall - 1 - rng.uniform(0, radius * 0.5);
-      state.y[idx] = pumpY + rng.uniform(-radius, radius);
+      if (kCursorBySite[siteIndex] >= kCandidatesBySite[siteIndex].length) break;
+      const idx = kCandidatesBySite[siteIndex][kCursorBySite[siteIndex]++];
+      state.x[idx] = state.leftWall - 1 - rng.uniform(0, membraneReach * 0.5);
+      state.y[idx] = siteY + rng.uniform(-siteReachY, siteReachY);
     }
   }
 }
@@ -662,9 +698,12 @@ function drawParticles(canvas: HTMLCanvasElement, state: LiveState, pointSize: n
   });
   drawDiscreteChannels(ctx, state, w, h, dpr);
 
-  const [, pumpYPx] = worldToCanvas(0, 0, state, w, h);
   ctx.fillStyle = pumpEnabled ? SIM_COLORS.ionC : 'rgba(170,170,190,0.8)';
-  ctx.fillRect((wl + wr) / 2 - 3 * dpr, pumpYPx - 10 * dpr, 6 * dpr, 20 * dpr);
+  const pumpHalfHeightPx = Math.max(3 * dpr, (PUMP_HALF_HEIGHT / state.boxHeight) * h * 0.5);
+  for (let i = 0; i < state.pumpY.length; i += 1) {
+    const [, pumpYPx] = worldToCanvas(0, state.pumpY[i], state, w, h);
+    ctx.fillRect((wl + wr) / 2 - 2.5 * dpr, pumpYPx - pumpHalfHeightPx, 5 * dpr, 2 * pumpHalfHeightPx);
+  }
 
   const r = Math.max(0.8, pointSize) * dpr;
   ctx.fillStyle = SIM_COLORS.fieldNegative;
