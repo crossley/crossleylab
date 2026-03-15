@@ -1,0 +1,212 @@
+[
+  {
+    "id": "inspect_diffusion_free",
+    "title": "Free Diffusion",
+    "description": "Particles spread through a box with no membrane and no electrical forces",
+    "htmlPath": "inspect_diffusion_free.html",
+    "tsEntry": "src/pages/inspect_diffusion_free.ts",
+    "unit": "diffusion",
+    "order": 1,
+    "status": "active"
+  },
+  {
+    "id": "inspect_diffusion_pore",
+    "title": "Diffusion Through a Membrane Pore",
+    "description": "A membrane separates two compartments and particles can cross only through one pore",
+    "htmlPath": "inspect_diffusion_pore.html",
+    "tsEntry": "src/pages/inspect_diffusion_pore.ts",
+    "unit": "diffusion",
+    "order": 2,
+    "status": "active"
+  },
+  {
+    "id": "inspect_diffusion_permeability",
+    "title": "Pore Permeability",
+    "description": "Compare a narrow pore with a wide pore to see how permeability changes transport",
+    "htmlPath": "inspect_diffusion_permeability.html",
+    "tsEntry": "src/pages/inspect_diffusion_permeability.ts",
+    "unit": "diffusion",
+    "order": 3,
+    "status": "active"
+  },
+  {
+    "id": "inspect_diffusion_selective",
+    "title": "Selective Permeability",
+    "description": "Two particle types cross different pores, introducing selective permeability",
+    "htmlPath": "inspect_diffusion_selective.html",
+    "tsEntry": "src/pages/inspect_diffusion_selective.ts",
+    "unit": "diffusion",
+    "order": 4,
+    "status": "active"
+  },
+  {
+    "id": "inspect_diffusion_selective_permeability_rate",
+    "title": "Selective Permeability by Probabilistic Gating",
+    "description": "Hold pore geometry fixed and control cross-membrane flow by ion-specific pore permeability probabilities.",
+    "htmlPath": "inspect_diffusion_selective_permeability_rate.html",
+    "tsEntry": "src/pages/inspect_diffusion_selective_permeability_rate.ts",
+    "unit": "diffusion",
+    "order": 5,
+    "status": "active"
+  },
+  {
+    "id": "inspect_field_attraction",
+    "title": "Free Diffusion with Electrical Attraction",
+    "description": "Diffusion in a box with a fixed electrical attractor added",
+    "htmlPath": "inspect_field_attraction.html",
+    "tsEntry": "src/pages/inspect_field_attraction.ts",
+    "unit": "membrane_potential",
+    "order": 6,
+    "status": "active"
+  },
+  {
+    "id": "inspect_membrane_potential_intro",
+    "title": "What Is a Membrane Potential?",
+    "description": "Positive and negative ions accumulate on opposite sides of a membrane even before channels are introduced",
+    "htmlPath": "inspect_membrane_potential_intro.html",
+    "tsEntry": "src/pages/inspect_membrane_potential_intro.ts",
+    "unit": "membrane_potential",
+    "order": 7,
+    "status": "active"
+  },
+  {
+    "id": "inspect_nernst_one_ion",
+    "title": "Nernst Equation (One Ion)",
+    "description": "Connect concentration ratio and electrical potential using the one-ion equilibrium relationship",
+    "htmlPath": "inspect_nernst_one_ion.html",
+    "tsEntry": "src/pages/inspect_nernst_one_ion.ts",
+    "unit": "membrane_potential",
+    "order": 8,
+    "status": "active"
+  },
+  {
+    "id": "inspect_two_ion_selective_channels",
+    "title": "Two-Ion Selective Channels",
+    "description": "Two ion species with selective pores approach the same equilibrium concentration ratio at different rates",
+    "htmlPath": "inspect_two_ion_selective_channels.html",
+    "tsEntry": "src/pages/inspect_two_ion_selective_channels.ts",
+    "unit": "membrane_potential",
+    "order": 9,
+    "status": "active"
+  },
+  {
+    "id": "inspect_nak_pump_gradients",
+    "title": "Na/K Pump Establishes Gradients",
+    "description": "Add active pumping to show how real-cell-like Na and K gradients can be created and maintained",
+    "htmlPath": "inspect_nak_pump_gradients.html",
+    "tsEntry": "src/pages/inspect_nak_pump_gradients.ts",
+    "unit": "membrane_potential",
+    "order": 10,
+    "status": "active"
+  },
+  {
+    "id": "inspect_resting_potential_charge_wall",
+    "title": "Goldman Equation from a Charge Wall (2 ions)",
+    "description": "Selective channels and a charge-wall field produce a full resting-potential lesson with a live comparison trace",
+    "htmlPath": "inspect_resting_potential_charge_wall.html",
+    "tsEntry": "src/pages/inspect_resting_potential_charge_wall.ts",
+    "unit": "membrane_potential",
+    "order": 11,
+    "status": "active"
+  },
+  {
+    "id": "inspect_emergent_field_attraction",
+    "title": "Free Diffusion with Electrical Attraction",
+    "description": "Diffusion in a box with a fixed electrical attractor added",
+    "htmlPath": "inspect_emergent_field_attraction.html",
+    "tsEntry": "src/pages/inspect_emergent_field_attraction.ts",
+    "unit": "membrane_potential_emergent",
+    "order": 12,
+    "status": "active"
+  },
+  {
+    "id": "inspect_emergent_membrane_potential_intro",
+    "title": "What Is a Membrane Potential?",
+    "description": "Positive and negative ions accumulate on opposite sides of a membrane even before channels are introduced",
+    "htmlPath": "inspect_emergent_membrane_potential_intro.html",
+    "tsEntry": "src/pages/inspect_emergent_membrane_potential_intro.ts",
+    "unit": "membrane_potential_emergent",
+    "order": 13,
+    "status": "active"
+  },
+  {
+    "id": "inspect_emergent_nernst_one_ion",
+    "title": "Nernst Equation (One Ion)",
+    "description": "Connect concentration ratio and electrical potential using the one-ion equilibrium relationship",
+    "htmlPath": "inspect_emergent_nernst_one_ion.html",
+    "tsEntry": "src/pages/inspect_emergent_nernst_one_ion.ts",
+    "unit": "membrane_potential_emergent",
+    "order": 14,
+    "status": "active"
+  },
+  {
+    "id": "inspect_emergent_two_ion_selective_channels",
+    "title": "Two-Ion Selective Channels",
+    "description": "Two ion species with selective pores approach the same equilibrium concentration ratio at different rates",
+    "htmlPath": "inspect_emergent_two_ion_selective_channels.html",
+    "tsEntry": "src/pages/inspect_emergent_two_ion_selective_channels.ts",
+    "unit": "membrane_potential_emergent",
+    "order": 15,
+    "status": "active"
+  },
+  {
+    "id": "inspect_emergent_nak_pump_gradients",
+    "title": "Na/K Pump Establishes Gradients",
+    "description": "Add active transport to sustain Na and K gradients while passive selective channels still operate",
+    "htmlPath": "inspect_emergent_nak_pump_gradients.html",
+    "tsEntry": "src/pages/inspect_emergent_nak_pump_gradients.ts",
+    "unit": "membrane_potential_emergent",
+    "order": 16,
+    "status": "active"
+  },
+  {
+    "id": "inspect_emergent_resting_potential_fixed_anions",
+    "title": "Goldman Equation from Fixed Intracellular Anions (2 ions)",
+    "description": "Selective channels and a fixed-anion field produce a full resting-potential lesson with a live comparison trace",
+    "htmlPath": "inspect_emergent_resting_potential_fixed_anions.html",
+    "tsEntry": "src/pages/inspect_emergent_resting_potential_fixed_anions.ts",
+    "unit": "membrane_potential_emergent",
+    "order": 17,
+    "status": "active"
+  },
+  {
+    "id": "inspect_emergent_nak_discrete_markov_channels",
+    "title": "Na/K Pump with Many Stochastic Channels",
+    "description": "Keep fixed discrete channel locations while each Na and K channel switches open/closed stochastically with Markov dynamics",
+    "htmlPath": "inspect_emergent_nak_discrete_markov_channels.html",
+    "tsEntry": "src/pages/inspect_emergent_nak_discrete_markov_channels.ts",
+    "unit": "membrane_potential_emergent",
+    "order": 18,
+    "status": "active"
+  },
+  {
+    "id": "inspect_ap_subthreshold",
+    "title": "Sub-Threshold Excitation and Inhibition",
+    "description": "Small perturbations move Vm up or down without triggering a full spike",
+    "htmlPath": "inspect_ap_subthreshold.html",
+    "tsEntry": "src/pages/inspect_ap_subthreshold.ts",
+    "unit": "action_potential",
+    "order": 19,
+    "status": "active"
+  },
+  {
+    "id": "inspect_ap_threshold_all_or_none",
+    "title": "Threshold and All-or-None Spike",
+    "description": "Crossing threshold shifts permeability and triggers a full action potential response",
+    "htmlPath": "inspect_ap_threshold_all_or_none.html",
+    "tsEntry": "src/pages/inspect_ap_threshold_all_or_none.ts",
+    "unit": "action_potential",
+    "order": 20,
+    "status": "active"
+  },
+  {
+    "id": "inspect_ap_phases",
+    "title": "Action Potential Phases (Na In, K Out)",
+    "description": "A staged visual model links depolarization, repolarization, and recovery to selective pores",
+    "htmlPath": "inspect_ap_phases.html",
+    "tsEntry": "src/pages/inspect_ap_phases.ts",
+    "unit": "action_potential",
+    "order": 21,
+    "status": "active"
+  }
+]
