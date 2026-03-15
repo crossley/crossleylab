@@ -190,33 +190,23 @@
     "status": "active"
   },
   {
-    "id": "inspect_ap_subthreshold",
-    "title": "Sub-Threshold Excitation and Inhibition",
-    "description": "Small perturbations move Vm up or down without triggering a full spike",
-    "htmlPath": "inspect_ap_subthreshold.html",
-    "tsEntry": "src/pages/inspect_ap_subthreshold.ts",
-    "unit": "action_potential",
+    "id": "inspect_emergent_nak_dynamic_field_feedback_with_vm_trace",
+    "title": "Dynamic Charge-Separation Field + Vm Trace",
+    "description": "Adds a dedicated membrane-potential-proxy trace panel to the dynamic charge-separation field simulation",
+    "htmlPath": "inspect_emergent_nak_dynamic_field_feedback_with_vm_trace.html",
+    "tsEntry": "src/pages/inspect_emergent_nak_dynamic_field_feedback_with_vm_trace.ts",
+    "unit": "membrane_potential_emergent",
     "order": 20,
     "status": "active"
   },
   {
-    "id": "inspect_ap_threshold_all_or_none",
-    "title": "Threshold and All-or-None Spike",
-    "description": "Crossing threshold shifts permeability and triggers a full action potential response",
-    "htmlPath": "inspect_ap_threshold_all_or_none.html",
-    "tsEntry": "src/pages/inspect_ap_threshold_all_or_none.ts",
+    "id": "inspect_ap_voltage_gated_current_input",
+    "title": "Voltage-Gated Na/K Channels with External Current",
+    "description": "A first active-signaling model: Na and K gating depends on membrane potential proxy while signed external current drives depolarization or hyperpolarization",
+    "htmlPath": "inspect_ap_voltage_gated_current_input.html",
+    "tsEntry": "src/pages/inspect_ap_voltage_gated_current_input.ts",
     "unit": "action_potential",
     "order": 21,
-    "status": "active"
-  },
-  {
-    "id": "inspect_ap_phases",
-    "title": "Action Potential Phases (Na In, K Out)",
-    "description": "A staged visual model links depolarization, repolarization, and recovery to selective pores",
-    "htmlPath": "inspect_ap_phases.html",
-    "tsEntry": "src/pages/inspect_ap_phases.ts",
-    "unit": "action_potential",
-    "order": 22,
     "status": "active"
   }
 ]
