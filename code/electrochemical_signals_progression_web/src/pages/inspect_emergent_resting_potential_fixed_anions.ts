@@ -1,4 +1,4 @@
-import { mountTwoIonRestingPage } from './inspect_emergent_resting_two_ion_common';
+import { mountTwoIonRestingPage } from './emergent_resting_two_ion_common';
 import { DEFAULT_NUM_PARTICLES, DEFAULT_POTENTIAL_SCALE, SIM_COLORS } from './sim_shared';
 
 mountTwoIonRestingPage({
