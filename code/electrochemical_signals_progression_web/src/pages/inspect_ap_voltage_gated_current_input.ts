@@ -75,6 +75,8 @@ interface TraceHistory {
   naInsideFrac: number[];
   kInsideFrac: number[];
   vmProxy: number[];
+  naPerm: number[];
+  kPerm: number[];
 }
 
 class Rng {
@@ -616,23 +618,29 @@ function pushTrace(trace: TraceHistory, state: LiveState, traceWindowMs: number)
   trace.naInsideFrac.push(state.naLeft / Math.max(1, state.naLeft + state.naRight));
   trace.kInsideFrac.push(state.kLeft / Math.max(1, state.kLeft + state.kRight));
   trace.vmProxy.push(state.vmProxy);
+  trace.naPerm.push(openFraction(state.naOpen));
+  trace.kPerm.push(openFraction(state.kOpen));
   const minTime = Math.max(0, state.simTime - traceWindowMs);
   while (trace.times.length > 1 && trace.times[0] < minTime) {
     trace.times.shift();
     trace.naInsideFrac.shift();
     trace.kInsideFrac.shift();
     trace.vmProxy.shift();
+    trace.naPerm.shift();
+    trace.kPerm.shift();
   }
   while (trace.times.length > TRACE_HISTORY_MAX_POINTS) {
     trace.times.shift();
     trace.naInsideFrac.shift();
     trace.kInsideFrac.shift();
     trace.vmProxy.shift();
+    trace.naPerm.shift();
+    trace.kPerm.shift();
   }
 }
 
 function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
-  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [], vmProxy: [] };
+  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [], vmProxy: [], naPerm: [], kPerm: [] };
   pushTrace(trace, state, traceWindowMs);
   return trace;
 }
@@ -881,6 +889,62 @@ function drawVmTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime
   ctx.restore();
 }
 
+function drawPermTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: number, traceWindowMs: number): void {
+  syncCanvasSize(canvas);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const w = canvas.width;
+  const h = canvas.height;
+  const dpr = window.devicePixelRatio || 1;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#03060b';
+  ctx.fillRect(0, 0, w, h);
+
+  const padL = 60 * dpr;
+  const padR = 12 * dpr;
+  const padT = 18 * dpr;
+  const padB = 24 * dpr;
+  const plotW = Math.max(1, w - padL - padR);
+  const plotH = Math.max(1, h - padT - padB);
+  const startTime = Math.max(0, currentTime - traceWindowMs);
+  const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(1, traceWindowMs)) * plotW;
+  const yPerm = (v: number) => padT + (1 - clamp(v, 0, 1)) * plotH;
+
+  ctx.strokeStyle = 'rgba(180,220,255,0.28)';
+  ctx.lineWidth = 1 * dpr;
+  ctx.strokeRect(padL, padT, plotW, plotH);
+  ctx.beginPath();
+  ctx.moveTo(padL, yPerm(0.5));
+  ctx.lineTo(padL + plotW, yPerm(0.5));
+  ctx.stroke();
+
+  const drawSeries = (data: number[], color: string): void => {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.8 * dpr;
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < trace.times.length; i += 1) {
+      if (trace.times[i] < startTime) continue;
+      const px = xMap(trace.times[i]);
+      const py = yPerm(data[i]);
+      if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+    }
+    if (started) ctx.stroke();
+  };
+
+  drawSeries(trace.naPerm, SIM_COLORS.ionBTrace);
+  drawSeries(trace.kPerm, SIM_COLORS.ionATrace);
+
+  ctx.fillStyle = 'rgba(232,243,255,0.78)';
+  ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+  ctx.save();
+  ctx.translate(padL - 40 * dpr, padT + plotH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+  ctx.fillText('open fraction', 0, 0);
+  ctx.restore();
+}
+
 const app = getEl<HTMLDivElement>('#app');
 app.innerHTML = `
   <div class="site-shell">
@@ -904,9 +968,6 @@ app.innerHTML = `
               <button id="rerun">Rerun</button>
               <button id="reset-defaults" class="warn">Reset Defaults</button>
             </div>
-            <div class="button-row">
-              <button id="pump-toggle" class="primary">Pump ON</button>
-            </div>
             <div class="control-grid">
               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="20" max="5000" step="1" /></div>
               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
@@ -920,7 +981,7 @@ app.innerHTML = `
         </div>
       </aside>
       <section class="panel canvas-panel">
-        <div class="canvas-grid-2" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+        <div class="canvas-grid-2" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
           <div class="canvas-subpanel">
             <canvas id="particle-canvas"></canvas>
           </div>
@@ -929,6 +990,9 @@ app.innerHTML = `
           </div>
           <div class="canvas-subpanel">
             <canvas id="vm-trace-canvas"></canvas>
+          </div>
+          <div class="canvas-subpanel">
+            <canvas id="perm-trace-canvas"></canvas>
           </div>
         </div>
       </section>
@@ -939,6 +1003,7 @@ app.innerHTML = `
 const particleCanvas = getEl<HTMLCanvasElement>('#particle-canvas');
 const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
 const vmTraceCanvas = getEl<HTMLCanvasElement>('#vm-trace-canvas');
+const permTraceCanvas = getEl<HTMLCanvasElement>('#perm-trace-canvas');
 const inputs = {
   numParticles: getEl<HTMLInputElement>('#num-particles'),
   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
@@ -951,8 +1016,7 @@ const inputs = {
 const buttons = {
   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
   rerun: getEl<HTMLButtonElement>('#rerun'),
-  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults'),
-  pumpToggle: getEl<HTMLButtonElement>('#pump-toggle')
+  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults')
 };
 
 let simParams: SimParams = { ...defaultSim };
@@ -962,7 +1026,6 @@ let rng = new Rng(currentSeed);
 let state = createState(simParams, currentSeed);
 let trace = createTrace(state, simParams.T);
 let isPlaying = true;
-let pumpEnabled = true;
 let lastTs = performance.now();
 let stepAccumulator = 0;
 
@@ -974,7 +1037,6 @@ function writeInputs(): void {
   setNumberInput(inputs.sepGain, simParams.chargeSeparationGain, 2);
   setNumberInput(inputs.fieldResponseMs, simParams.fieldResponseMs, 0);
   setNumberInput(inputs.pumpStrength, simParams.pumpStrength, 2);
-  buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
 }
 
 function readSimInputs(): SimParams {
@@ -1036,9 +1098,10 @@ function applyLiveInputs(): void {
 }
 
 function render(): void {
-  drawParticles(particleCanvas, state, displayParams.pointSize, pumpEnabled, simParams);
+  drawParticles(particleCanvas, state, displayParams.pointSize, true, simParams);
   drawTrace(traceCanvas, trace, state.simTime, simParams.T);
   drawVmTrace(vmTraceCanvas, trace, state.simTime, simParams.T);
+  drawPermTrace(permTraceCanvas, trace, state.simTime, simParams.T);
 }
 
 writeInputs();
@@ -1048,18 +1111,12 @@ buttons.togglePlay.addEventListener('click', () => {
   isPlaying = !isPlaying;
   buttons.togglePlay.textContent = isPlaying ? 'Pause' : 'Play';
 });
-buttons.pumpToggle.addEventListener('click', () => {
-  pumpEnabled = !pumpEnabled;
-  writeInputs();
-  render();
-});
 buttons.rerun.addEventListener('click', () => {
   rebuild();
   render();
 });
 buttons.resetDefaults.addEventListener('click', () => {
   simParams = { ...defaultSim };
-  pumpEnabled = true;
   rebuild();
   isPlaying = true;
   buttons.togglePlay.textContent = 'Pause';
@@ -1084,7 +1141,7 @@ function animate(ts: number): void {
     if (stepsToRun > 0) {
       stepAccumulator -= stepsToRun;
       for (let i = 0; i < stepsToRun; i += 1) {
-        stepState(state, simParams, rng, pumpEnabled);
+        stepState(state, simParams, rng, true);
         pushTrace(trace, state, simParams.T);
       }
     }
