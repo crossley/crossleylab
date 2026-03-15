@@ -330,6 +330,7 @@ app.innerHTML = `
         <li>Stronger field or weaker diffusion produces tighter clustering.</li>
         <li>Weaker field or stronger diffusion produces broader spread.</li>
         <li>At equilibrium, diffusion and electrical forces balance, producing a stable distribution.</li>
+        <li>Vary each electric field source to understand attraction and repulsion behavior.</li>
       </ul>
     </header>
 

@@ -877,9 +877,9 @@ app.innerHTML = `
       <p class="eyebrow">Charge-Separation Feedback as a Next Step</p>
       <h1>Dynamic Charge-Separation Field with Membrane Potential Trace</h1>
       <ul class="key-points">
-        <li>Na+ and K+ pass through many fixed channel locations across the membrane.</li>
-        <li>Each channel switches open/closed with Markov dynamics (no voltage gating yet).</li>
-        <li>Inside vs outside cation imbalance adds a dynamic field term to the immobile-anion field.</li>
+        <li>This is the previous simulation with an added membrane-potential trace.</li>
+        <li>Explore the action-potential idea: Na permeability rises rapidly, then K permeability rises more gradually.</li>
+        <li>Adjust Na and K open probabilities and observe how they shape the Vm trace.</li>
       </ul>
     </header>
     <div class="sim-layout">

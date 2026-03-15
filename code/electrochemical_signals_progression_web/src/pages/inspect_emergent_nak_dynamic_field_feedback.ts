@@ -850,9 +850,9 @@ app.innerHTML = `
       <p class="eyebrow">Charge-Separation Feedback as a Next Step</p>
       <h1>Na/K Pump with Dynamic Charge-Separation Field</h1>
       <ul class="key-points">
-        <li>Na+ and K+ pass through many fixed channel locations across the membrane.</li>
-        <li>Each channel switches open/closed with Markov dynamics (no voltage gating yet).</li>
-        <li>Inside vs outside cation imbalance adds a dynamic field term to the immobile-anion field.</li>
+        <li>Up to this point, electric force came only from fixed intracellular anions (red).</li>
+        <li>In real neurons, mobile-ion charge imbalance across the membrane is another electric-force source.</li>
+        <li>This simulation adds that dynamic charge-separation field.</li>
       </ul>
     </header>
     <div class="sim-layout">

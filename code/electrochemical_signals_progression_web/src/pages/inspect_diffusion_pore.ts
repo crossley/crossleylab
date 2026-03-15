@@ -492,6 +492,8 @@ app.innerHTML = `
         <li>A concentration gradient is a difference in particle distribution, not a force.</li>
         <li>Diffusion causes net movement from high to low concentration.</li>
         <li>The membrane blocks crossing except at the pore.</li>
+        <li>Try different Diffusion SD values and observe how quickly equilibrium is approached.</li>
+        <li>Change channel width and compare how it alters the time to equilibrium.</li>
       </ul>
     </header>
 

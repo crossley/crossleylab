@@ -6,8 +6,11 @@ mountTwoIonRestingPage({
   title: 'Goldman Equation from Fixed Intracellular Anions (2 ions)',
   subtitle: 'Two-ion resting potential teaching model.',
   subtitlePoints: [
-    'Resting voltage reflects diffusion, field effects, and selective permeability together.',
-    'Resting potential is closer to the Nernst potential of the ion with higher permeability'
+    'Without a Na/K pump, the cell cannot maintain concentration gradients.',
+    'With the Na/K pump active, the cell can maintain concentration gradients.',
+    'With gradients present, ions flow through selective channels; more permeable ions flow faster.',
+    'The resulting equilibrium potential sits closer to the Nernst potential of the more permeable ion.',
+    'Find parameter settings that demonstrate each step of this logic.'
   ],
   withGoldman: true,
   focusMode: 'goldman',

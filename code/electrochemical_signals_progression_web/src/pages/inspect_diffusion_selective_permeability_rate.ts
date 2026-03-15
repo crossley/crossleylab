@@ -557,10 +557,11 @@ app.innerHTML = `
       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
       <h1>Selective Permeability by Probabilistic Gating</h1>
       <ul class="key-points">
-        <li>Ion A and Ion B have the same diffusion dynamics.</li>
-        <li>Each ion crosses only through its own pore.</li>
+        <li>Pore width was a teaching proxy for permeability.</li>
+        <li>In this model, permeability is the probability that a crossing attempt succeeds.</li>
         <li>Higher open probability means higher permeability for that ion.</li>
         <li>Higher permeability leads to faster approach to equilibrium.</li>
+        <li>Vary Ion A and Ion B permeability and decide how well pore width approximates permeability.</li>
       </ul>
     </header>
 

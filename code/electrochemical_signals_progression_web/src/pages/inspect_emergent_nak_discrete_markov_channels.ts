@@ -836,9 +836,11 @@ app.innerHTML = `
       <p class="eyebrow">Discrete Channels with Stochastic Gating</p>
       <h1>Na/K Pump with Many Stochastic Channels</h1>
       <ul class="key-points">
-        <li>Na+ and K+ pass through many fixed channel locations across the membrane.</li>
-        <li>Each channel switches open/closed with Markov dynamics (no voltage gating yet).</li>
-        <li>Open-probability targets set average channel availability while diffusion still governs encounters.</li>
+        <li>Real neurons have many channels distributed across their membranes.</li>
+        <li>Each channel stochastically switches between open and closed states.</li>
+        <li>Average open probability sets overall permeability for each ion species.</li>
+        <li>Diffusion governs how often ions encounter open channels.</li>
+        <li>Vary open probabilities and observe how permeability controls equilibration speed.</li>
       </ul>
     </header>
     <div class="sim-layout">

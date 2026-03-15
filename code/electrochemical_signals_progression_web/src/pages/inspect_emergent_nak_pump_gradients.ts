@@ -700,6 +700,8 @@ app.innerHTML = `
         <li>The NA/K pump establishes a concentration gradient for Na and K across the membrane</li>
         <li>Na+ and K+ diffuse through separate passive channels.</li>
         <li>Pump moves 3 Na+ out for 2 K+ in</li>
+        <li>Try different Na/K pump strengths and observe how equilibrium concentration gradients change.</li>
+        <li>The Na/K pump is an active transporter that helps cells maintain concentration gradients.</li>
       </ul>
     </header>
     <div class="sim-layout">

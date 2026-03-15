@@ -476,6 +476,8 @@ app.innerHTML = `
         <li>Pore width is a proxy for permeability.</li>
         <li>Wider pores allow faster cross-membrane particle flow.</li>
         <li>Permeability changes how quickly equilibrium is reached.</li>
+        <li>Adjust Diffusion SD and pore widths to control how quickly each system reaches equilibrium.</li>
+        <li>Higher Diffusion SD and wider pores should produce faster equilibration.</li>
       </ul>
     </header>
 

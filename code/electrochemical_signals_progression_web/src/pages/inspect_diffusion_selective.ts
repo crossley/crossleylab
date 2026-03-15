@@ -535,6 +535,8 @@ app.innerHTML = `
         <li>Ion A and Ion B have the same diffusion dynamics.</li>
         <li>Each ion crosses only through its own pore.</li>
         <li>More permeable (wider) pores approach equilibrium faster.</li>
+        <li>Adjust Diffusion SD and pore widths to control how quickly each ion equalizes across the membrane.</li>
+        <li>Wider pores reach equal concentrations faster, but both ions eventually reach equilibrium.</li>
       </ul>
     </header>
 

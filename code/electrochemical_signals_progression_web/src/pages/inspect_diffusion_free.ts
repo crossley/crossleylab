@@ -262,6 +262,8 @@ app.innerHTML = `
         <li>Diffusion is random thermal motion from frequent molecular collisions.</li>
         <li>Particles move randomly at each step (Brownian motion).</li>
         <li>Distribution of particles becomes uniform over time.</li>
+        <li>Diffusion SD sets the standard deviation of random motion at each time step.</li>
+        <li>Try several Diffusion SD values to build intuition for its effect.</li>
       </ul>
     </header>
 

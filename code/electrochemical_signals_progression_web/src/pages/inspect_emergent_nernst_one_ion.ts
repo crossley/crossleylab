@@ -487,6 +487,9 @@ app.innerHTML = `
         <li>Diffusion tends to reduce concetration gradients (ions move from high to low concentration).</li>
         <li>The Nernst potential is the exact membrane voltage where those two forces cancel for that ion.</li>
         <li>At the Nernst potential, net movement of that ion is zero.</li>
+        <li>Test whether the Nernst potential changes with channel permeability.</li>
+        <li>Test whether the Nernst potential changes with Diffusion SD.</li>
+        <li>Test whether the Nernst potential changes with electric strength.</li>
       </ul>
     </header>
     <div class="sim-layout">

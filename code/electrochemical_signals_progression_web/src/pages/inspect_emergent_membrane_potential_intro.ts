@@ -342,6 +342,9 @@ app.innerHTML = `
       <ul class="key-points">
         <li>Membrane potential is a charge difference across the membrane.</li>
         <li>Here the membrane is impermeable, so ions cannot cross sides.</li>
+        <li>Vary positive and negative particle counts on each side of the membrane.</li>
+        <li>Find multiple ways to produce a negative membrane potential.</li>
+        <li>Find multiple ways to produce a positive membrane potential.</li>
       </ul>
     </header>
     <div class="sim-layout">

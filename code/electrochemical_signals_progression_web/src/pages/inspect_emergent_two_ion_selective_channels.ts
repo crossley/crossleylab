@@ -652,6 +652,8 @@ app.innerHTML = `
         <li>Ion A and Ion B each cross through their own selective pore.</li>
         <li>Both ions feel the same electric field.</li>
         <li>Higher open probability means higher permeability and faster redistribution.</li>
+        <li>Set one pore permeability high and the other low, then compare the resulting concentration gradients.</li>
+        <li>Different permeabilities change equilibration rates but do not by themselves maintain stable gradients.</li>
       </ul>
     </header>
 
