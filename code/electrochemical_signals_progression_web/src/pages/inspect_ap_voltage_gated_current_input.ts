@@ -995,13 +995,13 @@ app.innerHTML = `
           </div>
           <div style="display:grid; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 12px;">
             <div class="canvas-subpanel">
-              <canvas id="trace-canvas"></canvas>
+              <canvas id="trace-canvas" style="height: min(15vh, 140px);"></canvas>
             </div>
             <div class="canvas-subpanel">
-              <canvas id="vm-trace-canvas"></canvas>
+              <canvas id="vm-trace-canvas" style="height: min(15vh, 140px);"></canvas>
             </div>
             <div class="canvas-subpanel">
-              <canvas id="perm-trace-canvas"></canvas>
+              <canvas id="perm-trace-canvas" style="height: min(15vh, 140px);"></canvas>
             </div>
           </div>
         </div>
