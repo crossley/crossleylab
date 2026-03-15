@@ -1,4 +1,10 @@
 import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_NUM_PARTICLES,
+  MAX_PARTICLES,
+  SIM_COLORS
+} from './sim_shared';
 
 interface SimParams {
   T: number;
@@ -15,13 +21,13 @@ interface DisplayParams {
   targetFps: number;
 }
 
-interface Trajectory {
+interface LiveState {
   x: Float32Array;
   y: Float32Array;
-  frames: number;
   numParticles: number;
   dt: number;
-  totalTime: number;
+  simTime: number;
+  stepCount: number;
 }
 
 class Rng {
@@ -62,8 +68,8 @@ class Rng {
 const defaultSim: SimParams = {
   T: 1000,
   dt: 1,
-  numParticles: 100,
-  diffusionSd: 0.5,
+  numParticles: DEFAULT_NUM_PARTICLES,
+  diffusionSd: DEFAULT_DIFFUSION_SD,
   initClusterSd: 0.1
 };
 
@@ -78,46 +84,17 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
 
-function randomSeed(): number {
-  return (Math.random() * 0xffffffff) >>> 0;
+function reflectIntoBounds(value: number, min: number, max: number): number {
+  let next = value;
+  while (next < min || next > max) {
+    if (next < min) next = min + (min - next);
+    if (next > max) next = max - (next - max);
+  }
+  return clamp(next, min, max);
 }
 
-function simulate(params: SimParams, seed: number): Trajectory {
-  const T = clamp(Math.round(params.T), 20, 20000);
-  const dt = clamp(params.dt, 0.05, 20);
-  const numParticles = clamp(Math.round(params.numParticles), 1, 5000);
-  const diffusionSd = clamp(params.diffusionSd, 0, 20);
-  const initClusterSd = clamp(params.initClusterSd, 0, 20);
-
-  const frameCount = Math.max(2, Math.floor(T / dt));
-  const x = new Float32Array(frameCount * numParticles);
-  const y = new Float32Array(frameCount * numParticles);
-  const rng = new Rng(seed);
-
-  for (let p = 0; p < numParticles; p += 1) {
-    x[p] = rng.normal(0, initClusterSd);
-    y[p] = rng.normal(0, initClusterSd);
-  }
-
-  for (let i = 1; i < frameCount; i += 1) {
-    const prev = (i - 1) * numParticles;
-    const curr = i * numParticles;
-    for (let p = 0; p < numParticles; p += 1) {
-      const dxdt = rng.normal(0, diffusionSd);
-      const dydt = rng.normal(0, diffusionSd);
-      x[curr + p] = x[prev + p] + dxdt * dt;
-      y[curr + p] = y[prev + p] + dydt * dt;
-    }
-  }
-
-  return {
-    x,
-    y,
-    frames: frameCount,
-    numParticles,
-    dt,
-    totalTime: T
-  };
+function randomSeed(): number {
+  return (Math.random() * 0xffffffff) >>> 0;
 }
 
 function getEl<T extends Element>(selector: string): T {
@@ -126,16 +103,74 @@ function getEl<T extends Element>(selector: string): T {
   return el;
 }
 
-function setNumberInput(
-  input: HTMLInputElement,
-  value: number,
-  digits = 3
-): void {
+function setNumberInput(input: HTMLInputElement, value: number, digits = 3): void {
   if (Number.isInteger(value)) {
     input.value = String(value);
     return;
   }
   input.value = Number(value.toFixed(digits)).toString();
+}
+
+function createState(params: SimParams, seed: number): LiveState {
+  const dt = clamp(params.dt, 0.05, 20);
+  const numParticles = clamp(Math.round(params.numParticles), 1, MAX_PARTICLES);
+  const initClusterSd = clamp(params.initClusterSd, 0, 20);
+  const rng = new Rng(seed);
+  const x = new Float32Array(numParticles);
+  const y = new Float32Array(numParticles);
+  for (let i = 0; i < numParticles; i += 1) {
+    x[i] = rng.normal(0, initClusterSd);
+    y[i] = rng.normal(0, initClusterSd);
+  }
+  return { x, y, numParticles, dt, simTime: 0, stepCount: 0 };
+}
+
+function resizeState(state: LiveState, nextCount: number, rng: Rng, initClusterSd: number): LiveState {
+  if (nextCount === state.numParticles) return state;
+  const x = new Float32Array(nextCount);
+  const y = new Float32Array(nextCount);
+  const keep = Math.min(state.numParticles, nextCount);
+  x.set(state.x.subarray(0, keep));
+  y.set(state.y.subarray(0, keep));
+  for (let i = keep; i < nextCount; i += 1) {
+    x[i] = rng.normal(0, initClusterSd);
+    y[i] = rng.normal(0, initClusterSd);
+  }
+  return { ...state, x, y, numParticles: nextCount };
+}
+
+function enforceChamberBounds(state: LiveState, axisLimit: number): void {
+  const chamberHalfExtent = Math.max(1, axisLimit);
+  for (let i = 0; i < state.numParticles; i += 1) {
+    state.x[i] = reflectIntoBounds(state.x[i], -chamberHalfExtent, chamberHalfExtent);
+    state.y[i] = reflectIntoBounds(state.y[i], -chamberHalfExtent, chamberHalfExtent);
+  }
+}
+
+function stepState(state: LiveState, params: SimParams, display: DisplayParams, rng: Rng): void {
+  const chamberHalfExtent = Math.max(1, display.axisLimit);
+  for (let i = 0; i < state.numParticles; i += 1) {
+    state.x[i] = reflectIntoBounds(
+      state.x[i] + rng.normal(0, params.diffusionSd) * state.dt,
+      -chamberHalfExtent,
+      chamberHalfExtent
+    );
+    state.y[i] = reflectIntoBounds(
+      state.y[i] + rng.normal(0, params.diffusionSd) * state.dt,
+      -chamberHalfExtent,
+      chamberHalfExtent
+    );
+  }
+  state.stepCount += 1;
+  state.simTime = state.stepCount * state.dt;
+}
+
+function getExtent(state: LiveState): number {
+  let maxAbs = 1;
+  for (let i = 0; i < state.numParticles; i += 1) {
+    maxAbs = Math.max(maxAbs, Math.abs(state.x[i]), Math.abs(state.y[i]));
+  }
+  return maxAbs;
 }
 
 function syncCanvasSize(canvas: HTMLCanvasElement): void {
@@ -149,12 +184,7 @@ function syncCanvasSize(canvas: HTMLCanvasElement): void {
   }
 }
 
-function drawFrame(
-  canvas: HTMLCanvasElement,
-  traj: Trajectory,
-  frame: number,
-  display: DisplayParams
-): void {
+function drawFrame(canvas: HTMLCanvasElement, state: LiveState, display: DisplayParams): void {
   syncCanvasSize(canvas);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -162,7 +192,6 @@ function drawFrame(
   const width = canvas.width;
   const height = canvas.height;
   ctx.clearRect(0, 0, width, height);
-
   ctx.fillStyle = '#03060b';
   ctx.fillRect(0, 0, width, height);
 
@@ -173,7 +202,6 @@ function drawFrame(
   const sx = width / (2 * axis);
   const sy = height / (2 * axis);
 
-  ctx.save();
   ctx.strokeStyle = 'rgba(120, 170, 255, 0.12)';
   ctx.lineWidth = 1;
   const gridStep = axis >= 80 ? 20 : axis >= 40 ? 10 : 5;
@@ -189,9 +217,7 @@ function drawFrame(
     ctx.lineTo(width, y);
     ctx.stroke();
   }
-  ctx.restore();
 
-  ctx.save();
   ctx.strokeStyle = 'rgba(180, 220, 255, 0.28)';
   ctx.lineWidth = 1.25;
   ctx.beginPath();
@@ -200,17 +226,17 @@ function drawFrame(
   ctx.moveTo(0, halfH);
   ctx.lineTo(width, halfH);
   ctx.stroke();
-  ctx.restore();
 
-  const offset = clamp(Math.floor(frame), 0, traj.frames - 1) * traj.numParticles;
+  ctx.strokeStyle = 'rgba(214, 236, 255, 0.42)';
+  ctx.lineWidth = 1.25 * dpr;
+  ctx.strokeRect(0.75 * dpr, 0.75 * dpr, width - 1.5 * dpr, height - 1.5 * dpr);
+
   const radius = Math.max(0.8, display.pointSize) * dpr;
-  ctx.fillStyle = 'rgba(66, 200, 255, 0.9)';
-  for (let p = 0; p < traj.numParticles; p += 1) {
-    const x = halfW + traj.x[offset + p] * sx;
-    const y = halfH - traj.y[offset + p] * sy;
-    if (x < -radius || x > width + radius || y < -radius || y > height + radius) {
-      continue;
-    }
+  ctx.fillStyle = SIM_COLORS.particle;
+  for (let i = 0; i < state.numParticles; i += 1) {
+    const x = halfW + state.x[i] * sx;
+    const y = halfH - state.y[i] * sy;
+    if (x < -radius || x > width + radius || y < -radius || y > height + radius) continue;
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
@@ -218,7 +244,6 @@ function drawFrame(
 
   ctx.fillStyle = 'rgba(232, 243, 255, 0.92)';
   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
-  ctx.fillText('2D Diffusion of Particles', 12 * dpr, 20 * dpr);
 }
 
 const app = getEl<HTMLDivElement>('#app');
@@ -227,17 +252,17 @@ app.innerHTML = `
     <div class="nav-line">
       <a href="./index.html">Back to index</a>
       <span>•</span>
-      <span>Page: <code>inspect_diffusion_1</code></span>
+      <span>Page: <code>inspect_diffusion_free</code></span>
     </div>
 
     <header class="page-head">
-      <p class="eyebrow">Diffusion and Membrane Geometry Foundations</p>
-      <h1>inspect_diffusion_1</h1>
-      <p class="subtitle">
-        Pure 2D Brownian diffusion with no barriers or forces. This web version
-        preserves the Python script's core update rule while adding replay,
-        seeded reruns, and adjustable simulation/display parameters.
-      </p>
+      <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
+      <h1>Free Diffusion</h1>
+      <ul class="key-points">
+        <li>Diffusion is random thermal motion from frequent molecular collisions.</li>
+        <li>Particles move randomly at each step (Brownian motion).</li>
+        <li>Distribution of particles becomes uniform over time.</li>
+      </ul>
     </header>
 
     <div class="sim-layout">
@@ -266,7 +291,7 @@ app.innerHTML = `
             <summary>Advanced Controls</summary>
             <div class="group" style="margin-top: 8px;">
               <div class="control-grid">
-                <div class="field"><label for="total-time">Total time T (ms)</label><input id="total-time" type="number" min="20" max="20000" step="10" /></div>
+                <div class="field"><label for="total-time">Status window T (ms)</label><input id="total-time" type="number" min="100" max="20000" step="10" /></div>
                 <div class="field"><label for="dt">dt (ms)</label><input id="dt" type="number" min="0.05" max="20" step="0.05" /></div>
                 <div class="field"><label for="init-cluster-sd">Initial cluster SD</label><input id="init-cluster-sd" type="number" min="0" max="20" step="0.05" /></div>
                 <div class="field"><label for="axis-limit">Axis limit (+/-)</label><input id="axis-limit" type="number" min="5" max="500" step="1" /></div>
@@ -279,12 +304,12 @@ app.innerHTML = `
           <div class="group">
             <p class="group-label">Status</p>
             <dl class="status-list">
-              <dt>Frame</dt><dd id="status-frame">0</dd>
+              <dt>Step</dt><dd id="status-frame">0</dd>
               <dt>Time (ms)</dt><dd id="status-time">0.0</dd>
-              <dt>Frames total</dt><dd id="status-frames-total">0</dd>
               <dt>Particles</dt><dd id="status-particles">0</dd>
               <dt>dt</dt><dd id="status-dt">0</dd>
               <dt>Step SD (x/y)</dt><dd id="status-step-sd">0</dd>
+              <dt>Cloud Extent</dt><dd id="status-extent">0</dd>
               <dt>Seed</dt><dd id="status-seed">0</dd>
             </dl>
           </div>
@@ -304,15 +329,7 @@ app.innerHTML = `
       </aside>
 
       <section class="panel canvas-panel">
-        <div class="canvas-head">
-          <h2>Particle Animation</h2>
-          <span class="tiny">Qualitative browser port of <code>inspect_diffusion_1.py</code></span>
-        </div>
         <canvas id="sim-canvas" aria-label="2D diffusion particle simulation"></canvas>
-        <div class="legend">
-          <span><span class="swatch" style="background: #42c8ff"></span>Brownian particles</span>
-          <span>No boundaries, no forces, no interactions</span>
-        </div>
       </section>
     </div>
   </div>
@@ -336,10 +353,10 @@ const inputs = {
 const statusEls = {
   frame: getEl<HTMLElement>('#status-frame'),
   time: getEl<HTMLElement>('#status-time'),
-  framesTotal: getEl<HTMLElement>('#status-frames-total'),
   particles: getEl<HTMLElement>('#status-particles'),
   dt: getEl<HTMLElement>('#status-dt'),
   stepSd: getEl<HTMLElement>('#status-step-sd'),
+  extent: getEl<HTMLElement>('#status-extent'),
   seed: getEl<HTMLElement>('#status-seed')
 };
 const equationBlock = getEl<HTMLElement>('#equation-block');
@@ -355,10 +372,11 @@ const buttons = {
 let simParams: SimParams = { ...defaultSim };
 let displayParams: DisplayParams = { ...defaultDisplay };
 let currentSeed = randomSeed();
-let trajectory = simulate(simParams, currentSeed);
+let rng = new Rng(currentSeed);
+let state = createState(simParams, currentSeed);
 let isPlaying = true;
-let playheadFrame = 0;
 let lastAnimationTs = performance.now();
+let stepAccumulator = 0;
 
 function writeInputs(): void {
   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
@@ -375,9 +393,9 @@ function writeInputs(): void {
 
 function readInputsForSimulation(): SimParams {
   return {
-    T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 20, 20000),
+    T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
     dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
-    numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, 5000),
+    numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
     diffusionSd: clamp(Number(inputs.diffusionSd.value) || 0, 0, 20),
     initClusterSd: clamp(Number(inputs.initClusterSd.value) || 0, 0, 20)
   };
@@ -392,13 +410,13 @@ function readInputsForDisplay(): DisplayParams {
   };
 }
 
-function updateStatus(frameIndex: number): void {
-  statusEls.frame.textContent = `${frameIndex + 1}`;
-  statusEls.time.textContent = (frameIndex * trajectory.dt).toFixed(1);
-  statusEls.framesTotal.textContent = `${trajectory.frames}`;
-  statusEls.particles.textContent = `${trajectory.numParticles}`;
-  statusEls.dt.textContent = trajectory.dt.toFixed(2);
+function updateStatus(): void {
+  statusEls.frame.textContent = `${state.stepCount}`;
+  statusEls.time.textContent = state.simTime.toFixed(1);
+  statusEls.particles.textContent = `${state.numParticles}`;
+  statusEls.dt.textContent = state.dt.toFixed(2);
   statusEls.stepSd.textContent = (simParams.diffusionSd * simParams.dt).toFixed(3);
+  statusEls.extent.textContent = getExtent(state).toFixed(1);
   statusEls.seed.textContent = `${currentSeed >>> 0}`;
 }
 
@@ -412,29 +430,49 @@ function updateEquationText(): void {
     'ξ_x, ξ_y ~ Normal(0, σ²),  where σ = diffusionSd',
     '',
     '<span class="accent-2">Euler step used in this simulation</span>',
-    'x[i+1] = x[i] + dxdt[i] · dt',
-    'y[i+1] = y[i] + dydt[i] · dt',
-    'dxdt[i], dydt[i] ~ Normal(0, diffusionSd²)',
+    'x_trial = x_old + dxdt · dt',
+    'y_trial = y_old + dydt · dt',
+    'x_new = reflect(x_trial, -L, L)',
+    'y_new = reflect(y_trial, -L, L)',
+    'dxdt, dydt ~ Normal(0, diffusionSd²)',
+    '',
+    '<span class="accent-2">Reflective chamber rule</span>',
+    'Particles bounce off the chamber walls instead of leaving the visible box.',
     '',
     `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}`,
     `Per-step displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`
   ].join('\n');
 }
 
-function rerunFromInputs(rewind = true): void {
+function rebuildFromInputs(): void {
   simParams = readInputsForSimulation();
   displayParams = readInputsForDisplay();
   currentSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
-  trajectory = simulate(simParams, currentSeed);
-  if (rewind) playheadFrame = 0;
+  rng = new Rng(currentSeed);
+  state = createState(simParams, currentSeed);
+  stepAccumulator = 0;
+  writeInputs();
+  updateEquationText();
+}
+
+function applyLiveSimParams(): void {
+  const next = readInputsForSimulation();
+  const nextSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
+  if (nextSeed !== currentSeed) {
+    currentSeed = nextSeed;
+    rng = new Rng(currentSeed);
+  }
+  simParams = next;
+  state = resizeState(state, simParams.numParticles, rng, simParams.initClusterSd);
+  state.dt = simParams.dt;
   writeInputs();
   updateEquationText();
 }
 
 function refreshDisplayFromInputs(): void {
   displayParams = readInputsForDisplay();
+  enforceChamberBounds(state, displayParams.axisLimit);
   writeInputs();
-  updateEquationText();
 }
 
 function setPlaying(next: boolean): void {
@@ -442,86 +480,72 @@ function setPlaying(next: boolean): void {
   buttons.togglePlay.textContent = isPlaying ? 'Pause' : 'Play';
 }
 
+function render(): void {
+  updateStatus();
+  drawFrame(canvas, state, displayParams);
+}
+
 writeInputs();
 updateEquationText();
-updateStatus(0);
-drawFrame(canvas, trajectory, 0, displayParams);
+render();
 
-buttons.togglePlay.addEventListener('click', () => {
-  setPlaying(!isPlaying);
-});
-
+buttons.togglePlay.addEventListener('click', () => setPlaying(!isPlaying));
 buttons.rerun.addEventListener('click', () => {
-  rerunFromInputs(true);
+  rebuildFromInputs();
+  setPlaying(true);
+  render();
 });
-
 buttons.rewind.addEventListener('click', () => {
-  playheadFrame = 0;
-  updateStatus(0);
-  drawFrame(canvas, trajectory, 0, displayParams);
+  rebuildFromInputs();
+  render();
 });
-
 buttons.resetDefaults.addEventListener('click', () => {
   simParams = { ...defaultSim };
   displayParams = { ...defaultDisplay };
   currentSeed = randomSeed();
   writeInputs();
-  rerunFromInputs(true);
+  rebuildFromInputs();
   setPlaying(true);
+  render();
 });
-
 buttons.randomSeed.addEventListener('click', () => {
   currentSeed = randomSeed();
   setNumberInput(inputs.seed, currentSeed, 0);
-  rerunFromInputs(true);
+  rebuildFromInputs();
+  setPlaying(true);
+  render();
 });
 
-const simulationInputKeys: Array<keyof typeof inputs> = [
-  'numParticles',
-  'diffusionSd',
-  'seed',
-  'totalTime',
-  'dt',
-  'initClusterSd'
-];
-
-for (const key of simulationInputKeys) {
+for (const key of ['numParticles', 'diffusionSd', 'seed', 'totalTime', 'dt', 'initClusterSd'] as const) {
   inputs[key].addEventListener('change', () => {
-    rerunFromInputs(key !== 'seed');
+    applyLiveSimParams();
+    render();
   });
 }
 
-const displayInputKeys: Array<keyof typeof inputs> = [
-  'playbackSpeed',
-  'axisLimit',
-  'pointSize',
-  'targetFps'
-];
-
-for (const key of displayInputKeys) {
+for (const key of ['playbackSpeed', 'axisLimit', 'pointSize', 'targetFps'] as const) {
   inputs[key].addEventListener('change', () => {
     refreshDisplayFromInputs();
+    render();
   });
 }
 
-window.addEventListener('resize', () => {
-  drawFrame(canvas, trajectory, Math.floor(playheadFrame), displayParams);
-});
+window.addEventListener('resize', () => render());
 
 function animate(now: number): void {
-  const dtSec = (now - lastAnimationTs) / 1000;
+  const dtSec = Math.max(0, (now - lastAnimationTs) / 1000);
   lastAnimationTs = now;
-
-  if (isPlaying && trajectory.frames > 0) {
-    playheadFrame += dtSec * displayParams.targetFps * displayParams.playbackSpeed;
-    if (playheadFrame >= trajectory.frames) {
-      playheadFrame %= trajectory.frames;
+  if (isPlaying) {
+    stepAccumulator += dtSec * displayParams.targetFps * displayParams.playbackSpeed;
+    const stepsToRun = Math.min(120, Math.floor(stepAccumulator));
+    if (stepsToRun > 0) {
+      stepAccumulator -= stepsToRun;
+      for (let i = 0; i < stepsToRun; i += 1) {
+        stepState(state, simParams, displayParams, rng);
+      }
     }
   }
-
-  const frameIndex = clamp(Math.floor(playheadFrame), 0, Math.max(0, trajectory.frames - 1));
-  updateStatus(frameIndex);
-  drawFrame(canvas, trajectory, frameIndex, displayParams);
+  render();
   requestAnimationFrame(animate);
 }
 

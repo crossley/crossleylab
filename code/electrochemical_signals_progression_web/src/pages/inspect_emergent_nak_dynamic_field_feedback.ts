@@ -33,6 +33,7 @@ interface SimParams {
 
 interface DisplayParams {
   pointSize: number;
+  playbackSpeed: number;
   targetFps: number;
 }
 
@@ -119,6 +120,8 @@ const CHANNEL_HALF_HEIGHT = 0.35;
 const CHANNEL_PADDING = 5;
 const PUMP_HALF_HEIGHT = 1.2;
 const FIXED_ANION_MEMBRANE_OFFSET = 2;
+const MOBILE_FIELD_SAMPLES = 96;
+const MOBILE_FIELD_WEIGHT = 0.35;
 
 const defaultSim: SimParams = {
   T: 2800,
@@ -143,6 +146,7 @@ const defaultSim: SimParams = {
 
 const defaultDisplay: DisplayParams = {
   pointSize: 2.1,
+  playbackSpeed: 1,
   targetFps: 30
 };
 
@@ -277,11 +281,23 @@ function shuffleInPlace(values: number[], rng: Rng): void {
   }
 }
 
+function sampledMobileFieldSources(state: LiveState, rng: Rng, maxSamples: number): number[] {
+  if (state.numParticles <= maxSamples) return Array.from({ length: state.numParticles }, (_, i) => i);
+  const step = Math.max(1, Math.floor(state.numParticles / maxSamples));
+  const offset = Math.floor(rng.next() * step);
+  const out: number[] = [];
+  for (let i = offset; i < state.numParticles && out.length < maxSamples; i += step) out.push(i);
+  while (out.length < maxSamples) out.push(Math.floor(rng.next() * state.numParticles));
+  return out;
+}
+
 function recount(state: LiveState): void {
   let naLeft = 0;
   let naRight = 0;
   let kLeft = 0;
   let kRight = 0;
+  let fixedLeft = 0;
+  let fixedRight = 0;
   for (let i = 0; i < state.numParticles; i += 1) {
     const left = state.x[i] < state.leftWall;
     const right = state.x[i] > state.rightWall;
@@ -292,12 +308,20 @@ function recount(state: LiveState): void {
       if (isNa) naRight += 1; else kRight += 1;
     }
   }
+  for (let i = 0; i < state.fixedCount; i += 1) {
+    const left = state.fixedX[i] < state.leftWall;
+    const right = state.fixedX[i] > state.rightWall;
+    if (left) fixedLeft += 1;
+    else if (right) fixedRight += 1;
+  }
   state.naLeft = naLeft;
   state.naRight = naRight;
   state.kLeft = kLeft;
   state.kRight = kRight;
-  const total = Math.max(1, state.numParticles);
-  state.vmProxy = 80 * ((naLeft + kLeft) - (naRight + kRight)) / total;
+  const netLeft = (naLeft + kLeft) - fixedLeft;
+  const netRight = (naRight + kRight) - fixedRight;
+  const total = Math.max(1, state.numParticles + state.fixedCount);
+  state.vmProxy = 80 * (netLeft - netRight) / total;
 }
 
 function createState(params: SimParams, seed: number): LiveState {
@@ -540,34 +564,45 @@ function stepState(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: b
   updateChannelStates(state.naOpen, params.naOpenTarget, params.gateTauMs, state.dt, rng);
   updateChannelStates(state.kOpen, params.kOpenTarget, params.gateTauMs, state.dt, rng);
 
-  const total = Math.max(1, state.numParticles);
-  const chargeImbalanceFrac = ((state.naLeft + state.kLeft) - (state.naRight + state.kRight)) / total;
-  const targetField = params.electricStrength + params.chargeSeparationGain * chargeImbalanceFrac;
+  const vmNormalized = state.vmProxy / 80;
+  const targetField = params.electricStrength + params.chargeSeparationGain * vmNormalized;
   const alpha = clamp(state.dt / Math.max(1e-6, params.fieldResponseMs), 0, 1);
   state.effectiveElectricStrength += alpha * (targetField - state.effectiveElectricStrength);
 
-  const driftFromFixedAnionLayer = (x: number, y: number, charge: number): number => {
+  const mobileSources = sampledMobileFieldSources(state, rng, MOBILE_FIELD_SAMPLES);
+  const perFixedStrength = state.effectiveElectricStrength / Math.max(1, state.fixedCount);
+  const perMobileStrength = -MOBILE_FIELD_WEIGHT * state.effectiveElectricStrength / Math.max(1, mobileSources.length);
+
+  const driftFromChargeField = (x: number, y: number, charge: number, selfIndex: number): [number, number] => {
     let driftX = 0;
-    const perSourceStrength = state.effectiveElectricStrength / Math.max(1, state.fixedCount);
+    let driftY = 0;
     for (let k = 0; k < state.fixedCount; k += 1) {
-      const [dxPart] = pointFieldDrift(state.fixedX[k] - x, state.fixedY[k] - y, perSourceStrength, charge);
+      const [dxPart, dyPart] = pointFieldDrift(state.fixedX[k] - x, state.fixedY[k] - y, perFixedStrength, charge);
       driftX += dxPart;
+      driftY += dyPart;
     }
-    return driftX;
+    for (let s = 0; s < mobileSources.length; s += 1) {
+      const srcIdx = mobileSources[s];
+      if (srcIdx === selfIndex) continue;
+      const [dxPart, dyPart] = pointFieldDrift(state.x[srcIdx] - x, state.y[srcIdx] - y, perMobileStrength, charge);
+      driftX += dxPart;
+      driftY += dyPart;
+    }
+    return [driftX, driftY];
   };
 
   for (let i = 0; i < state.numParticles; i += 1) {
     const xPrev = state.x[i];
     const yPrev = state.y[i];
-    const driftX = driftFromFixedAnionLayer(xPrev, yPrev, state.charges[i]);
+    const [driftX, driftY] = driftFromChargeField(xPrev, yPrev, state.charges[i], i);
     const xTrial = reflectIntoBounds(xPrev + (rng.normal(0, params.diffusionSd) + driftX) * state.dt, -halfW, halfW);
-    const yNew = reflectIntoBounds(yPrev + rng.normal(0, params.diffusionSd) * state.dt, -halfH, halfH);
+    const yTrial = reflectIntoBounds(yPrev + (rng.normal(0, params.diffusionSd) + driftY) * state.dt, -halfH, halfH);
     let xNew = xTrial;
     const tryingToCrossLeft = xPrev > state.rightWall && xTrial <= state.rightWall;
     const tryingToCrossRight = xPrev < state.leftWall && xTrial >= state.leftWall;
     const canCross = state.types[i] === 0
-      ? nearestAlignedOpenChannel(yNew, state.naChannelY, state.naOpen, CHANNEL_HALF_HEIGHT)
-      : nearestAlignedOpenChannel(yNew, state.kChannelY, state.kOpen, CHANNEL_HALF_HEIGHT);
+      ? nearestAlignedOpenChannel(yTrial, state.naChannelY, state.naOpen, CHANNEL_HALF_HEIGHT)
+      : nearestAlignedOpenChannel(yTrial, state.kChannelY, state.kOpen, CHANNEL_HALF_HEIGHT);
 
     if ((tryingToCrossLeft || tryingToCrossRight) && !canCross) {
       xNew = tryingToCrossLeft
@@ -577,7 +612,7 @@ function stepState(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: b
       xNew = xPrev < 0 ? state.leftWall : state.rightWall;
     }
     state.x[i] = xNew;
-    state.y[i] = yNew;
+    state.y[i] = yTrial;
   }
 
   applyPump(state, params, rng, pumpEnabled);
@@ -817,7 +852,7 @@ app.innerHTML = `
       <ul class="key-points">
         <li>Na+ and K+ pass through many fixed channel locations across the membrane.</li>
         <li>Each channel switches open/closed with Markov dynamics (no voltage gating yet).</li>
-        <li>Inside vs outside cation imbalance adds a dynamic field term to the fixed-anion field.</li>
+        <li>Inside vs outside cation imbalance adds a dynamic field term to the immobile-anion field.</li>
       </ul>
     </header>
     <div class="sim-layout">
@@ -836,6 +871,7 @@ app.innerHTML = `
             <div class="control-grid">
               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="20" max="5000" step="1" /></div>
               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+              <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="12" step="0.05" /></div>
               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" step="0.01" /></div>
               <div class="field"><label for="na-open-target">NA+ open probability target</label><input id="na-open-target" type="number" min="0" max="1" step="0.01" /></div>
               <div class="field"><label for="k-open-target">K+ open probability target</label><input id="k-open-target" type="number" min="0" max="1" step="0.01" /></div>
@@ -874,6 +910,9 @@ const inputs = {
   fieldResponseMs: getEl<HTMLInputElement>('#field-response-ms'),
   pumpStrength: getEl<HTMLInputElement>('#pump-strength')
 };
+const displayInputs = {
+  playbackSpeed: getEl<HTMLInputElement>('#playback-speed')
+};
 const buttons = {
   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
   rerun: getEl<HTMLButtonElement>('#rerun'),
@@ -902,6 +941,7 @@ function writeInputs(): void {
   setNumberInput(inputs.sepGain, simParams.chargeSeparationGain, 2);
   setNumberInput(inputs.fieldResponseMs, simParams.fieldResponseMs, 0);
   setNumberInput(inputs.pumpStrength, simParams.pumpStrength, 2);
+  setNumberInput(displayInputs.playbackSpeed, displayParams.playbackSpeed, 2);
   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
 }
 
@@ -929,6 +969,13 @@ function readSimInputs(): SimParams {
     fixedAnionLayerX: fixedAnionLayerXNearMembrane(boxWidth, defaultSim.wallThickness),
     pumpStrength: clamp(Number(inputs.pumpStrength.value) || 0, 0, 2)
   });
+}
+
+function readDisplayInputs(): DisplayParams {
+  return {
+    ...displayParams,
+    playbackSpeed: clamp(Number(displayInputs.playbackSpeed.value) || defaultDisplay.playbackSpeed, 0.1, 12)
+  };
 }
 
 function rebuild(): void {
@@ -982,6 +1029,7 @@ buttons.rerun.addEventListener('click', () => {
 });
 buttons.resetDefaults.addEventListener('click', () => {
   simParams = { ...defaultSim };
+  displayParams = { ...defaultDisplay };
   pumpEnabled = true;
   rebuild();
   isPlaying = true;
@@ -995,6 +1043,11 @@ for (const input of Object.values(inputs)) {
     render();
   });
 }
+displayInputs.playbackSpeed.addEventListener('change', () => {
+  displayParams = readDisplayInputs();
+  writeInputs();
+  render();
+});
 
 window.addEventListener('resize', () => render());
 
@@ -1002,7 +1055,7 @@ function animate(ts: number): void {
   const dtSec = Math.max(0, (ts - lastTs) / 1000);
   lastTs = ts;
   if (isPlaying) {
-    stepAccumulator += dtSec * displayParams.targetFps;
+    stepAccumulator += dtSec * displayParams.targetFps * displayParams.playbackSpeed;
     const stepsToRun = Math.min(120, Math.floor(stepAccumulator));
     if (stepsToRun > 0) {
       stepAccumulator -= stepsToRun;

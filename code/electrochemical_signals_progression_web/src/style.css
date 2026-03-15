@@ -45,15 +45,32 @@ body {
 
 .page-head {
   display: grid;
-  gap: 6px;
+  gap: 8px;
+  padding: 18px 4px 10px;
 }
 
 .eyebrow {
   margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  font-size: 0.92rem;
   color: var(--muted);
+  max-width: 72ch;
+  line-height: 1.45;
+}
+
+.key-points {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 4px;
+  max-width: 76ch;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.key-points li::marker {
+  color: var(--accent);
 }
 
 h1 {
@@ -62,11 +79,21 @@ h1 {
   line-height: 1.1;
 }
 
-.subtitle {
-  margin: 0;
-  color: var(--muted);
-  max-width: 72ch;
-  line-height: 1.4;
+.landing-title {
+  font-size: clamp(1.65rem, 3.6vw, 2.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  max-width: none;
+  white-space: nowrap;
+  text-shadow:
+    0 0 22px rgba(66, 200, 255, 0.18),
+    0 14px 40px rgba(0, 0, 0, 0.42);
+}
+
+@media (max-width: 760px) {
+  .landing-title {
+    white-space: normal;
+  }
 }
 
 .panel {
@@ -92,13 +119,18 @@ h1 {
 
 .link-card {
   display: grid;
-  gap: 2px;
-  padding: 10px;
+  gap: 4px;
+  padding: 12px;
   border-radius: 10px;
   border: 1px solid rgba(160, 190, 255, 0.1);
   text-decoration: none;
   color: inherit;
   background: rgba(9, 13, 20, 0.72);
+}
+
+.link-card strong {
+  font-size: 1rem;
+  line-height: 1.2;
 }
 
 .link-card.ready:hover {
@@ -135,14 +167,9 @@ h1 {
 }
 
 .controls .panel {
-  position: sticky;
-  top: 12px;
-}
-
-@media (max-width: 980px) {
-  .controls .panel {
-    position: static;
-  }
+  position: static;
+  max-height: none;
+  overflow: visible;
 }
 
 .group {
@@ -259,6 +286,18 @@ details > summary {
   gap: 10px;
 }
 
+.canvas-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.canvas-column {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
 @media (max-width: 900px) {
   .canvas-grid-2 {
     grid-template-columns: 1fr;
@@ -268,6 +307,19 @@ details > summary {
 .canvas-subpanel {
   display: grid;
   gap: 6px;
+}
+
+.canvas-two-col {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+@media (max-width: 980px) {
+  .canvas-two-col {
+    grid-template-columns: 1fr;
+  }
 }
 
 .subhead {
@@ -301,11 +353,25 @@ details > summary {
 
 canvas {
   width: 100%;
-  height: min(68vh, 640px);
+  height: min(54vh, 512px);
   border-radius: 12px;
   border: 1px solid rgba(160, 190, 255, 0.1);
   background: var(--canvas-bg);
   display: block;
+}
+
+.trace-canvas {
+  height: min(26vh, 208px);
+}
+
+.diffusion-pore-panel .pore-trace-canvas {
+  height: min(54vh, 512px);
+}
+
+.square-canvas {
+  aspect-ratio: 1 / 1;
+  height: auto;
+  max-height: min(50vh, 420px);
 }
 
 .legend {
@@ -314,6 +380,20 @@ canvas {
   gap: 8px 12px;
   font-size: 0.82rem;
   color: var(--muted);
+}
+
+.prompt-card {
+  border: 1px solid rgba(160, 190, 255, 0.12);
+  border-radius: 10px;
+  background: rgba(8, 12, 19, 0.6);
+  padding: 10px;
+  font-size: 0.83rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+.prompt-card strong {
+  color: var(--ink);
 }
 
 .swatch {
@@ -380,4 +460,13 @@ code {
 
 .equation .accent-2 {
   color: var(--accent-2);
+}
+
+details,
+.group:has(.status-list),
+.group:has(.equation-card),
+.field:has(#seed),
+#rewind,
+#random-seed {
+  display: none !important;
 }

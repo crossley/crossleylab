@@ -1,30 +1,48 @@
-# iz_nets_web
+# Electrochemical Signals Progression Web
 
-Interactive browser version of the `A -> B -> C` Izhikevich network with live controls.
+Interactive browser-based teaching simulations for first-year undergraduates learning membrane diffusion, electrochemical balance, resting potential, Nernst reasoning, and pump-driven gradients.
 
-## Run locally
+## Run Locally
 
 ```bash
-cd code/iz_nets_web
 npm install
 npm run dev
 ```
 
-Open the URL printed by Vite (usually `http://localhost:5173`).
+Open the local Vite URL (typically `http://localhost:5173`).
 
-## Build for static hosting (GitHub Pages)
+## Build
 
 ```bash
-cd code/iz_nets_web
-npm install
 npm run build
 ```
 
-Deploy the `dist/` folder to GitHub Pages.
+Serve the generated `dist/` directory with any static host.
 
-## Notes
+## Quality Gates
 
-- Rendering is fully client-side (no backend required).
-- Controls include hold-to-nudge `- / +` controls for `w_AB`, `w_BC`, and `E_A/E_B/E_C`.
-- Views include square-pulse input trace to A plus per-neuron dual-axis traces (`v` on left axis, `g` on right axis).
-- Solver `dt` is fixed at `0.01` internally for stability; traces are sampled on a fixed simulated-time grid.
+```bash
+npm run lint
+npm run check-pages
+```
+
+- `lint`: TypeScript strict compile check (`tsc --noEmit`)
+- `check-pages`: validates lesson registry ↔ HTML entrypoints ↔ TS page modules
+- GitHub Actions CI runs `lint`, `check-pages`, and `build` on every push and pull request.
+
+## Teaching Notes
+
+- The sequence is designed as a progression from simpler particle transport concepts to membrane-potential concepts.
+- Many pages use pedagogical proxies (for example, charge-imbalance traces) before introducing mV-scaled comparisons.
+- Current compartment convention in the membrane lessons is: `left = inside (cell)`, `right = outside`.
+- Evaluation templates are provided in [`docs/evaluation/`](docs/evaluation/).
+
+## Project Structure
+
+- `src/lessons.json`: single lesson registry (title/order/slug/html/entry)
+- `src/index.ts`: landing page generated from `src/lessons.json`
+- `src/pages/`: page-specific simulations
+- `src/pages/resting_two_ion_common.ts`: shared two-ion resting-potential engine
+- `src/style.css`: common styles
+- `scripts/check-pages.mjs`: registry and entrypoint consistency checks
+- `docs/evaluation/`: concept inventory, feedback, observation, and semester templates

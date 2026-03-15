@@ -50,66 +50,6 @@
     "status": "active"
   },
   {
-    "id": "inspect_field_attraction",
-    "title": "Free Diffusion with Electrical Attraction",
-    "description": "Diffusion in a box with a fixed electrical attractor added",
-    "htmlPath": "inspect_field_attraction.html",
-    "tsEntry": "src/pages/inspect_field_attraction.ts",
-    "unit": "membrane_potential",
-    "order": 6,
-    "status": "active"
-  },
-  {
-    "id": "inspect_membrane_potential_intro",
-    "title": "What Is a Membrane Potential?",
-    "description": "Positive and negative ions accumulate on opposite sides of a membrane even before channels are introduced",
-    "htmlPath": "inspect_membrane_potential_intro.html",
-    "tsEntry": "src/pages/inspect_membrane_potential_intro.ts",
-    "unit": "membrane_potential",
-    "order": 7,
-    "status": "active"
-  },
-  {
-    "id": "inspect_nernst_one_ion",
-    "title": "Nernst Equation (One Ion)",
-    "description": "Connect concentration ratio and electrical potential using the one-ion equilibrium relationship",
-    "htmlPath": "inspect_nernst_one_ion.html",
-    "tsEntry": "src/pages/inspect_nernst_one_ion.ts",
-    "unit": "membrane_potential",
-    "order": 8,
-    "status": "active"
-  },
-  {
-    "id": "inspect_two_ion_selective_channels",
-    "title": "Two-Ion Selective Channels",
-    "description": "Two ion species with selective pores approach the same equilibrium concentration ratio at different rates",
-    "htmlPath": "inspect_two_ion_selective_channels.html",
-    "tsEntry": "src/pages/inspect_two_ion_selective_channels.ts",
-    "unit": "membrane_potential",
-    "order": 9,
-    "status": "active"
-  },
-  {
-    "id": "inspect_nak_pump_gradients",
-    "title": "Na/K Pump Establishes Gradients",
-    "description": "Add active pumping to show how real-cell-like Na and K gradients can be created and maintained",
-    "htmlPath": "inspect_nak_pump_gradients.html",
-    "tsEntry": "src/pages/inspect_nak_pump_gradients.ts",
-    "unit": "membrane_potential",
-    "order": 10,
-    "status": "active"
-  },
-  {
-    "id": "inspect_resting_potential_charge_wall",
-    "title": "Goldman Equation from a Charge Wall (2 ions)",
-    "description": "Selective channels and a charge-wall field produce a full resting-potential lesson with a live comparison trace",
-    "htmlPath": "inspect_resting_potential_charge_wall.html",
-    "tsEntry": "src/pages/inspect_resting_potential_charge_wall.ts",
-    "unit": "membrane_potential",
-    "order": 11,
-    "status": "active"
-  },
-  {
     "id": "inspect_emergent_field_attraction",
     "title": "Free Diffusion with Electrical Attraction",
     "description": "Diffusion in a box with a fixed electrical attractor added",
@@ -162,7 +102,7 @@
   {
     "id": "inspect_emergent_resting_potential_fixed_anions",
     "title": "Goldman Equation from Fixed Intracellular Anions (2 ions)",
-    "description": "Selective channels and a fixed-anion field produce a full resting-potential lesson with a live comparison trace",
+    "description": "Selective channels and an immobile-anion field produce a full resting-potential lesson with a live comparison trace",
     "htmlPath": "inspect_emergent_resting_potential_fixed_anions.html",
     "tsEntry": "src/pages/inspect_emergent_resting_potential_fixed_anions.ts",
     "unit": "membrane_potential_emergent",
@@ -182,7 +122,7 @@
   {
     "id": "inspect_emergent_nak_dynamic_field_feedback",
     "title": "Na/K Pump with Dynamic Charge-Separation Field",
-    "description": "A fixed-anion field is augmented by a cation-imbalance feedback term so inside/outside charge separation influences transport direction",
+    "description": "An immobile-anion field is augmented by a cation-imbalance feedback term so inside/outside charge separation influences transport direction",
     "htmlPath": "inspect_emergent_nak_dynamic_field_feedback.html",
     "tsEntry": "src/pages/inspect_emergent_nak_dynamic_field_feedback.ts",
     "unit": "membrane_potential_emergent",

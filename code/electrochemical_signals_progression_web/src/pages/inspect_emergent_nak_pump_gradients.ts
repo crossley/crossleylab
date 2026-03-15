@@ -5,6 +5,7 @@ import {
   drawMembraneWall,
   MAX_PARTICLES,
   SIM_COLORS,
+  evenlySpacedChannelBounds,
   pointFieldDrift
 } from './sim_shared';
 
@@ -21,16 +22,11 @@ interface SimParams {
   boxHeight: number;
   wallThickness: number;
   diffusionSd: number;
-  naGateHalfVm: number;
-  naGateSlope: number;
-  kGateHalfVm: number;
-  kGateSlope: number;
-  naGateTauMs: number;
-  kGateTauMs: number;
+  naChannelWidth: number;
+  kChannelWidth: number;
+  naPermeability: number;
+  kPermeability: number;
   electricStrength: number;
-  chargeSeparationGain: number;
-  fieldResponseMs: number;
-  externalCurrentInput: number;
   fixedAnionLayerX: number;
   pumpStrength: number;
 }
@@ -58,28 +54,21 @@ interface LiveState {
   leftWall: number;
   rightWall: number;
   fixedAnionLayerX: number;
-  naChannelY: Float32Array;
-  kChannelY: Float32Array;
-  pumpY: Float32Array;
-  naOpen: Uint8Array;
-  kOpen: Uint8Array;
+  naYMin: number;
+  naYMax: number;
+  kYMin: number;
+  kYMax: number;
   naLeft: number;
   naRight: number;
   kLeft: number;
   kRight: number;
   vmProxy: number;
-  effectiveElectricStrength: number;
-  naPopenTarget: number;
-  kPopenTarget: number;
 }
 
 interface TraceHistory {
   times: number[];
   naInsideFrac: number[];
   kInsideFrac: number[];
-  vmProxy: number[];
-  naPerm: number[];
-  kPerm: number[];
 }
 
 class Rng {
@@ -121,11 +110,6 @@ class Rng {
   }
 }
 
-const CHANNELS_PER_TYPE = 20;
-const PUMP_SITES = 10;
-const CHANNEL_HALF_HEIGHT = 0.35;
-const CHANNEL_PADDING = 5;
-const PUMP_HALF_HEIGHT = 1.2;
 const FIXED_ANION_MEMBRANE_OFFSET = 2;
 const MOBILE_FIELD_SAMPLES = 96;
 const MOBILE_FIELD_WEIGHT = 0.35;
@@ -141,16 +125,11 @@ const defaultSim: SimParams = {
   boxHeight: 90,
   wallThickness: 4,
   diffusionSd: DEFAULT_DIFFUSION_SD,
-  naGateHalfVm: -24,
-  naGateSlope: 7,
-  kGateHalfVm: -8,
-  kGateSlope: 10,
-  naGateTauMs: 5,
-  kGateTauMs: 20,
+  naChannelWidth: 16,
+  kChannelWidth: 16,
+  naPermeability: 0.2,
+  kPermeability: 0.65,
   electricStrength: -0.12,
-  chargeSeparationGain: 1.3,
-  fieldResponseMs: 14,
-  externalCurrentInput: 0,
   fixedAnionLayerX: fixedAnionLayerXNearMembrane(100, 4),
   pumpStrength: 1
 };
@@ -220,43 +199,6 @@ function layoutFixedAnions(
   }
 }
 
-function layoutInterleavedChannels(
-  naY: Float32Array,
-  kY: Float32Array,
-  boxHeight: number,
-  rng: Rng
-): void {
-  const halfH = boxHeight / 2;
-  const yMax = halfH - CHANNEL_PADDING;
-  const yMin = -halfH + CHANNEL_PADDING;
-  const totalSlots = naY.length + kY.length;
-  const step = (yMax - yMin) / (totalSlots + 1);
-  const jitter = step * 0.16;
-
-  for (let i = 0; i < naY.length; i += 1) {
-    const slot = 2 * i + 1;
-    const baseY = yMax - slot * step;
-    naY[i] = clamp(baseY + rng.uniform(-jitter, jitter), yMin, yMax);
-  }
-  for (let i = 0; i < kY.length; i += 1) {
-    const slot = 2 * i + 2;
-    const baseY = yMax - slot * step;
-    kY[i] = clamp(baseY + rng.uniform(-jitter, jitter), yMin, yMax);
-  }
-}
-
-function layoutPumpSites(pumpY: Float32Array, boxHeight: number, rng: Rng): void {
-  const halfH = boxHeight / 2;
-  const yMax = halfH - CHANNEL_PADDING;
-  const yMin = -halfH + CHANNEL_PADDING;
-  const step = (yMax - yMin) / (pumpY.length + 1);
-  const jitter = step * 0.2;
-  for (let i = 0; i < pumpY.length; i += 1) {
-    const baseY = yMax - (i + 1) * step;
-    pumpY[i] = clamp(baseY + rng.uniform(-jitter, jitter), yMin, yMax);
-  }
-}
-
 function normalizeSimParams(params: SimParams): SimParams {
   const boxWidth = clamp(params.boxWidth, 40, 500);
   const boxHeight = clamp(params.boxHeight, 40, 500);
@@ -272,16 +214,11 @@ function normalizeSimParams(params: SimParams): SimParams {
     boxHeight,
     wallThickness,
     diffusionSd: clamp(params.diffusionSd, 0, 20),
-    naGateHalfVm: clamp(params.naGateHalfVm, -80, 50),
-    naGateSlope: clamp(Math.abs(params.naGateSlope), 1, 40),
-    kGateHalfVm: clamp(params.kGateHalfVm, -80, 50),
-    kGateSlope: clamp(Math.abs(params.kGateSlope), 1, 40),
-    naGateTauMs: clamp(params.naGateTauMs, 1, 200),
-    kGateTauMs: clamp(params.kGateTauMs, 1, 200),
+    naChannelWidth: clamp(params.naChannelWidth, 0.5, boxHeight - 8),
+    kChannelWidth: clamp(params.kChannelWidth, 0.5, boxHeight - 8),
+    naPermeability: clamp(params.naPermeability, 0, 1),
+    kPermeability: clamp(params.kPermeability, 0, 1),
     electricStrength: params.electricStrength,
-    chargeSeparationGain: clamp(params.chargeSeparationGain, -8, 8),
-    fieldResponseMs: clamp(params.fieldResponseMs, 1, 400),
-    externalCurrentInput: clamp(params.externalCurrentInput, -4, 4),
     fixedAnionLayerX: fixedAnionLayerXNearMembrane(boxWidth, wallThickness),
     pumpStrength: clamp(params.pumpStrength, 0, 2)
   };
@@ -344,6 +281,7 @@ function createState(params: SimParams, seed: number): LiveState {
   const rng = new Rng(seed);
   const leftWall = -p.wallThickness / 2;
   const rightWall = p.wallThickness / 2;
+  const [[naYMin, naYMax], [kYMin, kYMax]] = evenlySpacedChannelBounds([p.naChannelWidth, p.kChannelWidth], p.boxHeight);
   const x = new Float32Array(p.numParticles);
   const y = new Float32Array(p.numParticles);
   const fixedCount = targetFixedAnionCount(p.numParticles);
@@ -377,21 +315,6 @@ function createState(params: SimParams, seed: number): LiveState {
   placeType(kIndices, p.kInsideInitFrac);
   layoutFixedAnions(fixedX, fixedY, fixedCount, p.boxWidth, p.boxHeight, leftWall, rng);
 
-  const naChannelY = new Float32Array(CHANNELS_PER_TYPE);
-  const kChannelY = new Float32Array(CHANNELS_PER_TYPE);
-  const pumpY = new Float32Array(PUMP_SITES);
-  layoutInterleavedChannels(naChannelY, kChannelY, p.boxHeight, rng);
-  layoutPumpSites(pumpY, p.boxHeight, rng);
-
-  const naOpen = new Uint8Array(CHANNELS_PER_TYPE);
-  const kOpen = new Uint8Array(CHANNELS_PER_TYPE);
-  const naInitTarget = gateTargetFromVm(0, p.naGateHalfVm, p.naGateSlope);
-  const kInitTarget = gateTargetFromVm(0, p.kGateHalfVm, p.kGateSlope);
-  for (let i = 0; i < CHANNELS_PER_TYPE; i += 1) {
-    naOpen[i] = rng.next() < naInitTarget ? 1 : 0;
-    kOpen[i] = rng.next() < kInitTarget ? 1 : 0;
-  }
-
   const state: LiveState = {
     x,
     y,
@@ -409,23 +332,17 @@ function createState(params: SimParams, seed: number): LiveState {
     leftWall,
     rightWall,
     fixedAnionLayerX: p.fixedAnionLayerX,
-    naChannelY,
-    kChannelY,
-    pumpY,
-    naOpen,
-    kOpen,
+    naYMin,
+    naYMax,
+    kYMin,
+    kYMax,
     naLeft: 0,
     naRight: 0,
     kLeft: 0,
     kRight: 0,
-    vmProxy: 0,
-    effectiveElectricStrength: p.electricStrength,
-    naPopenTarget: 0,
-    kPopenTarget: 0
+    vmProxy: 0
   };
   recount(state);
-  state.naPopenTarget = gateTargetFromVm(state.vmProxy, p.naGateHalfVm, p.naGateSlope);
-  state.kPopenTarget = gateTargetFromVm(state.vmProxy, p.kGateHalfVm, p.kGateSlope);
   return state;
 }
 
@@ -483,44 +400,16 @@ function retargetTypes(state: LiveState, naFraction: number, rng: Rng): LiveStat
   return state;
 }
 
-function nearestAlignedOpenChannel(y: number, channelY: Float32Array, channelOpen: Uint8Array, halfHeight: number): boolean {
-  for (let i = 0; i < channelY.length; i += 1) {
-    if (Math.abs(y - channelY[i]) <= halfHeight && channelOpen[i] === 1) return true;
-  }
-  return false;
-}
-
-function gateTargetFromVm(vmProxy: number, vHalf: number, slope: number): number {
-  return 1 / (1 + Math.exp(-(vmProxy - vHalf) / Math.max(1e-6, slope)));
-}
-
-function updateChannelStates(open: Uint8Array, targetOpen: number, gateTauMs: number, dt: number, rng: Rng): void {
-  const p = clamp(targetOpen, 0, 1);
-  const tau = Math.max(1e-6, gateTauMs);
-  const lambda = 1 / tau;
-  const pOpenStep = 1 - Math.exp(-(p * lambda) * dt);
-  const pCloseStep = 1 - Math.exp(-((1 - p) * lambda) * dt);
-  for (let i = 0; i < open.length; i += 1) {
-    if (open[i] === 1) {
-      if (rng.next() < pCloseStep) open[i] = 0;
-    } else if (rng.next() < pOpenStep) {
-      open[i] = 1;
-    }
-  }
-}
-
 function enforceGeometry(state: LiveState): void {
   const halfW = state.boxWidth / 2;
   const halfH = state.boxHeight / 2;
   for (let i = 0; i < state.numParticles; i += 1) {
     state.x[i] = reflectIntoBounds(state.x[i], -halfW, halfW);
     state.y[i] = reflectIntoBounds(state.y[i], -halfH, halfH);
+    const [yMin, yMax] = state.types[i] === 0 ? [state.naYMin, state.naYMax] : [state.kYMin, state.kYMax];
     const inMembrane = state.x[i] > state.leftWall && state.x[i] < state.rightWall;
-    if (inMembrane) {
-      const openAligned = state.types[i] === 0
-        ? nearestAlignedOpenChannel(state.y[i], state.naChannelY, state.naOpen, CHANNEL_HALF_HEIGHT)
-        : nearestAlignedOpenChannel(state.y[i], state.kChannelY, state.kOpen, CHANNEL_HALF_HEIGHT);
-      if (!openAligned) state.x[i] = state.x[i] < 0 ? state.leftWall : state.rightWall;
+    if (inMembrane && !(state.y[i] >= yMin && state.y[i] <= yMax)) {
+      state.x[i] = state.x[i] < 0 ? state.leftWall : state.rightWall;
     }
   }
   recount(state);
@@ -529,56 +418,38 @@ function enforceGeometry(state: LiveState): void {
 function applyPump(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: boolean): void {
   const strength = clamp(params.pumpStrength, 0, 2);
   const rate = clamp(0.7 * strength, 0, 4);
-  const membraneReach = clamp(7 * strength, 1, 20);
-  const siteReachY = clamp(2.2 + 1.8 * strength, 1.5, 8);
+  const radius = clamp(7 * strength, 1, 20);
   if (!pumpEnabled || rate <= 0) return;
-  const naCandidatesBySite: number[][] = Array.from({ length: state.pumpY.length }, () => []);
-  const kCandidatesBySite: number[][] = Array.from({ length: state.pumpY.length }, () => []);
+  const pumpY = ((state.naYMin + state.naYMax) * 0.5 + (state.kYMin + state.kYMax) * 0.5) * 0.5;
+  const naCandidates: number[] = [];
+  const kCandidates: number[] = [];
   for (let i = 0; i < state.numParticles; i += 1) {
-    let bestSite = -1;
-    let bestDy = Number.POSITIVE_INFINITY;
-    for (let s = 0; s < state.pumpY.length; s += 1) {
-      const dy = Math.abs(state.y[i] - state.pumpY[s]);
-      if (dy <= siteReachY && dy < bestDy) {
-        bestDy = dy;
-        bestSite = s;
-      }
-    }
-    if (bestSite < 0) continue;
-    if (state.types[i] === 0 && state.x[i] < state.leftWall && state.leftWall - state.x[i] <= membraneReach) {
-      naCandidatesBySite[bestSite].push(i);
-    }
-    if (state.types[i] === 1 && state.x[i] > state.rightWall && state.x[i] - state.rightWall <= membraneReach) {
-      kCandidatesBySite[bestSite].push(i);
-    }
+    const isNearPumpY = Math.abs(state.y[i] - pumpY) <= radius;
+    if (!isNearPumpY) continue;
+    if (state.types[i] === 0 && state.x[i] < state.leftWall && state.leftWall - state.x[i] <= radius) naCandidates.push(i);
+    if (state.types[i] === 1 && state.x[i] > state.rightWall && state.x[i] - state.rightWall <= radius) kCandidates.push(i);
   }
-  for (let s = 0; s < state.pumpY.length; s += 1) {
-    shuffleInPlace(naCandidatesBySite[s], rng);
-    shuffleInPlace(kCandidatesBySite[s], rng);
-  }
+  shuffleInPlace(naCandidates, rng);
+  shuffleInPlace(kCandidates, rng);
 
   let cycles = Math.floor(rate * state.dt);
   if (rng.next() < rate * state.dt - cycles) cycles += 1;
   cycles = clamp(cycles, 0, 20);
 
-  const siteOrder = Array.from({ length: state.pumpY.length }, (_, i) => i);
-  shuffleInPlace(siteOrder, rng);
-  const naCursorBySite = new Uint16Array(state.pumpY.length);
-  const kCursorBySite = new Uint16Array(state.pumpY.length);
+  let naCursor = 0;
+  let kCursor = 0;
   for (let c = 0; c < cycles; c += 1) {
-    const siteIndex = siteOrder[c % siteOrder.length];
-    const siteY = state.pumpY[siteIndex];
     for (let i = 0; i < 3; i += 1) {
-      if (naCursorBySite[siteIndex] >= naCandidatesBySite[siteIndex].length) break;
-      const idx = naCandidatesBySite[siteIndex][naCursorBySite[siteIndex]++];
-      state.x[idx] = state.rightWall + 1 + rng.uniform(0, membraneReach * 0.5);
-      state.y[idx] = siteY + rng.uniform(-siteReachY, siteReachY);
+      if (naCursor >= naCandidates.length) break;
+      const idx = naCandidates[naCursor++];
+      state.x[idx] = state.rightWall + 1 + rng.uniform(0, radius * 0.5);
+      state.y[idx] = pumpY + rng.uniform(-radius, radius);
     }
     for (let i = 0; i < 2; i += 1) {
-      if (kCursorBySite[siteIndex] >= kCandidatesBySite[siteIndex].length) break;
-      const idx = kCandidatesBySite[siteIndex][kCursorBySite[siteIndex]++];
-      state.x[idx] = state.leftWall - 1 - rng.uniform(0, membraneReach * 0.5);
-      state.y[idx] = siteY + rng.uniform(-siteReachY, siteReachY);
+      if (kCursor >= kCandidates.length) break;
+      const idx = kCandidates[kCursor++];
+      state.x[idx] = state.leftWall - 1 - rng.uniform(0, radius * 0.5);
+      state.y[idx] = pumpY + rng.uniform(-radius, radius);
     }
   }
 }
@@ -586,21 +457,9 @@ function applyPump(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: b
 function stepState(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: boolean): void {
   const halfW = state.boxWidth / 2;
   const halfH = state.boxHeight / 2;
-  const naTarget = gateTargetFromVm(state.vmProxy, params.naGateHalfVm, params.naGateSlope);
-  const kTarget = gateTargetFromVm(state.vmProxy, params.kGateHalfVm, params.kGateSlope);
-  state.naPopenTarget = naTarget;
-  state.kPopenTarget = kTarget;
-  updateChannelStates(state.naOpen, naTarget, params.naGateTauMs, state.dt, rng);
-  updateChannelStates(state.kOpen, kTarget, params.kGateTauMs, state.dt, rng);
-
-  const vmNormalized = state.vmProxy / 80;
-  const targetField = params.electricStrength + params.chargeSeparationGain * vmNormalized - params.externalCurrentInput;
-  const alpha = clamp(state.dt / Math.max(1e-6, params.fieldResponseMs), 0, 1);
-  state.effectiveElectricStrength += alpha * (targetField - state.effectiveElectricStrength);
-
   const mobileSources = sampledMobileFieldSources(state, rng, MOBILE_FIELD_SAMPLES);
-  const perFixedStrength = state.effectiveElectricStrength / Math.max(1, state.fixedCount);
-  const perMobileStrength = -MOBILE_FIELD_WEIGHT * state.effectiveElectricStrength / Math.max(1, mobileSources.length);
+  const perFixedStrength = params.electricStrength / Math.max(1, state.fixedCount);
+  const perMobileStrength = -MOBILE_FIELD_WEIGHT * params.electricStrength / Math.max(1, mobileSources.length);
 
   const driftFromChargeField = (x: number, y: number, charge: number, selfIndex: number): [number, number] => {
     let driftX = 0;
@@ -619,7 +478,6 @@ function stepState(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: b
     }
     return [driftX, driftY];
   };
-
   for (let i = 0; i < state.numParticles; i += 1) {
     const xPrev = state.x[i];
     const yPrev = state.y[i];
@@ -629,15 +487,18 @@ function stepState(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: b
     let xNew = xTrial;
     const tryingToCrossLeft = xPrev > state.rightWall && xTrial <= state.rightWall;
     const tryingToCrossRight = xPrev < state.leftWall && xTrial >= state.leftWall;
-    const canCross = state.types[i] === 0
-      ? nearestAlignedOpenChannel(yTrial, state.naChannelY, state.naOpen, CHANNEL_HALF_HEIGHT)
-      : nearestAlignedOpenChannel(yTrial, state.kChannelY, state.kOpen, CHANNEL_HALF_HEIGHT);
-
-    if ((tryingToCrossLeft || tryingToCrossRight) && !canCross) {
+    const [yMin, yMax] = state.types[i] === 0 ? [state.naYMin, state.naYMax] : [state.kYMin, state.kYMax];
+    const inChannel = yTrial >= yMin && yTrial <= yMax;
+    const permeability = state.types[i] === 0 ? params.naPermeability : params.kPermeability;
+    if ((tryingToCrossLeft || tryingToCrossRight) && !inChannel) {
       xNew = tryingToCrossLeft
         ? reflectIntoBounds(2 * state.rightWall - xTrial, -halfW, halfW)
         : reflectIntoBounds(2 * state.leftWall - xTrial, -halfW, halfW);
-    } else if (!canCross && xTrial > state.leftWall && xTrial < state.rightWall) {
+    } else if ((tryingToCrossLeft || tryingToCrossRight) && inChannel && rng.next() > permeability) {
+      xNew = tryingToCrossLeft
+        ? reflectIntoBounds(2 * state.rightWall - xTrial, -halfW, halfW)
+        : reflectIntoBounds(2 * state.leftWall - xTrial, -halfW, halfW);
+    } else if (!inChannel && xTrial > state.leftWall && xTrial < state.rightWall) {
       xNew = xPrev < 0 ? state.leftWall : state.rightWall;
     }
     state.x[i] = xNew;
@@ -650,40 +511,25 @@ function stepState(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: b
   recount(state);
 }
 
-function openFraction(open: Uint8Array): number {
-  let countOpen = 0;
-  for (let i = 0; i < open.length; i += 1) if (open[i] === 1) countOpen += 1;
-  return countOpen / Math.max(1, open.length);
-}
-
 function pushTrace(trace: TraceHistory, state: LiveState, traceWindowMs: number): void {
   trace.times.push(state.simTime);
   trace.naInsideFrac.push(state.naLeft / Math.max(1, state.naLeft + state.naRight));
   trace.kInsideFrac.push(state.kLeft / Math.max(1, state.kLeft + state.kRight));
-  trace.vmProxy.push(state.vmProxy);
-  trace.naPerm.push(state.naPopenTarget);
-  trace.kPerm.push(state.kPopenTarget);
   const minTime = Math.max(0, state.simTime - traceWindowMs);
   while (trace.times.length > 1 && trace.times[0] < minTime) {
     trace.times.shift();
     trace.naInsideFrac.shift();
     trace.kInsideFrac.shift();
-    trace.vmProxy.shift();
-    trace.naPerm.shift();
-    trace.kPerm.shift();
   }
   while (trace.times.length > TRACE_HISTORY_MAX_POINTS) {
     trace.times.shift();
     trace.naInsideFrac.shift();
     trace.kInsideFrac.shift();
-    trace.vmProxy.shift();
-    trace.naPerm.shift();
-    trace.kPerm.shift();
   }
 }
 
 function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
-  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [], vmProxy: [], naPerm: [], kPerm: [] };
+  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [] };
   pushTrace(trace, state, traceWindowMs);
   return trace;
 }
@@ -705,57 +551,7 @@ function worldToCanvas(x: number, y: number, state: LiveState, w: number, h: num
   return [px, py];
 }
 
-function drawDiscreteChannels(
-  ctx: CanvasRenderingContext2D,
-  state: LiveState,
-  w: number,
-  h: number,
-  dpr: number
-): void {
-  const [wl] = worldToCanvas(state.leftWall, 0, state, w, h);
-  const [wr] = worldToCanvas(state.rightWall, 0, state, w, h);
-  const membraneWidth = Math.max(1, wr - wl);
-  const aperturePx = Math.max(1.3 * dpr, (2 * CHANNEL_HALF_HEIGHT / state.boxHeight) * h * 0.5);
-
-  const drawTypeChannels = (yList: Float32Array, open: Uint8Array, color: string): void => {
-    for (let i = 0; i < yList.length; i += 1) {
-      const [, yPx] = worldToCanvas(0, yList[i], state, w, h);
-      const top = yPx - aperturePx;
-      const height = 2 * aperturePx;
-      ctx.fillStyle = 'rgba(8,16,26,0.90)';
-      ctx.fillRect(wl, top, membraneWidth, height);
-      if (open[i] === 1) {
-        ctx.save();
-        ctx.fillStyle = color;
-        ctx.globalAlpha = 0.45;
-        ctx.fillRect(wl, top, membraneWidth, height);
-        ctx.globalAlpha = 1;
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1.2 * dpr;
-        ctx.strokeRect(wl, top, membraneWidth, height);
-        ctx.restore();
-      } else {
-        ctx.strokeStyle = 'rgba(230,240,255,0.50)';
-        ctx.lineWidth = 1 * dpr;
-        ctx.beginPath();
-        ctx.moveTo(wl + 1 * dpr, yPx);
-        ctx.lineTo(wr - 1 * dpr, yPx);
-        ctx.stroke();
-      }
-    }
-  };
-
-  drawTypeChannels(state.naChannelY, state.naOpen, 'rgba(66, 200, 255, 0.95)');
-  drawTypeChannels(state.kChannelY, state.kOpen, 'rgba(245, 178, 72, 0.95)');
-}
-
-function drawParticles(
-  canvas: HTMLCanvasElement,
-  state: LiveState,
-  pointSize: number,
-  pumpEnabled: boolean,
-  params: SimParams
-): void {
+function drawParticles(canvas: HTMLCanvasElement, state: LiveState, pointSize: number, pumpEnabled: boolean): void {
   syncCanvasSize(canvas);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -777,20 +573,45 @@ function drawParticles(
 
   const [wl] = worldToCanvas(state.leftWall, 0, state, w, h);
   const [wr] = worldToCanvas(state.rightWall, 0, state, w, h);
+  const [, naTop] = worldToCanvas(0, state.naYMax, state, w, h);
+  const [, naBottom] = worldToCanvas(0, state.naYMin, state, w, h);
+  const [, kTop] = worldToCanvas(0, state.kYMax, state, w, h);
+  const [, kBottom] = worldToCanvas(0, state.kYMin, state, w, h);
   drawMembraneWall(ctx, {
     leftX: wl,
     rightX: wr,
     height: h,
-    dpr
+    dpr,
+    channels: [
+      { top: naTop, bottom: naBottom },
+      { top: kTop, bottom: kBottom }
+    ]
   });
-  drawDiscreteChannels(ctx, state, w, h, dpr);
+  const membraneWidth = Math.max(1, wr - wl);
+  const drawPermeabilityBand = (top: number, bottom: number, color: string, permeability: number): void => {
+    const yTop = Math.min(top, bottom);
+    const yBottom = Math.max(top, bottom);
+    const bandHeight = Math.max(1, yBottom - yTop);
+    const openHeight = Math.max(1 * dpr, bandHeight * clamp(permeability, 0, 1));
+    const openY = yTop + (bandHeight - openHeight) / 2;
+    ctx.fillStyle = 'rgba(8, 16, 26, 0.85)';
+    ctx.fillRect(wl, yTop, membraneWidth, bandHeight);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.15 + 0.55 * clamp(permeability, 0, 1);
+    ctx.fillRect(wl, openY, membraneWidth, openHeight);
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1 * dpr;
+    ctx.strokeRect(wl, yTop, membraneWidth, bandHeight);
+  };
+  drawPermeabilityBand(naTop, naBottom, 'rgba(66, 200, 255, 0.92)', simParams.naPermeability);
+  drawPermeabilityBand(kTop, kBottom, 'rgba(245, 178, 72, 0.92)', simParams.kPermeability);
 
+  const pumpY = ((state.naYMin + state.naYMax) * 0.5 + (state.kYMin + state.kYMax) * 0.5) * 0.5;
+  const [, pumpYPx] = worldToCanvas(0, pumpY, state, w, h);
+  // Pump marker centered between Na and K channel bands
   ctx.fillStyle = pumpEnabled ? SIM_COLORS.ionC : 'rgba(170,170,190,0.8)';
-  const pumpHalfHeightPx = Math.max(3 * dpr, (PUMP_HALF_HEIGHT / state.boxHeight) * h * 0.5);
-  for (let i = 0; i < state.pumpY.length; i += 1) {
-    const [, pumpYPx] = worldToCanvas(0, state.pumpY[i], state, w, h);
-    ctx.fillRect((wl + wr) / 2 - 2.5 * dpr, pumpYPx - pumpHalfHeightPx, 5 * dpr, 2 * pumpHalfHeightPx);
-  }
+  ctx.fillRect((wl + wr) / 2 - 3 * dpr, pumpYPx - 10 * dpr, 6 * dpr, 20 * dpr);
 
   const r = Math.max(0.8, pointSize) * dpr;
   ctx.fillStyle = SIM_COLORS.fieldNegative;
@@ -805,21 +626,8 @@ function drawParticles(
     ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2); ctx.fill();
   }
 
-  const naOpenN = Math.round(openFraction(state.naOpen) * state.naOpen.length);
-  const kOpenN = Math.round(openFraction(state.kOpen) * state.kOpen.length);
-
   ctx.fillStyle = 'rgba(232,243,255,0.92)';
   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
-  ctx.fillText(`Vm proxy = ${state.vmProxy.toFixed(1)} mV`, 12 * dpr, 15 * dpr);
-  ctx.fillText(`E_eff = ${state.effectiveElectricStrength.toFixed(3)}`, 12 * dpr, 69 * dpr);
-  ctx.fillText(`I_ext = ${params.externalCurrentInput.toFixed(2)}`, 12 * dpr, 87 * dpr);
-  ctx.fillStyle = 'rgba(66,200,255,0.90)';
-  ctx.fillText(`Na open: ${naOpenN}/${state.naOpen.length}`, 12 * dpr, 33 * dpr);
-  ctx.fillStyle = 'rgba(245,178,72,0.90)';
-  ctx.fillText(`K open: ${kOpenN}/${state.kOpen.length}`, 12 * dpr, 51 * dpr);
-  ctx.fillStyle = 'rgba(232,243,255,0.75)';
-  ctx.fillText('inside (cell)', 12 * dpr, h - 10 * dpr);
-  ctx.fillText('outside', w - 58 * dpr, h - 10 * dpr);
 }
 
 function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: number, traceWindowMs: number): void {
@@ -851,154 +659,47 @@ function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: 
   ctx.lineTo(padL + plotW, yFrac(0.5));
   ctx.stroke();
 
-  const drawSeries = (data: number[], color: string, dashed = false): void => {
-    ctx.save();
-    ctx.strokeStyle = color;
+  const fracSeries = [
+    { data: trace.naInsideFrac, color: SIM_COLORS.ionBTrace },
+    { data: trace.kInsideFrac, color: SIM_COLORS.ionATrace }
+  ];
+  for (const s of fracSeries) {
+    ctx.strokeStyle = s.color;
     ctx.lineWidth = 1.8 * dpr;
-    if (dashed) ctx.setLineDash([5 * dpr, 4 * dpr]);
     ctx.beginPath();
     let started = false;
     for (let i = 0; i < trace.times.length; i += 1) {
       if (trace.times[i] < startTime) continue;
       const px = xMap(trace.times[i]);
-      const py = yFrac(data[i]);
+      const py = yFrac(s.data[i]);
       if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
     }
     if (started) ctx.stroke();
-    ctx.restore();
-  };
+  }
 
-  drawSeries(trace.naInsideFrac, SIM_COLORS.ionBTrace, false);
-  drawSeries(trace.kInsideFrac, SIM_COLORS.ionATrace, false);
-
+  ctx.fillStyle = 'rgba(232,243,255,0.92)';
+  ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
   ctx.fillStyle = 'rgba(232,243,255,0.78)';
   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
   ctx.save();
   ctx.translate(padL - 42 * dpr, padT + plotH / 2);
   ctx.rotate(-Math.PI / 2);
   ctx.textAlign = 'center';
-  ctx.fillText('fraction', 0, 0);
-  ctx.restore();
-}
-
-function drawVmTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: number, traceWindowMs: number): void {
-  syncCanvasSize(canvas);
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  const w = canvas.width;
-  const h = canvas.height;
-  const dpr = window.devicePixelRatio || 1;
-  ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#03060b';
-  ctx.fillRect(0, 0, w, h);
-
-  const padL = 60 * dpr;
-  const padR = 12 * dpr;
-  const padT = 18 * dpr;
-  const padB = 24 * dpr;
-  const plotW = Math.max(1, w - padL - padR);
-  const plotH = Math.max(1, h - padT - padB);
-  const startTime = Math.max(0, currentTime - traceWindowMs);
-  const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(1, traceWindowMs)) * plotW;
-  const yVm = (v: number) => padT + (1 - (v + 100) / 200) * plotH;
-
-  ctx.strokeStyle = 'rgba(180,220,255,0.28)';
-  ctx.lineWidth = 1 * dpr;
-  ctx.strokeRect(padL, padT, plotW, plotH);
-  ctx.beginPath();
-  ctx.moveTo(padL, yVm(0));
-  ctx.lineTo(padL + plotW, yVm(0));
-  ctx.stroke();
-
-  ctx.strokeStyle = SIM_COLORS.totalTrace;
-  ctx.lineWidth = 1.8 * dpr;
-  ctx.beginPath();
-  let started = false;
-  for (let i = 0; i < trace.times.length; i += 1) {
-    if (trace.times[i] < startTime) continue;
-    const px = xMap(trace.times[i]);
-    const py = yVm(trace.vmProxy[i]);
-    if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
-  }
-  if (started) ctx.stroke();
-
-  ctx.fillStyle = 'rgba(232,243,255,0.78)';
-  ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
-  ctx.save();
-  ctx.translate(padL - 40 * dpr, padT + plotH / 2);
-  ctx.rotate(-Math.PI / 2);
-  ctx.textAlign = 'center';
-  ctx.fillText('mV proxy', 0, 0);
-  ctx.restore();
-}
-
-function drawPermTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: number, traceWindowMs: number): void {
-  syncCanvasSize(canvas);
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  const w = canvas.width;
-  const h = canvas.height;
-  const dpr = window.devicePixelRatio || 1;
-  ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#03060b';
-  ctx.fillRect(0, 0, w, h);
-
-  const padL = 60 * dpr;
-  const padR = 12 * dpr;
-  const padT = 18 * dpr;
-  const padB = 24 * dpr;
-  const plotW = Math.max(1, w - padL - padR);
-  const plotH = Math.max(1, h - padT - padB);
-  const startTime = Math.max(0, currentTime - traceWindowMs);
-  const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(1, traceWindowMs)) * plotW;
-  const yPerm = (v: number) => padT + (1 - clamp(v, 0, 1)) * plotH;
-
-  ctx.strokeStyle = 'rgba(180,220,255,0.28)';
-  ctx.lineWidth = 1 * dpr;
-  ctx.strokeRect(padL, padT, plotW, plotH);
-  ctx.beginPath();
-  ctx.moveTo(padL, yPerm(0.5));
-  ctx.lineTo(padL + plotW, yPerm(0.5));
-  ctx.stroke();
-
-  const drawSeries = (data: number[], color: string): void => {
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1.8 * dpr;
-    ctx.beginPath();
-    let started = false;
-    for (let i = 0; i < trace.times.length; i += 1) {
-      if (trace.times[i] < startTime) continue;
-      const px = xMap(trace.times[i]);
-      const py = yPerm(data[i]);
-      if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
-    }
-    if (started) ctx.stroke();
-  };
-
-  drawSeries(trace.naPerm, SIM_COLORS.ionBTrace);
-  drawSeries(trace.kPerm, SIM_COLORS.ionATrace);
-
-  ctx.fillStyle = 'rgba(232,243,255,0.78)';
-  ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
-  ctx.save();
-  ctx.translate(padL - 40 * dpr, padT + plotH / 2);
-  ctx.rotate(-Math.PI / 2);
-  ctx.textAlign = 'center';
-  ctx.fillText('open fraction', 0, 0);
+  ctx.fillText('inside fraction', 0, 0);
   ctx.restore();
 }
 
 const app = getEl<HTMLDivElement>('#app');
 app.innerHTML = `
   <div class="site-shell">
-    <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>inspect_ap_voltage_gated_current_input</code></span></div>
+    <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>inspect_emergent_nak_pump_gradients</code></span></div>
     <header class="page-head">
-      <p class="eyebrow">Action Potentials: First Voltage-Gated Step</p>
-      <h1>Voltage-Gated Na/K Channels with External Current</h1>
+      <p class="eyebrow">Passive Selective Permeability vs Active Pumping</p>
+      <h1>Na/K Pump</h1>
       <ul class="key-points">
-        <li>Na+ and K+ channels are now voltage-gated from the membrane-potential proxy trace.</li>
-        <li>External current input is signed: positive depolarizes, negative hyperpolarizes.</li>
-        <li>Field effects still combine immobile-anion, charge-separation, and stimulus terms.</li>
+        <li>The NA/K pump establishes a concentration gradient for Na and K across the membrane</li>
+        <li>Na+ and K+ diffuse through separate passive channels.</li>
+        <li>Pump moves 3 Na+ out for 2 K+ in</li>
       </ul>
     </header>
     <div class="sim-layout">
@@ -1011,34 +712,28 @@ app.innerHTML = `
               <button id="rerun">Rerun</button>
               <button id="reset-defaults" class="warn">Reset Defaults</button>
             </div>
+            <div class="button-row">
+              <button id="pump-toggle" class="primary">Pump ON</button>
+            </div>
             <div class="control-grid">
               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="20" max="5000" step="1" /></div>
               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="12" step="0.05" /></div>
               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" step="0.01" /></div>
-              <div class="field"><label for="external-current">External current input</label><input id="external-current" type="number" min="-4" max="4" step="0.05" /></div>
-              <div class="field"><label for="sep-gain">Charge-separation gain</label><input id="sep-gain" type="number" min="-8" max="8" step="0.05" /></div>
-              <div class="field"><label for="field-response-ms">Field response (ms)</label><input id="field-response-ms" type="number" min="1" max="400" step="1" /></div>
+              <div class="field"><label for="na-permeability">NA+ permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
+              <div class="field"><label for="k-permeability">K+ permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
               <div class="field"><label for="pump-strength">NA+/K+ pump strength</label><input id="pump-strength" type="number" min="0" max="2" step="0.05" /></div>
             </div>
           </div>
         </div>
       </aside>
       <section class="panel canvas-panel">
-        <div class="canvas-grid-2" style="grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: stretch;">
+        <div class="canvas-grid-2">
           <div class="canvas-subpanel">
             <canvas id="particle-canvas"></canvas>
           </div>
-          <div style="display:grid; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 12px;">
-            <div class="canvas-subpanel">
-              <canvas id="trace-canvas" style="height: min(15vh, 140px);"></canvas>
-            </div>
-            <div class="canvas-subpanel">
-              <canvas id="vm-trace-canvas" style="height: min(15vh, 140px);"></canvas>
-            </div>
-            <div class="canvas-subpanel">
-              <canvas id="perm-trace-canvas" style="height: min(15vh, 140px);"></canvas>
-            </div>
+          <div class="canvas-subpanel">
+            <canvas id="trace-canvas"></canvas>
           </div>
         </div>
       </section>
@@ -1048,15 +743,12 @@ app.innerHTML = `
 
 const particleCanvas = getEl<HTMLCanvasElement>('#particle-canvas');
 const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
-const vmTraceCanvas = getEl<HTMLCanvasElement>('#vm-trace-canvas');
-const permTraceCanvas = getEl<HTMLCanvasElement>('#perm-trace-canvas');
 const inputs = {
   numParticles: getEl<HTMLInputElement>('#num-particles'),
   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
-  externalCurrent: getEl<HTMLInputElement>('#external-current'),
-  sepGain: getEl<HTMLInputElement>('#sep-gain'),
-  fieldResponseMs: getEl<HTMLInputElement>('#field-response-ms'),
+  naPermeability: getEl<HTMLInputElement>('#na-permeability'),
+  kPermeability: getEl<HTMLInputElement>('#k-permeability'),
   pumpStrength: getEl<HTMLInputElement>('#pump-strength')
 };
 const displayInputs = {
@@ -1065,7 +757,8 @@ const displayInputs = {
 const buttons = {
   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
   rerun: getEl<HTMLButtonElement>('#rerun'),
-  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults')
+  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults'),
+  pumpToggle: getEl<HTMLButtonElement>('#pump-toggle')
 };
 
 let simParams: SimParams = { ...defaultSim };
@@ -1075,6 +768,7 @@ let rng = new Rng(currentSeed);
 let state = createState(simParams, currentSeed);
 let trace = createTrace(state, simParams.T);
 let isPlaying = true;
+let pumpEnabled = true;
 let lastTs = performance.now();
 let stepAccumulator = 0;
 
@@ -1082,11 +776,11 @@ function writeInputs(): void {
   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
-  setNumberInput(inputs.externalCurrent, simParams.externalCurrentInput, 2);
-  setNumberInput(inputs.sepGain, simParams.chargeSeparationGain, 2);
-  setNumberInput(inputs.fieldResponseMs, simParams.fieldResponseMs, 0);
+  setNumberInput(inputs.naPermeability, simParams.naPermeability, 2);
+  setNumberInput(inputs.kPermeability, simParams.kPermeability, 2);
   setNumberInput(inputs.pumpStrength, simParams.pumpStrength, 2);
   setNumberInput(displayInputs.playbackSpeed, displayParams.playbackSpeed, 2);
+  buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
 }
 
 function readSimInputs(): SimParams {
@@ -1104,15 +798,10 @@ function readSimInputs(): SimParams {
     boxHeight,
     wallThickness: defaultSim.wallThickness,
     diffusionSd: clamp(Number(inputs.diffusionSd.value) || 0, 0, 20),
-    naGateHalfVm: defaultSim.naGateHalfVm,
-    naGateSlope: defaultSim.naGateSlope,
-    kGateHalfVm: defaultSim.kGateHalfVm,
-    kGateSlope: defaultSim.kGateSlope,
-    naGateTauMs: defaultSim.naGateTauMs,
-    kGateTauMs: defaultSim.kGateTauMs,
-    chargeSeparationGain: clamp(Number(inputs.sepGain.value) || 0, -8, 8),
-    fieldResponseMs: clamp(Number(inputs.fieldResponseMs.value) || defaultSim.fieldResponseMs, 1, 400),
-    externalCurrentInput: clamp(Number(inputs.externalCurrent.value) || 0, -4, 4),
+    naChannelWidth: clamp(simParams.naChannelWidth, 0.5, boxHeight - 8),
+    kChannelWidth: clamp(simParams.kChannelWidth, 0.5, boxHeight - 8),
+    naPermeability: clamp(Number(inputs.naPermeability.value) || 0, 0, 1),
+    kPermeability: clamp(Number(inputs.kPermeability.value) || 0, 0, 1),
     electricStrength: Number.isNaN(electricStrengthRaw) ? defaultSim.electricStrength : electricStrengthRaw,
     fixedAnionLayerX: fixedAnionLayerXNearMembrane(boxWidth, defaultSim.wallThickness),
     pumpStrength: clamp(Number(inputs.pumpStrength.value) || 0, 0, 2)
@@ -1147,18 +836,20 @@ function applyLiveInputs(): void {
   state.leftWall = -simParams.wallThickness / 2;
   state.rightWall = simParams.wallThickness / 2;
   state.fixedAnionLayerX = simParams.fixedAnionLayerX;
-  state.effectiveElectricStrength += 0.3 * (simParams.electricStrength - state.effectiveElectricStrength);
   layoutFixedAnions(state.fixedX, state.fixedY, state.fixedCount, state.boxWidth, state.boxHeight, state.leftWall, rng);
+  const [[naYMin, naYMax], [kYMin, kYMax]] = evenlySpacedChannelBounds([simParams.naChannelWidth, simParams.kChannelWidth], simParams.boxHeight);
+  state.naYMin = naYMin;
+  state.naYMax = naYMax;
+  state.kYMin = kYMin;
+  state.kYMax = kYMax;
   enforceGeometry(state);
   pushTrace(trace, state, simParams.T);
   writeInputs();
 }
 
 function render(): void {
-  drawParticles(particleCanvas, state, displayParams.pointSize, true, simParams);
+  drawParticles(particleCanvas, state, displayParams.pointSize, pumpEnabled);
   drawTrace(traceCanvas, trace, state.simTime, simParams.T);
-  drawVmTrace(vmTraceCanvas, trace, state.simTime, simParams.T);
-  drawPermTrace(permTraceCanvas, trace, state.simTime, simParams.T);
 }
 
 writeInputs();
@@ -1168,6 +859,11 @@ buttons.togglePlay.addEventListener('click', () => {
   isPlaying = !isPlaying;
   buttons.togglePlay.textContent = isPlaying ? 'Pause' : 'Play';
 });
+buttons.pumpToggle.addEventListener('click', () => {
+  pumpEnabled = !pumpEnabled;
+  writeInputs();
+  render();
+});
 buttons.rerun.addEventListener('click', () => {
   rebuild();
   render();
@@ -1175,6 +871,7 @@ buttons.rerun.addEventListener('click', () => {
 buttons.resetDefaults.addEventListener('click', () => {
   simParams = { ...defaultSim };
   displayParams = { ...defaultDisplay };
+  pumpEnabled = true;
   rebuild();
   isPlaying = true;
   buttons.togglePlay.textContent = 'Pause';
@@ -1204,7 +901,7 @@ function animate(ts: number): void {
     if (stepsToRun > 0) {
       stepAccumulator -= stepsToRun;
       for (let i = 0; i < stepsToRun; i += 1) {
-        stepState(state, simParams, rng, true);
+        stepState(state, simParams, rng, pumpEnabled);
         pushTrace(trace, state, simParams.T);
       }
     }
