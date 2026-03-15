@@ -68,6 +68,8 @@ interface LiveState {
   kRight: number;
   vmProxy: number;
   effectiveElectricStrength: number;
+  naPopenTarget: number;
+  kPopenTarget: number;
 }
 
 interface TraceHistory {
@@ -393,9 +395,13 @@ function createState(params: SimParams, seed: number): LiveState {
     kLeft: 0,
     kRight: 0,
     vmProxy: 0,
-    effectiveElectricStrength: p.electricStrength
+    effectiveElectricStrength: p.electricStrength,
+    naPopenTarget: 0,
+    kPopenTarget: 0
   };
   recount(state);
+  state.naPopenTarget = gateTargetFromVm(state.vmProxy, p.naGateHalfVm, p.naGateSlope);
+  state.kPopenTarget = gateTargetFromVm(state.vmProxy, p.kGateHalfVm, p.kGateSlope);
   return state;
 }
 
@@ -558,6 +564,8 @@ function stepState(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: b
   const halfH = state.boxHeight / 2;
   const naTarget = gateTargetFromVm(state.vmProxy, params.naGateHalfVm, params.naGateSlope);
   const kTarget = gateTargetFromVm(state.vmProxy, params.kGateHalfVm, params.kGateSlope);
+  state.naPopenTarget = naTarget;
+  state.kPopenTarget = kTarget;
   updateChannelStates(state.naOpen, naTarget, params.naGateTauMs, state.dt, rng);
   updateChannelStates(state.kOpen, kTarget, params.kGateTauMs, state.dt, rng);
 
@@ -618,8 +626,8 @@ function pushTrace(trace: TraceHistory, state: LiveState, traceWindowMs: number)
   trace.naInsideFrac.push(state.naLeft / Math.max(1, state.naLeft + state.naRight));
   trace.kInsideFrac.push(state.kLeft / Math.max(1, state.kLeft + state.kRight));
   trace.vmProxy.push(state.vmProxy);
-  trace.naPerm.push(openFraction(state.naOpen));
-  trace.kPerm.push(openFraction(state.kOpen));
+  trace.naPerm.push(state.naPopenTarget);
+  trace.kPerm.push(state.kPopenTarget);
   const minTime = Math.max(0, state.simTime - traceWindowMs);
   while (trace.times.length > 1 && trace.times[0] < minTime) {
     trace.times.shift();
