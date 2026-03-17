@@ -1,7 +1,13 @@
 import lessonsData from './lessons.json';
 
-export type LessonUnit = 'diffusion' | 'membrane_potential_emergent' | 'action_potential';
-export type LessonStatus = 'active' | 'draft' | 'archived';
+export type LessonArc =
+  | 'diffusion'
+  | 'concentration_gradients'
+  | 'resting_potential'
+  | 'voltage_and_current'
+  | 'action_potential';
+
+export type LessonStatus = 'active' | 'draft' | 'rebuild' | 'future' | 'archived';
 
 export interface LessonMeta {
   id: string;
@@ -9,9 +15,9 @@ export interface LessonMeta {
   description: string;
   htmlPath: string;
   tsEntry: string;
-  unit: LessonUnit;
-  order: number;
+  arc: LessonArc;
   status: LessonStatus;
 }
 
-export const lessons: LessonMeta[] = [...(lessonsData as LessonMeta[])].sort((a, b) => a.order - b.order);
+// Array order in lessons.json determines lesson order within each arc.
+export const lessons: LessonMeta[] = lessonsData as LessonMeta[];
