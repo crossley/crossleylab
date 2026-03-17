@@ -23,6 +23,14 @@ const arcLabels: Record<LessonArc, string> = {
   action_potential: 'Arc 5 — The Action Potential'
 };
 
+const arcDescriptions: Record<LessonArc, string> = {
+  diffusion: 'Particles spread by random Brownian motion. A membrane and selective channels are introduced one step at a time.',
+  concentration_gradients: 'Electrical forces combine with diffusion. The Na/K pump establishes the biological ion distributions.',
+  resting_potential: 'Charge separation creates a voltage across the membrane. The Nernst and Goldman equations emerge from the simulation.',
+  voltage_and_current: 'Channels that open and close stochastically produce measurable currents. Voltage controls gating.',
+  action_potential: 'Voltage-gated Na⁺ and K⁺ channels combine to produce an all-or-nothing spike.'
+};
+
 function lessonCard(lesson: (typeof lessons)[number]): string {
   const isLive = lesson.status === 'active';
   if (isLive) {
@@ -51,6 +59,7 @@ const groupedCardsHtml = arcOrder
     return `
       <section class="panel lesson-group">
         <h2 class="section-title">${arcLabels[arc]}</h2>
+        <p class="arc-description">${arcDescriptions[arc]}</p>
         <div class="link-list">${cards}
         </div>
       </section>`;
@@ -59,6 +68,10 @@ const groupedCardsHtml = arcOrder
 
 app.innerHTML = `
   <div class="site-shell">
+    <div class="nav-line">
+      <div class="spacer"></div>
+      <button id="theme-toggle" class="theme-btn">☀</button>
+    </div>
     <header class="page-head">
       <h1 class="landing-title">Electrochemical Signals in Nerve Cells</h1>
       <p class="eyebrow">A step-by-step journey from Brownian motion through the action potential. Each simulation is interactive — pause, adjust parameters, and explore.</p>
@@ -67,3 +80,8 @@ app.innerHTML = `
     ${groupedCardsHtml}
   </div>
 `;
+
+document.querySelector<HTMLButtonElement>('#theme-toggle')!.addEventListener('click', () => {
+  const isLight = document.documentElement.classList.toggle('light');
+  document.querySelector<HTMLButtonElement>('#theme-toggle')!.textContent = isLight ? '☽' : '☀';
+});

@@ -1,128 +1,159 @@
 # Electrochemical Signalling: Progressive Python Simulations
 
-This repository provides a sequence of Python simulations
-showing how electrochemical signalling concepts can be
-constructed progressively from simple diffusion to
-membrane-potential-like dynamics. The files are intended to
-be read and executed in order, with each script adding a
-small number of new mechanisms while preserving the
-structure introduced earlier. Beginning with unconstrained
-Brownian motion, the progression introduces membrane
-geometry, channel permeability, electrical bias, particle
-interactions, and selective transport, culminating in toy
-resting-potential and Goldman-style demonstrations.
+A sequence of Python simulations that build from unconstrained
+Brownian motion to a Hodgkin–Huxley-style action potential.
+Each script adds one new mechanism while preserving the
+structure introduced earlier, making the progression suitable
+for students at varying levels of programming comfort.
 
-## Accompanying Paper
+Scripts are grouped into five arcs that mirror the
+accompanying web-based interactive series.
 
-This repository accompanies the following paper:
+## Running the scripts
 
-*[paper title]*
+Each script requires **NumPy** and **Matplotlib** (with
+`ffmpeg` on `PATH` for the MP4-producing scripts).
 
-This paper describes a pedagogical framework for teaching
-electrochemical signalling and dynamical systems through
-progressive simulation.
+```bash
+pip install numpy matplotlib
+python inspect_diffusion_1.py          # opens animation window
+```
 
-The repository therefore serves two purposes:
-
-1. **Pedagogical** - demonstrating electrochemical concepts
-   through incremental simulation examples.
-
-2. **Conceptual** - illustrating how membrane potential
-   emerges from interacting dynamical processes.
+Output files (`.mp4` or `.png`) are written to the same
+directory as the script unless a path is configured at the
+top of the file.
 
 ---
 
-## Overall Progression
+## Arc 1 — Diffusion and the Concentration Gradient Problem
 
-The examples follow a consistent progression:
+*How does a substance spread through space, and what role
+does a membrane play?*
 
-1. **Diffusion and membrane geometry**
+**inspect_diffusion_1.py** — L1
+Pure 2D Brownian motion; particles spread randomly through an
+open chamber with no barriers or forces.
 
-   * random walk diffusion
-   * compartment boundaries and channel constraints
-   * permeability differences via channel size/selectivity
+**inspect_diffusion_2.py** — L2
+A membrane divides the chamber. Particles cross only through
+a single pore. Equilibration slows as the pore narrows.
 
-2. **Electrochemical drift and interactions**
+**inspect_diffusion_3.py** — L3
+Pore geometry is fixed; a per-crossing probability controls
+how often a particle is allowed through. Same final
+equilibrium regardless of probability — only the rate changes.
 
-   * electrical bias added to diffusion
-   * weak vs strong gradient comparisons
-   * particle-particle repulsion and crowding effects
+**inspect_diffusion_4.py** — L4
+Two ion types (Na⁺ and K⁺ analogues) each cross only through
+their own channel type. Selective permeability is demonstrated
+without any electrical forces.
 
-3. **Resting-potential-style dynamics**
+**inspect_diffusion_5_probabilistic_gating.py** — L3 extension
+Stochastic gate: each crossing attempt succeeds with
+probability `open_prob`. Demonstrates that equilibrium is
+always 50/50 — permeability controls rate, not outcome.
 
-   * two ion types with opposite charge signs
-   * selective permeability by ion type
-   * compartment imbalance traces as qualitative voltage proxies
-
-4. **Numerical methods connection**
-
-   * Euler updates as the integration rule used throughout
-
----
-
-## File-by-File Overview
-
-### Diffusion and Permeability Foundations
-
-**inspect_diffusion_1.py**
-Pure 2D Brownian diffusion with no barriers or forces.
-
-**inspect_diffusion_2.py**
-Diffusion in a two-compartment system separated by a wall
-with a single channel.
-
-**inspect_diffusion_3.py**
-Side-by-side comparison of narrow versus wide channels to
-show permeability effects on mixing.
-
-**inspect_diffusion_4.py**
-Two particle types with different channel access,
-demonstrating selective permeability.
+**inspect_diffusion_6_na_k_biological_ic.py** — L5
+Na⁺ starts mostly outside, K⁺ mostly inside, matching
+biological initial conditions. Without a pump both converge
+to equal concentrations — motivating the need for active
+transport.
 
 ---
 
-### Adding Electrical and Interaction Forces
+## Arc 2 — Electricity and the Concentration Gradient
 
-**inspect_electrochemical_1.py**
-Compares weak versus strong electrical attraction superimposed
-on diffusion through a channel.
+*How does an electrical field interact with a concentration
+gradient, and what is needed to maintain the biological
+ion distributions?*
 
-**inspect_electrochemical_2.py**
-Adds particle-particle repulsion to diffusion plus electrical
-drift.
+**inspect_electrochemical_1.py** — L6
+A point charge creates an electrical field that biases
+particle positions. Diffusion and electrical force act in
+opposition.
 
-**inspect_electrochemical_3.py**
-Combines electrical drift, repulsion, and type-selective
-channels in a two-species setting.
+**inspect_electrochemical_2.py** — L7
+Particle–particle repulsion added. Crowding effects compete
+with electrical attraction.
+
+**inspect_electrochemical_3.py** — L8
+Two ion types with type-selective channels plus electrical
+drift and repulsion. Both species are attracted inside by
+fixed anions — the biological gradient is not produced.
+
+**inspect_electrochemical_4_nak_pump.py** — L9
+A probabilistic Na/K pump teleports Na⁺ out and K⁺ in
+against the electrical and concentration gradients,
+establishing the biological ion distribution.
 
 ---
 
-### Resting-Potential and Goldman-Style Extensions
+## Arc 3 — The Resting Potential
 
-**inspect_resting_potential_1.py**
+*What is membrane potential, how does it arise from ion
+gradients, and what determines its value?*
+
+**inspect_resting_potential_1.py** — L10 predecessor
 Single-channel toy resting-potential simulation with a
-transient depolarizing perturbation.
+transient depolarising perturbation.
 
-**inspect_resting_potential_2.py**
-Two-ion selective permeability model with per-ion and total
-imbalance traces.
+**inspect_resting_potential_2.py** — L11 predecessor
+Two-ion selective permeability with per-ion and total
+imbalance traces as voltage proxies.
 
-**inspect_resting_potential_3.py**
-Two-ion model using a distributed negative charge wall to
-create a lateral field.
+**inspect_resting_potential_3.py** — L12 predecessor
+Two-ion model with a distributed negative charge wall
+creating a lateral electrical field.
 
-**inspect_resting_potential_4.py**
-Adds a Goldman-equation-style permeability-weighted log-ratio
-prediction overlay.
+**inspect_resting_potential_4.py** — L12
+Goldman-equation-style permeability-weighted log-ratio
+prediction overlaid on the simulation trace.
+
+**inspect_resting_potential_5_voltage_concept.py** — L10
+Static diagram: four charge-separation scenarios illustrate
+how V_m = (inside net charge) − (outside net charge).
+Saved as a PNG.
+
+**inspect_resting_potential_6_nernst_one_ion.py** — L11
+K⁺ only; the membrane potential and a Nernst-equation proxy
+converge as the system reaches electrochemical equilibrium.
+
+**inspect_resting_potential_7_markov_channels.py** — L15
+Many two-state (open/closed) channels; stacked single-channel
+traces and a summed macroscopic current. Saved as a PNG.
+
+**inspect_resting_potential_8_dynamic_field_vm.py** — L13
+K⁺ plus a pump plus an electrode; changing `electrode_charge`
+shifts V_m above or below the reversal point and reverses
+the direction of net ion flow.
 
 ---
 
-### Numerical Method Reference
+## Arc 4 — Voltage and Current
+
+*How do channels that sense voltage produce the currents
+measured in electrophysiology experiments?*
+
+*(Web-only lessons for L14–L17; Python coverage to follow.)*
+
+---
+
+## Arc 5 — The Action Potential
+
+**inspect_ap_1_voltage_gated_current_input.py** — L18
+Hodgkin–Huxley-style simulation: m²h Na⁺ gating and n² K⁺
+gating driven by a current pulse. V_m, gating variables, and
+per-ion currents are plotted. Produces a full action potential
+waveform.
+
+---
+
+## Numerical Method Reference
 
 **eulers_method.py**
-Standalone Euler-method example connecting the update rule
-used in the simulation progression to numerical integration
-fundamentals.
+Standalone Euler-method example connecting the forward-Euler
+update rule used throughout the progression to the concept of
+numerical integration.
 
 ---
 
