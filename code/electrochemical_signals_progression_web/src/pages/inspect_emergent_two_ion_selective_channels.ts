@@ -198,12 +198,6 @@ function syncCharges(state: LiveState, params: Pick<SimParams, 'type0Charge' | '
   }
 }
 
-function formatCharge(value: number): string {
-  const rounded = Number(value.toFixed(2));
-  if (Object.is(rounded, -0)) return '0';
-  return rounded > 0 ? `+${rounded}` : `${rounded}`;
-}
-
 function count(state: LiveState): void {
   let t0L = 0;
   let t0R = 0;
@@ -641,19 +635,23 @@ const app = getEl<HTMLDivElement>('#app');
 app.innerHTML = `
   <div class="site-shell">
     <div class="nav-line">
-      <a href="./index.html">Back to index</a>
-      <span>•</span>
-      <span>Page: <code>inspect_emergent_two_ion_selective_channels</code></span>
+      <a href="./index.html">← Back</a>
+      <div class="spacer"></div>
+      <button id="theme-toggle" class="theme-btn">☀</button>
     </div>
     <header class="page-head">
       <p class="eyebrow">Two-Ion Transport with Selective Pores</p>
-      <h1>Two-Ion Selective Channels with Electrical Attraction</h1>
+      <h1>Na⁺ and K⁺ with Anions — Still No Gradient</h1>
+      <p class="teaching-label">Key concepts</p>
       <ul class="key-points">
-        <li>Ion A and Ion B each cross through their own selective pore.</li>
-        <li>Both ions feel the same electric field.</li>
-        <li>Higher open probability means higher permeability and faster redistribution.</li>
-        <li>Set one pore permeability high and the other low, then compare the resulting concentration gradients.</li>
-        <li>Different permeabilities change equilibration rates but do not by themselves maintain stable gradients.</li>
+        <li>Fixed negative anions inside the cell attract both Na⁺ and K⁺ toward the inside.</li>
+        <li>Both ions end up biased toward the inside — neither ends up predominantly outside.</li>
+        <li>Anions alone cannot create the biological gradient (Na⁺ outside, K⁺ inside); something more is needed.</li>
+      </ul>
+      <p class="teaching-label questions">Questions to explore</p>
+      <ul class="guided-questions">
+        <li>Where do Na⁺ ions end up relative to the membrane? What about K⁺?</li>
+        <li>Is this the distribution you would find in a real cell?</li>
       </ul>
     </header>
 
@@ -661,68 +659,18 @@ app.innerHTML = `
       <aside class="controls">
         <div class="panel">
           <div class="group">
-            <p class="group-label">Basic Controls</p>
             <div class="button-row">
               <button id="toggle-play" class="primary">Pause</button>
               <button id="rerun">Rerun</button>
               <button id="reset-defaults" class="warn">Reset Defaults</button>
             </div>
-            <div class="button-row">
-              <button id="rewind">Rewind</button>
-              <button id="random-seed">Randomize Seed</button>
-            </div>
             <div class="control-grid">
               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" step="0.01" /></div>
-              <div class="field"><label for="type0-charge">Ion A charge</label><input id="type0-charge" type="number" min="-5" max="5" step="0.1" /></div>
-              <div class="field"><label for="type1-charge">Ion B charge</label><input id="type1-charge" type="number" min="-5" max="5" step="0.1" /></div>
               <div class="field"><label for="type0-permeability">Ion A pore permeability</label><input id="type0-permeability" type="number" min="0" max="1" step="0.01" /></div>
               <div class="field"><label for="type1-permeability">Ion B pore permeability</label><input id="type1-permeability" type="number" min="0" max="1" step="0.01" /></div>
               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
-              <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
-            </div>
-          </div>
-          <details>
-            <summary>Advanced Controls</summary>
-            <div class="group" style="margin-top: 8px;">
-              <div class="control-grid">
-                <div class="field"><label for="total-time">Trace window T (ms)</label><input id="total-time" type="number" min="100" max="20000" step="10" /></div>
-                <div class="field"><label for="dt">dt (ms)</label><input id="dt" type="number" min="0.05" max="20" step="0.05" /></div>
-                <div class="field"><label for="box-width">Box width</label><input id="box-width" type="number" min="20" max="500" step="1" /></div>
-                <div class="field"><label for="box-height">Box height</label><input id="box-height" type="number" min="20" max="500" step="1" /></div>
-                <div class="field"><label for="wall-thickness">Wall thickness</label><input id="wall-thickness" type="number" min="0.5" max="50" step="0.5" /></div>
-                <div class="field"><label for="neg-x">Immobile anion reference x (fixed)</label><input id="neg-x" type="number" step="1" readonly /></div>
-                <div class="field"><label for="point-size">Point size</label><input id="point-size" type="number" min="0.5" max="8" step="0.25" /></div>
-                <div class="field"><label for="target-fps">Playback FPS</label><input id="target-fps" type="number" min="1" max="120" step="1" /></div>
-              </div>
-            </div>
-          </details>
-          <div class="group">
-            <p class="group-label">Status</p>
-            <dl class="status-list">
-              <dt>Step</dt><dd id="status-frame">0</dd>
-              <dt>Time (ms)</dt><dd id="status-time">0.0</dd>
-              <dt>Ion A Left</dt><dd id="status-type0-left">0</dd>
-              <dt>Ion A Right</dt><dd id="status-type0-right">0</dd>
-              <dt>Ion B Left</dt><dd id="status-type1-left">0</dd>
-              <dt>Ion B Right</dt><dd id="status-type1-right">0</dd>
-              <dt>Ion A Right Frac</dt><dd id="status-type0-right-frac">0</dd>
-              <dt>Ion B Right Frac</dt><dd id="status-type1-right-frac">0</dd>
-              <dt>dt</dt><dd id="status-dt">0</dd>
-              <dt>Step SD</dt><dd id="status-step-sd">0</dd>
-              <dt>Seed</dt><dd id="status-seed">0</dd>
-              <dt>Trace Samples</dt><dd id="status-frames">0</dd>
-            </dl>
-          </div>
-          <div class="group">
-            <p class="group-label">Teaching Note</p>
-            <div class="equation-card">
-              <pre class="equation" id="equation-block"></pre>
-              <p>
-                The pore geometry is fixed. Permeability is controlled by each ion channel's open probability.
-                In the default setup both ions are cations, so both are biased in the same field direction. To demonstrate opposite-direction electrical responses, assign opposite charge signs.
-              </p>
             </div>
           </div>
         </div>
@@ -744,46 +692,18 @@ app.innerHTML = `
 
 const canvas = getEl<HTMLCanvasElement>('#sim-canvas');
 const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
-const equationBlock = getEl<HTMLElement>('#equation-block');
 const inputs = {
   numParticles: getEl<HTMLInputElement>('#num-particles'),
-  type0Charge: getEl<HTMLInputElement>('#type0-charge'),
-  type1Charge: getEl<HTMLInputElement>('#type1-charge'),
   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
   type0Permeability: getEl<HTMLInputElement>('#type0-permeability'),
   type1Permeability: getEl<HTMLInputElement>('#type1-permeability'),
-  playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
-  seed: getEl<HTMLInputElement>('#seed'),
-  totalTime: getEl<HTMLInputElement>('#total-time'),
-  dt: getEl<HTMLInputElement>('#dt'),
-  boxWidth: getEl<HTMLInputElement>('#box-width'),
-  boxHeight: getEl<HTMLInputElement>('#box-height'),
-  wallThickness: getEl<HTMLInputElement>('#wall-thickness'),
-  fixedAnionLayerX: getEl<HTMLInputElement>('#neg-x'),
-  pointSize: getEl<HTMLInputElement>('#point-size'),
-  targetFps: getEl<HTMLInputElement>('#target-fps')
-};
-const statusEls = {
-  frame: getEl<HTMLElement>('#status-frame'),
-  time: getEl<HTMLElement>('#status-time'),
-  type0Left: getEl<HTMLElement>('#status-type0-left'),
-  type0Right: getEl<HTMLElement>('#status-type0-right'),
-  type1Left: getEl<HTMLElement>('#status-type1-left'),
-  type1Right: getEl<HTMLElement>('#status-type1-right'),
-  type0RightFrac: getEl<HTMLElement>('#status-type0-right-frac'),
-  type1RightFrac: getEl<HTMLElement>('#status-type1-right-frac'),
-  dt: getEl<HTMLElement>('#status-dt'),
-  stepSd: getEl<HTMLElement>('#status-step-sd'),
-  seed: getEl<HTMLElement>('#status-seed'),
-  frames: getEl<HTMLElement>('#status-frames')
+  playbackSpeed: getEl<HTMLInputElement>('#playback-speed')
 };
 const buttons = {
   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
   rerun: getEl<HTMLButtonElement>('#rerun'),
-  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults'),
-  rewind: getEl<HTMLButtonElement>('#rewind'),
-  randomSeed: getEl<HTMLButtonElement>('#random-seed')
+  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults')
 };
 
 let simParams: SimParams = { ...defaultSim };
@@ -798,40 +718,29 @@ let stepAccumulator = 0;
 
 function writeInputs(): void {
   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
-  setNumberInput(inputs.type0Charge, simParams.type0Charge, 2);
-  setNumberInput(inputs.type1Charge, simParams.type1Charge, 2);
   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
   setNumberInput(inputs.type0Permeability, simParams.type0Permeability, 2);
   setNumberInput(inputs.type1Permeability, simParams.type1Permeability, 2);
   setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
-  setNumberInput(inputs.seed, currentSeed, 0);
-  setNumberInput(inputs.totalTime, simParams.T, 0);
-  setNumberInput(inputs.dt, simParams.dt, 3);
-  setNumberInput(inputs.boxWidth, simParams.boxWidth, 1);
-  setNumberInput(inputs.boxHeight, simParams.boxHeight, 1);
-  setNumberInput(inputs.wallThickness, simParams.wallThickness, 2);
-  setNumberInput(inputs.fixedAnionLayerX, simParams.fixedAnionLayerX, 1);
-  setNumberInput(inputs.pointSize, displayParams.pointSize, 2);
-  setNumberInput(inputs.targetFps, displayParams.targetFps, 0);
 }
 
 function readSimInputs(): SimParams {
-  const boxHeight = clamp(Number(inputs.boxHeight.value) || defaultSim.boxHeight, 20, 500);
-  const boxWidth = clamp(Number(inputs.boxWidth.value) || defaultSim.boxWidth, 20, 500);
+  const boxHeight = defaultSim.boxHeight;
+  const boxWidth = defaultSim.boxWidth;
   const electricStrengthRaw = Number(inputs.electricStrength.value);
-  const type0Charge = inputs.type0Charge.value === '' ? defaultSim.type0Charge : Number(inputs.type0Charge.value);
-  const type1Charge = inputs.type1Charge.value === '' ? defaultSim.type1Charge : Number(inputs.type1Charge.value);
+  const type0Charge = defaultSim.type0Charge;
+  const type1Charge = defaultSim.type1Charge;
   return normalizeSimParams({
-    T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
-    dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+    T: defaultSim.T,
+    dt: defaultSim.dt,
     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
     type0Fraction: 0.5,
     type0Charge: clamp(type0Charge, -5, 5),
     type1Charge: clamp(type1Charge, -5, 5),
     boxWidth,
     boxHeight,
-    wallThickness: clamp(Number(inputs.wallThickness.value) || defaultSim.wallThickness, 0.5, 50),
+    wallThickness: defaultSim.wallThickness,
     diffusionSd: clamp(Number(inputs.diffusionSd.value) || defaultSim.diffusionSd, 0, 20),
     type0ChannelWidth: clamp(simParams.type0ChannelWidth, 0.5, boxHeight - 8),
     type1ChannelWidth: clamp(simParams.type1ChannelWidth, 0.5, boxHeight - 8),
@@ -844,12 +753,11 @@ function readSimInputs(): SimParams {
 
 function readDisplayInputs(): DisplayParams {
   return {
-    pointSize: clamp(Number(inputs.pointSize.value) || defaultDisplay.pointSize, 0.5, 8),
+    pointSize: defaultDisplay.pointSize,
     playbackSpeed: clamp(Number(inputs.playbackSpeed.value) || defaultDisplay.playbackSpeed, 0.1, 8),
-    targetFps: clamp(Math.round(Number(inputs.targetFps.value) || defaultDisplay.targetFps), 1, 120)
+    targetFps: defaultDisplay.targetFps
   };
 }
-
 function retargetFromInputs(): void {
   state = retargetTypes(state, simParams.type0Fraction, rng);
   syncCharges(state, simParams);
@@ -866,66 +774,18 @@ function trimTrace(traceHistory: TraceHistory, currentTime: number, traceWindowM
   }
 }
 
-function updateEquationText(): void {
-  const stepSd = simParams.diffusionSd * simParams.dt;
-  equationBlock.innerHTML = [
-    '<span class="accent">Shared live diffusion + immobile-anion field drift (all particles)</span>',
-    'drift_(x,y) = Σ pointFieldDrift(fixed_anion_k - ion) + Σ pointFieldDrift(sampled_mobile_k - ion)',
-    `Current ion charges: Ion A = ${formatCharge(simParams.type0Charge)}, Ion B = ${formatCharge(simParams.type1Charge)}`,
-    'The sign of electric_strength × charge determines whether a species is attracted or repelled by the immobile-anion field',
-    'Default note: both ions start as cations, so field direction is shared unless you change one ion to a negative charge',
-    'x_trial = x_old + (dxdt + drift_x) · dt',
-    'x_new = reflect(x_trial, -W/2, W/2)',
-    'y_new = reflect(y_old + (dydt + drift_y) · dt, -H/2, H/2)',
-    'dxdt, dydt ~ Normal(0, diffusionSd²)',
-    '',
-    '<span class="accent-2">Selective permeability comes from pore open probability</span>',
-    'Immobile intracellular negative charges are sampled uniformly across the left compartment.',
-    'Ion A and Ion B cross only through their own fixed pore windows.',
-    'In-channel crossing is accepted with probability p for that ion type.',
-    '',
-    `Per-step displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`,
-    `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
-    `Ion charges: Ion A = ${formatCharge(simParams.type0Charge)}, Ion B = ${formatCharge(simParams.type1Charge)}`,
-    `Permeability: Ion A p = ${simParams.type0Permeability.toFixed(2)}, Ion B p = ${simParams.type1Permeability.toFixed(2)}`,
-    `Trace window T = ${simParams.T.toFixed(0)} ms`
-  ].join('\n');
-}
-
-function updateStatus(): void {
-  statusEls.frame.textContent = `${state.stepCount}`;
-  statusEls.time.textContent = state.simTime.toFixed(1);
-  statusEls.type0Left.textContent = `${state.type0Left}`;
-  statusEls.type0Right.textContent = `${state.type0Right}`;
-  statusEls.type1Left.textContent = `${state.type1Left}`;
-  statusEls.type1Right.textContent = `${state.type1Right}`;
-  statusEls.type0RightFrac.textContent = state.type0Total > 0 ? (state.type0Right / state.type0Total).toFixed(3) : '0.000';
-  statusEls.type1RightFrac.textContent = state.type1Total > 0 ? (state.type1Right / state.type1Total).toFixed(3) : '0.000';
-  statusEls.dt.textContent = state.dt.toFixed(2);
-  statusEls.stepSd.textContent = (simParams.diffusionSd * simParams.dt).toFixed(3);
-  statusEls.seed.textContent = `${currentSeed >>> 0}`;
-  statusEls.frames.textContent = `${trace.times.length}`;
-}
-
 function rebuildFromInputs(): void {
   simParams = readSimInputs();
   displayParams = readDisplayInputs();
-  currentSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
   rng = new Rng(currentSeed);
   state = createState(simParams, currentSeed);
   trace = createTrace(state, simParams.T);
   stepAccumulator = 0;
   writeInputs();
-  updateEquationText();
 }
 
 function applyLiveSimParams(): void {
   const next = readSimInputs();
-  const nextSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
-  if (nextSeed !== currentSeed) {
-    currentSeed = nextSeed;
-    rng = new Rng(currentSeed);
-  }
   simParams = next;
   state = resizeState(state, simParams.numParticles, rng);
   retargetFromInputs();
@@ -947,7 +807,6 @@ function applyLiveSimParams(): void {
   enforceGeometry(state);
   trimTrace(trace, state.simTime, simParams.T);
   writeInputs();
-  updateEquationText();
 }
 
 function refreshDisplayFromInputs(): void {
@@ -961,21 +820,16 @@ function setPlaying(next: boolean): void {
 }
 
 function render(): void {
-  updateStatus();
   drawFrame(canvas, state, displayParams);
   drawSideTrace(traceCanvas, trace, state.simTime, simParams.T);
 }
 
 writeInputs();
-updateEquationText();
 render();
 
 buttons.togglePlay.addEventListener('click', () => setPlaying(!isPlaying));
-buttons.rerun.addEventListener('click', () => { rebuildFromInputs(); setPlaying(true); render(); });
-buttons.rewind.addEventListener('click', () => { rebuildFromInputs(); render(); });
-buttons.randomSeed.addEventListener('click', () => {
+buttons.rerun.addEventListener('click', () => {
   currentSeed = randomSeed();
-  setNumberInput(inputs.seed, currentSeed, 0);
   rebuildFromInputs();
   setPlaying(true);
   render();
@@ -991,32 +845,26 @@ buttons.resetDefaults.addEventListener('click', () => {
 });
 for (const input of [
   inputs.numParticles,
-  inputs.type0Charge,
-  inputs.type1Charge,
   inputs.diffusionSd,
   inputs.electricStrength,
   inputs.type0Permeability,
-  inputs.type1Permeability,
-  inputs.seed,
-  inputs.totalTime,
-  inputs.dt,
-  inputs.boxWidth,
-  inputs.boxHeight,
-  inputs.wallThickness,
-  inputs.fixedAnionLayerX
+  inputs.type1Permeability
 ] as const) {
   input.addEventListener('change', () => {
     applyLiveSimParams();
     render();
   });
 }
-for (const input of [inputs.playbackSpeed, inputs.pointSize, inputs.targetFps] as const) {
-  input.addEventListener('change', () => {
-    refreshDisplayFromInputs();
-    render();
-  });
-}
+inputs.playbackSpeed.addEventListener('change', () => {
+  refreshDisplayFromInputs();
+  render();
+});
 window.addEventListener('resize', () => render());
+
+getEl<HTMLButtonElement>('#theme-toggle').addEventListener('click', () => {
+  const isLight = document.documentElement.classList.toggle('light');
+  getEl<HTMLButtonElement>('#theme-toggle').textContent = isLight ? '☽' : '☀';
+});
 
 function animate(ts: number): void {
   const dtSec = Math.max(0, (ts - lastTs) / 1000);

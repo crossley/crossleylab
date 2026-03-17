@@ -226,14 +226,6 @@ function stepState(state: LiveState, params: SimParams, display: DisplayParams, 
   state.simTime = state.stepCount * state.dt;
 }
 
-function getExtent(state: LiveState): number {
-  let maxAbs = 1;
-  for (let i = 0; i < state.numParticles; i += 1) {
-    maxAbs = Math.max(maxAbs, Math.abs(state.x[i]), Math.abs(state.y[i]));
-  }
-  return maxAbs;
-}
-
 function syncCanvasSize(canvas: HTMLCanvasElement): void {
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
@@ -317,20 +309,24 @@ const app = getEl<HTMLDivElement>('#app');
 app.innerHTML = `
   <div class="site-shell">
     <div class="nav-line">
-      <a href="./index.html">Back to index</a>
-      <span>•</span>
-      <span>Page: <code>inspect_emergent_field_attraction</code></span>
+      <a href="./index.html">← Back</a>
+      <div class="spacer"></div>
+      <button id="theme-toggle" class="theme-btn">☀</button>
     </div>
 
     <header class="page-head">
       <p class="eyebrow">Point-Source Electrical Drift</p>
-      <h1>Free Diffusion with Electrical Attraction</h1>
+      <h1>Electrical Field Attraction</h1>
+      <p class="teaching-label">Key concepts</p>
       <ul class="key-points">
-        <li>Diffusion spreads particles; electrical drift attracts or repels them.</li>
-        <li>Stronger field or weaker diffusion produces tighter clustering.</li>
-        <li>Weaker field or stronger diffusion produces broader spread.</li>
-        <li>At equilibrium, diffusion and electrical forces balance, producing a stable distribution.</li>
-        <li>Vary each electric field source to understand attraction and repulsion behavior.</li>
+        <li>Electrical force attracts opposite charges; diffusion spreads them out.</li>
+        <li>These forces act in opposition — particles cluster near the charge source but don't all land on it.</li>
+        <li>Stronger electric force → tighter clustering despite diffusion.</li>
+      </ul>
+      <p class="teaching-label questions">Questions to explore</p>
+      <ul class="guided-questions">
+        <li>What does the particle distribution look like when electric strength is very low? Very high?</li>
+        <li>Can you find a setting where diffusion and electrical attraction are visually balanced?</li>
       </ul>
     </header>
 
@@ -338,15 +334,10 @@ app.innerHTML = `
       <aside class="controls">
         <div class="panel">
           <div class="group">
-            <p class="group-label">Basic Controls</p>
             <div class="button-row">
               <button id="toggle-play" class="primary">Pause</button>
               <button id="rerun">Rerun</button>
               <button id="reset-defaults" class="warn">Reset Defaults</button>
-            </div>
-            <div class="button-row">
-              <button id="rewind">Rewind</button>
-              <button id="random-seed">Randomize Seed</button>
             </div>
             <div class="control-grid">
               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
@@ -356,48 +347,6 @@ app.innerHTML = `
               <div class="field"><label for="source2-attraction">Electric strength 3 (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
               <div class="field"><label for="source3-attraction">Electric strength 4 (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
-              <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
-            </div>
-          </div>
-
-          <details>
-            <summary>Advanced Controls</summary>
-            <div class="group" style="margin-top: 8px;">
-              <div class="control-grid">
-                <div class="field"><label for="total-time">Status window T (ms)</label><input id="total-time" type="number" min="100" max="20000" step="10" /></div>
-                <div class="field"><label for="dt">dt (ms)</label><input id="dt" type="number" min="0.05" max="20" step="0.05" /></div>
-                <div class="field"><label for="init-cluster-sd">Initial cluster SD</label><input id="init-cluster-sd" type="number" min="0" max="20" step="0.05" /></div>
-                <div class="field"><label for="neg-x">Field source x</label><input id="neg-x" type="number" step="1" /></div>
-                <div class="field"><label for="neg-y">Field source y</label><input id="neg-y" type="number" step="1" /></div>
-                <div class="field"><label for="axis-limit">Axis limit (+/-)</label><input id="axis-limit" type="number" min="5" max="500" step="1" /></div>
-                <div class="field"><label for="point-size">Point size</label><input id="point-size" type="number" min="0.5" max="8" step="0.25" /></div>
-                <div class="field"><label for="target-fps">Playback FPS</label><input id="target-fps" type="number" min="1" max="120" step="1" /></div>
-              </div>
-            </div>
-          </details>
-
-          <div class="group">
-            <p class="group-label">Status</p>
-            <dl class="status-list">
-              <dt>Step</dt><dd id="status-frame">0</dd>
-              <dt>Time (ms)</dt><dd id="status-time">0.0</dd>
-              <dt>Particles</dt><dd id="status-particles">0</dd>
-              <dt>dt</dt><dd id="status-dt">0</dd>
-              <dt>Step SD (x/y)</dt><dd id="status-step-sd">0</dd>
-              <dt>Cloud Extent</dt><dd id="status-extent">0</dd>
-              <dt>Seed</dt><dd id="status-seed">0</dd>
-            </dl>
-          </div>
-
-          <div class="group">
-            <p class="group-label">Equation (Euler Update)</p>
-            <div class="equation-card">
-              <pre class="equation" id="equation-block"></pre>
-              <p>
-                <code>diffusionSd</code> controls the sampled Brownian rate terms.
-                The particles are treated as positive, so negative field strengths
-                attract them toward the source and positive field strengths repel them.
-              </p>
             </div>
           </div>
         </div>
@@ -419,35 +368,13 @@ const inputs = {
   source1Attraction: getEl<HTMLInputElement>('#source1-attraction'),
   source2Attraction: getEl<HTMLInputElement>('#source2-attraction'),
   source3Attraction: getEl<HTMLInputElement>('#source3-attraction'),
-  playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
-  seed: getEl<HTMLInputElement>('#seed'),
-  totalTime: getEl<HTMLInputElement>('#total-time'),
-  dt: getEl<HTMLInputElement>('#dt'),
-  initClusterSd: getEl<HTMLInputElement>('#init-cluster-sd'),
-  fixedAnionX: getEl<HTMLInputElement>('#neg-x'),
-  fixedAnionY: getEl<HTMLInputElement>('#neg-y'),
-  axisLimit: getEl<HTMLInputElement>('#axis-limit'),
-  pointSize: getEl<HTMLInputElement>('#point-size'),
-  targetFps: getEl<HTMLInputElement>('#target-fps')
+  playbackSpeed: getEl<HTMLInputElement>('#playback-speed')
 };
-
-const statusEls = {
-  frame: getEl<HTMLElement>('#status-frame'),
-  time: getEl<HTMLElement>('#status-time'),
-  particles: getEl<HTMLElement>('#status-particles'),
-  dt: getEl<HTMLElement>('#status-dt'),
-  stepSd: getEl<HTMLElement>('#status-step-sd'),
-  extent: getEl<HTMLElement>('#status-extent'),
-  seed: getEl<HTMLElement>('#status-seed')
-};
-const equationBlock = getEl<HTMLElement>('#equation-block');
 
 const buttons = {
   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
   rerun: getEl<HTMLButtonElement>('#rerun'),
-  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults'),
-  rewind: getEl<HTMLButtonElement>('#rewind'),
-  randomSeed: getEl<HTMLButtonElement>('#random-seed')
+  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults')
 };
 
 let simParams: SimParams = { ...defaultSim };
@@ -467,116 +394,50 @@ function writeInputs(): void {
   setNumberInput(inputs.source2Attraction, simParams.source2Attraction, 3);
   setNumberInput(inputs.source3Attraction, simParams.source3Attraction, 3);
   setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
-  setNumberInput(inputs.seed, currentSeed, 0);
-  setNumberInput(inputs.totalTime, simParams.T, 0);
-  setNumberInput(inputs.dt, simParams.dt, 3);
-  setNumberInput(inputs.initClusterSd, simParams.initClusterSd, 3);
-  setNumberInput(inputs.fixedAnionX, simParams.fixedAnionX, 1);
-  setNumberInput(inputs.fixedAnionY, simParams.fixedAnionY, 1);
-  setNumberInput(inputs.axisLimit, displayParams.axisLimit, 0);
-  setNumberInput(inputs.pointSize, displayParams.pointSize, 2);
-  setNumberInput(inputs.targetFps, displayParams.targetFps, 0);
 }
 
 function readInputsForSimulation(): SimParams {
   return {
-    T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
-    dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+    T: defaultSim.T,
+    dt: defaultSim.dt,
     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
     diffusionSd: clamp(Number(inputs.diffusionSd.value) || 0, 0, 20),
-    initClusterSd: clamp(Number(inputs.initClusterSd.value) || 0, 0, 20),
+    initClusterSd: defaultSim.initClusterSd,
     source0Attraction: clamp(Number(inputs.source0Attraction.value) || 0, -10, 10),
     source1Attraction: clamp(Number(inputs.source1Attraction.value) || 0, -10, 10),
     source2Attraction: clamp(Number(inputs.source2Attraction.value) || 0, -10, 10),
     source3Attraction: clamp(Number(inputs.source3Attraction.value) || 0, -10, 10),
-    fixedAnionX: Number(inputs.fixedAnionX.value) || defaultSim.fixedAnionX,
-    fixedAnionY: Number(inputs.fixedAnionY.value) || defaultSim.fixedAnionY
+    fixedAnionX: defaultSim.fixedAnionX,
+    fixedAnionY: defaultSim.fixedAnionY
   };
 }
 
 function readInputsForDisplay(): DisplayParams {
   return {
-    axisLimit: clamp(Number(inputs.axisLimit.value) || defaultDisplay.axisLimit, 5, 500),
-    pointSize: clamp(Number(inputs.pointSize.value) || defaultDisplay.pointSize, 0.5, 8),
+    axisLimit: defaultDisplay.axisLimit,
+    pointSize: defaultDisplay.pointSize,
     playbackSpeed: clamp(Number(inputs.playbackSpeed.value) || defaultDisplay.playbackSpeed, 0.1, 8),
-    targetFps: clamp(Math.round(Number(inputs.targetFps.value) || defaultDisplay.targetFps), 1, 120)
+    targetFps: defaultDisplay.targetFps
   };
-}
-
-function updateStatus(): void {
-  statusEls.frame.textContent = `${state.stepCount}`;
-  statusEls.time.textContent = state.simTime.toFixed(1);
-  statusEls.particles.textContent = `${state.numParticles}`;
-  statusEls.dt.textContent = state.dt.toFixed(2);
-  statusEls.stepSd.textContent = (simParams.diffusionSd * simParams.dt).toFixed(3);
-  statusEls.extent.textContent = getExtent(state).toFixed(1);
-  statusEls.seed.textContent = `${currentSeed >>> 0}`;
-}
-
-function updateEquationText(): void {
-  const sigma = simParams.diffusionSd;
-  const dt = simParams.dt;
-  const stepSd = sigma * dt;
-  const attractionValues = [
-    simParams.source0Attraction,
-    simParams.source1Attraction,
-    simParams.source2Attraction,
-    simParams.source3Attraction
-  ];
-  const strengths = [
-    -simParams.source0Attraction,
-    -simParams.source1Attraction,
-    -simParams.source2Attraction,
-    -simParams.source3Attraction
-  ];
-  equationBlock.innerHTML = [
-    '<span class="accent">Pedagogical stochastic-rate form</span>',
-    'dx/dt = ξ_x(t) + drift_x,   dy/dt = ξ_y(t) + drift_y',
-    'ξ_x, ξ_y ~ Normal(0, σ²),  where σ = diffusionSd',
-    'drift = Σ_s [ -electric_strength_s · (field_source_s - pos) / (||field_source_s - pos|| + ε) ]',
-    '',
-    '<span class="accent-2">Euler step used in this simulation</span>',
-    'x_trial = x_old + (dxdt + drift_x) · dt',
-    'y_trial = y_old + (dydt + drift_y) · dt',
-    'x_new = reflect(x_trial, -L, L)',
-    'y_new = reflect(y_trial, -L, L)',
-    'dxdt, dydt ~ Normal(0, diffusionSd²)',
-    '',
-    '<span class="accent-2">Reflective chamber rule</span>',
-    'Particles bounce off the chamber walls instead of leaving the visible box.',
-    '',
-    'UI convention: positive attraction attracts positive charge, negative attraction repels it.',
-    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, attraction = [${attractionValues.map((v) => v.toFixed(3)).join(', ')}]`,
-    `Mapped electric_strength = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
-    `Per-step displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`
-  ].join('\n');
 }
 
 function rebuildFromInputs(): void {
   simParams = readInputsForSimulation();
   displayParams = readInputsForDisplay();
-  currentSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
   rng = new Rng(currentSeed);
   state = createState(simParams, currentSeed);
   stepAccumulator = 0;
   writeInputs();
-  updateEquationText();
 }
 
 function applyLiveSimParams(): void {
   const next = readInputsForSimulation();
-  const nextSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
-  if (nextSeed !== currentSeed) {
-    currentSeed = nextSeed;
-    rng = new Rng(currentSeed);
-  }
   simParams = next;
   state = resizeState(state, simParams.numParticles, rng, simParams.initClusterSd);
   state.dt = simParams.dt;
   state.fixedAnionX = simParams.fixedAnionX;
   state.fixedAnionY = simParams.fixedAnionY;
   writeInputs();
-  updateEquationText();
 }
 
 function refreshDisplayFromInputs(): void {
@@ -591,22 +452,17 @@ function setPlaying(next: boolean): void {
 }
 
 function render(): void {
-  updateStatus();
   drawFrame(canvas, state, displayParams);
 }
 
 writeInputs();
-updateEquationText();
 render();
 
 buttons.togglePlay.addEventListener('click', () => setPlaying(!isPlaying));
 buttons.rerun.addEventListener('click', () => {
+  currentSeed = randomSeed();
   rebuildFromInputs();
   setPlaying(true);
-  render();
-});
-buttons.rewind.addEventListener('click', () => {
-  rebuildFromInputs();
   render();
 });
 buttons.resetDefaults.addEventListener('click', () => {
@@ -618,29 +474,23 @@ buttons.resetDefaults.addEventListener('click', () => {
   setPlaying(true);
   render();
 });
-buttons.randomSeed.addEventListener('click', () => {
-  currentSeed = randomSeed();
-  setNumberInput(inputs.seed, currentSeed, 0);
-  rebuildFromInputs();
-  setPlaying(true);
-  render();
-});
 
-for (const key of ['numParticles', 'diffusionSd', 'source0Attraction', 'source1Attraction', 'source2Attraction', 'source3Attraction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'fixedAnionX', 'fixedAnionY'] as const) {
+for (const key of ['numParticles', 'diffusionSd', 'source0Attraction', 'source1Attraction', 'source2Attraction', 'source3Attraction'] as const) {
   inputs[key].addEventListener('change', () => {
     applyLiveSimParams();
     render();
   });
 }
 
-for (const key of ['playbackSpeed', 'axisLimit', 'pointSize', 'targetFps'] as const) {
-  inputs[key].addEventListener('change', () => {
-    refreshDisplayFromInputs();
-    render();
-  });
-}
+inputs.playbackSpeed.addEventListener('change', () => {
+  refreshDisplayFromInputs();
+  render();
+});
 
-window.addEventListener('resize', () => render());
+getEl<HTMLButtonElement>('#theme-toggle').addEventListener('click', () => {
+  const isLight = document.documentElement.classList.toggle('light');
+  getEl<HTMLButtonElement>('#theme-toggle').textContent = isLight ? '☽' : '☀';
+});
 
 function animate(now: number): void {
   const dtSec = Math.max(0, (now - lastAnimationTs) / 1000);

@@ -479,75 +479,37 @@ function drawParticles(canvas: HTMLCanvasElement, state: LiveState, pointSize: n
 const app = getEl<HTMLDivElement>('#app');
 app.innerHTML = `
   <div class="site-shell">
-    <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>inspect_emergent_nernst_one_ion</code></span></div>
+    <div class="nav-line">
+      <a href="./index.html">← Back</a>
+      <div class="spacer"></div>
+      <button id="theme-toggle" class="theme-btn">☀</button>
+    </div>
     <header class="page-head">
-      <h1>Nernst Equilibrium for One Ion</h1>
+      <h1>The Nernst Equation</h1>
+      <p class="teaching-label">Key concepts</p>
       <ul class="key-points">
-        <li>Electric force creates a concentration gradient (like charges repel and opposite charges attract).</li>
-        <li>Diffusion tends to reduce concetration gradients (ions move from high to low concentration).</li>
-        <li>The Nernst potential is the exact membrane voltage where those two forces cancel for that ion.</li>
-        <li>At the Nernst potential, net movement of that ion is zero.</li>
-        <li>Test whether the Nernst potential changes with channel permeability.</li>
-        <li>Test whether the Nernst potential changes with Diffusion SD.</li>
-        <li>Test whether the Nernst potential changes with electric strength.</li>
+        <li>With a concentration gradient, K⁺ tends to diffuse out; electrical force pulls K⁺ in.</li>
+        <li>At equilibrium, diffusion and electrical force exactly balance — this balance sets the membrane potential.</li>
+        <li>The Nernst equation predicts this equilibrium voltage from the concentration ratio alone.</li>
+        <li>Nernst potential does <em>not</em> depend on permeability — only on the concentration gradient.</li>
+      </ul>
+      <p class="teaching-label questions">Questions to explore</p>
+      <ul class="guided-questions">
+        <li>Does changing channel permeability change the Nernst potential?</li>
+        <li>What happens to V<sub>m</sub> if you increase the pump rate?</li>
       </ul>
     </header>
     <div class="sim-layout">
       <aside class="controls">
         <div class="panel">
           <div class="group">
-            <p class="group-label">Basic Controls</p>
             <div class="button-row"><button id="toggle-play" class="primary">Pause</button><button id="rerun">Rerun</button><button id="reset-defaults" class="warn">Reset Defaults</button></div>
-            <div class="button-row"><button id="rewind">Rewind</button><button id="random-seed">Randomize Seed</button></div>
             <div class="control-grid">
               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="10" max="5000" step="1" /></div>
               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.01" /></div>
               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" /></div>
               <div class="field"><label for="channel-permeability">Channel permeability</label><input id="channel-permeability" type="number" min="0" max="1" step="0.01" /></div>
               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
-              <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
-            </div>
-          </div>
-          <details><summary>Advanced Controls</summary><div class="group" style="margin-top:8px;"><div class="control-grid">
-            <div class="field"><label for="total-time">Trace window T (ms)</label><input id="total-time" type="number" min="100" max="20000" step="10" /></div>
-            <div class="field"><label for="dt">dt (ms)</label><input id="dt" type="number" min="0.05" max="20" step="0.05" /></div>
-            <div class="field"><label for="box-width">Box width</label><input id="box-width" type="number" min="40" max="500" step="1" /></div>
-            <div class="field"><label for="box-height">Box height</label><input id="box-height" type="number" min="40" max="500" step="1" /></div>
-            <div class="field"><label for="wall-thickness">Wall thickness</label><input id="wall-thickness" type="number" min="0.5" max="50" step="0.5" /></div>
-            <div class="field"><label for="voltage-scale">Proxy voltage scale</label><input id="voltage-scale" type="number" min="1" max="500" step="1" /></div>
-            <div class="field"><label for="nernst-scale">Nernst scale</label><input id="nernst-scale" type="number" min="1" max="500" step="1" /></div>
-            <div class="field"><label for="trace-ylim">Min trace y-range</label><input id="trace-ylim" type="number" min="10" max="500" step="1" /></div>
-            <div class="field"><label for="point-size">Point size</label><input id="point-size" type="number" min="0.5" max="8" step="0.25" /></div>
-            <div class="field"><label for="target-fps">Playback FPS</label><input id="target-fps" type="number" min="1" max="120" step="1" /></div>
-          </div></div></details>
-          <div class="group">
-            <p class="group-label">Status</p>
-            <dl class="status-list">
-              <dt>Step</dt><dd id="status-frame">0</dd>
-              <dt>Time (ms)</dt><dd id="status-time">0.0</dd>
-              <dt>Inside Left Count</dt><dd id="status-left">0</dd>
-              <dt>Outside Right Count</dt><dd id="status-right">0</dd>
-              <dt>V proxy (mV-scaled)</dt><dd id="status-vproxy">0</dd>
-              <dt>V Nernst (mV-scaled)</dt><dd id="status-vnernst">0</dd>
-              <dt>dt</dt><dd id="status-dt">0</dd>
-              <dt>Step SD</dt><dd id="status-step-sd">0</dd>
-              <dt>Seed</dt><dd id="status-seed">0</dd>
-            </dl>
-          </div>
-          <div class="group">
-            <p class="group-label">Equation + Nernst Comparison</p>
-            <div class="equation-card">
-              <pre class="equation" id="equation-block"></pre>
-              <p>
-                Purple is the simulated membrane potential from compartment concentrations.
-                White is the Nernst prediction for a single permeant cation:
-              </p>
-              <math display="block" aria-label="V equals S times natural log of C out over C in equals S times natural log of C right over C left">
-                <mi>V</mi><mo>=</mo><mi>S</mi><mo>ln</mo><mo>(</mo><mfrac><msub><mi>C</mi><mtext>out</mtext></msub><msub><mi>C</mi><mtext>in</mtext></msub></mfrac><mo>)</mo>
-                <mo>=</mo>
-                <mi>S</mi><mo>ln</mo><mo>(</mo><mfrac><msub><mi>C</mi><mtext>right</mtext></msub><msub><mi>C</mi><mtext>left</mtext></msub></mfrac><mo>)</mo>
-              </math>
-              <p>In this layout, inside is left and outside is right.</p>
             </div>
           </div>
         </div>
@@ -564,42 +526,17 @@ app.innerHTML = `
 
 const particleCanvas = getEl<HTMLCanvasElement>('#particle-canvas');
 const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
-const equationBlock = getEl<HTMLElement>('#equation-block');
 const inputs = {
   numParticles: getEl<HTMLInputElement>('#num-particles'),
   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
   channelPermeability: getEl<HTMLInputElement>('#channel-permeability'),
-  playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
-  seed: getEl<HTMLInputElement>('#seed'),
-  totalTime: getEl<HTMLInputElement>('#total-time'),
-  dt: getEl<HTMLInputElement>('#dt'),
-  boxWidth: getEl<HTMLInputElement>('#box-width'),
-  boxHeight: getEl<HTMLInputElement>('#box-height'),
-  wallThickness: getEl<HTMLInputElement>('#wall-thickness'),
-  voltageScale: getEl<HTMLInputElement>('#voltage-scale'),
-  nernstScale: getEl<HTMLInputElement>('#nernst-scale'),
-  traceYLim: getEl<HTMLInputElement>('#trace-ylim'),
-  pointSize: getEl<HTMLInputElement>('#point-size'),
-  targetFps: getEl<HTMLInputElement>('#target-fps')
-};
-const statusEls = {
-  frame: getEl<HTMLElement>('#status-frame'),
-  time: getEl<HTMLElement>('#status-time'),
-  left: getEl<HTMLElement>('#status-left'),
-  right: getEl<HTMLElement>('#status-right'),
-  vProxy: getEl<HTMLElement>('#status-vproxy'),
-  vNernst: getEl<HTMLElement>('#status-vnernst'),
-  dt: getEl<HTMLElement>('#status-dt'),
-  stepSd: getEl<HTMLElement>('#status-step-sd'),
-  seed: getEl<HTMLElement>('#status-seed')
+  playbackSpeed: getEl<HTMLInputElement>('#playback-speed')
 };
 const buttons = {
   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
   rerun: getEl<HTMLButtonElement>('#rerun'),
-  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults'),
-  rewind: getEl<HTMLButtonElement>('#rewind'),
-  randomSeed: getEl<HTMLButtonElement>('#random-seed')
+  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults')
 };
 
 let simParams: SimParams = { ...defaultSim };
@@ -618,80 +555,36 @@ function writeInputs(): void {
   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
   setNumberInput(inputs.channelPermeability, simParams.channelPermeability, 2);
   setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
-  setNumberInput(inputs.seed, currentSeed, 0);
-  setNumberInput(inputs.totalTime, simParams.T, 0);
-  setNumberInput(inputs.dt, simParams.dt, 3);
-  setNumberInput(inputs.boxWidth, simParams.boxWidth, 1);
-  setNumberInput(inputs.boxHeight, simParams.boxHeight, 1);
-  setNumberInput(inputs.wallThickness, simParams.wallThickness, 2);
-  setNumberInput(inputs.voltageScale, simParams.voltageScale, 0);
-  setNumberInput(inputs.nernstScale, simParams.nernstScale, 0);
-  setNumberInput(inputs.traceYLim, displayParams.traceYLimit, 0);
-  setNumberInput(inputs.pointSize, displayParams.pointSize, 2);
-  setNumberInput(inputs.targetFps, displayParams.targetFps, 0);
 }
 function readSimInputs(): SimParams {
-  const boxHeight = clamp(Number(inputs.boxHeight.value) || defaultSim.boxHeight, 40, 500);
-  const boxWidth = clamp(Number(inputs.boxWidth.value) || defaultSim.boxWidth, 40, 500);
+  const boxHeight = defaultSim.boxHeight;
+  const boxWidth = defaultSim.boxWidth;
   const electricStrengthRaw = Number(inputs.electricStrength.value);
   return normalizeSimParams({
-    T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
-    dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+    T: defaultSim.T,
+    dt: defaultSim.dt,
     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 10, MAX_PARTICLES),
     boxWidth,
     boxHeight,
-    wallThickness: clamp(Number(inputs.wallThickness.value) || defaultSim.wallThickness, 0.5, 50),
+    wallThickness: defaultSim.wallThickness,
     diffusionSd: clamp(Number(inputs.diffusionSd.value) || 0, 0, 20),
     electricStrength: Number.isNaN(electricStrengthRaw) ? defaultSim.electricStrength : electricStrengthRaw,
     channelWidth: clamp(simParams.channelWidth, 0.5, boxHeight - 2),
     channelPermeability: clamp(Number(inputs.channelPermeability.value) || 0, 0, 1),
-    voltageScale: clamp(Number(inputs.voltageScale.value) || defaultSim.voltageScale, 1, 500),
-    nernstScale: clamp(Number(inputs.nernstScale.value) || defaultSim.nernstScale, 1, 500),
+    voltageScale: defaultSim.voltageScale,
+    nernstScale: defaultSim.nernstScale,
     fixedAnionInset: simParams.fixedAnionInset
   });
 }
 function readDisplayInputs(): DisplayParams {
   return {
-    pointSize: clamp(Number(inputs.pointSize.value) || defaultDisplay.pointSize, 0.5, 8),
+    pointSize: defaultDisplay.pointSize,
     playbackSpeed: clamp(Number(inputs.playbackSpeed.value) || defaultDisplay.playbackSpeed, 0.1, 8),
-    targetFps: clamp(Math.round(Number(inputs.targetFps.value) || defaultDisplay.targetFps), 1, 120),
-    traceYLimit: clamp(Number(inputs.traceYLim.value) || defaultDisplay.traceYLimit, 10, 500)
+    targetFps: defaultDisplay.targetFps,
+    traceYLimit: defaultDisplay.traceYLimit
   };
 }
-function updateEquationText(): void {
-  const stepSd = simParams.diffusionSd * simParams.dt;
-  equationBlock.innerHTML = [
-    '<span class="accent">Live update with an immobile-anion field term</span>',
-    'drift_(x,y) = Σ pointFieldDrift(fixed_anion_k - ion) + Σ pointFieldDrift(sampled_mobile_k - ion)',
-    'x_new = x_old + (dxdt + drift_x) · dt',
-    'y_new = reflect(y_old + (dydt + drift_y) · dt, -H/2, H/2)',
-    'dxdt, dydt ~ Normal(0, diffusionSd²)',
-    '',
-    '<span class="accent-2">Simulated Vm and Nernst comparison</span>',
-    'In-channel crossing is accepted with probability p (channel permeability).',
-    'V_sim = nernst_scale · ln((C_out + 0.5) / (C_in + 0.5))',
-    'V_Nernst = nernst_scale · ln((C_out + 0.5) / (C_in + 0.5))',
-    'For a single positive ion, Nernst predicts the balance point for diffusion vs electrical drift',
-    '',
-    `Per-step Brownian displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`,
-    `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
-    `Channel permeability p = ${simParams.channelPermeability.toFixed(2)}`,
-    `Trace window T = ${simParams.T.toFixed(0)} ms`
-  ].join('\n');
-}
-function updateStatus(): void {
-  statusEls.frame.textContent = `${state.stepCount}`;
-  statusEls.time.textContent = state.simTime.toFixed(1);
-  statusEls.left.textContent = `${state.leftCount}`;
-  statusEls.right.textContent = `${state.rightCount}`;
-  statusEls.vProxy.textContent = state.vProxy.toFixed(1);
-  statusEls.vNernst.textContent = state.vNernst.toFixed(1);
-  statusEls.dt.textContent = state.dt.toFixed(2);
-  statusEls.stepSd.textContent = (simParams.diffusionSd * simParams.dt).toFixed(3);
-  statusEls.seed.textContent = `${currentSeed >>> 0}`;
-}
 function render(): void {
-  updateStatus();
   drawParticles(particleCanvas, state, displayParams.pointSize);
   drawTrace(traceCanvas, trace, state.simTime, simParams.T, displayParams.traceYLimit);
 }
@@ -753,21 +646,14 @@ function trimTrace(traceHistory: TraceHistory, currentTime: number, traceWindowM
 function rebuildFromInputs(): void {
   simParams = readSimInputs();
   displayParams = readDisplayInputs();
-  currentSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
   rng = new Rng(currentSeed);
   state = createState(simParams, currentSeed);
   trace = createTrace(state, simParams.T);
   stepAccumulator = 0;
   writeInputs();
-  updateEquationText();
 }
 function applyLiveSimParams(): void {
   const next = readSimInputs();
-  const nextSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
-  if (nextSeed !== currentSeed) {
-    currentSeed = nextSeed;
-    rng = new Rng(currentSeed);
-  }
   simParams = next;
   state = resizeState(state, simParams.numParticles, rng);
   state.dt = simParams.dt;
@@ -793,26 +679,25 @@ function applyLiveSimParams(): void {
   enforceGeometry(state);
   trimTrace(trace, state.simTime, simParams.T);
   writeInputs();
-  updateEquationText();
 }
 function refreshDisplayFromInputs(): void { displayParams = readDisplayInputs(); writeInputs(); }
 function setPlaying(next: boolean): void { isPlaying = next; buttons.togglePlay.textContent = isPlaying ? 'Pause' : 'Play'; }
 
 writeInputs();
-updateEquationText();
 render();
 buttons.togglePlay.addEventListener('click', () => setPlaying(!isPlaying));
-buttons.rerun.addEventListener('click', () => { rebuildFromInputs(); setPlaying(true); render(); });
-buttons.rewind.addEventListener('click', () => { rebuildFromInputs(); render(); });
-buttons.randomSeed.addEventListener('click', () => { currentSeed = randomSeed(); setNumberInput(inputs.seed, currentSeed, 0); rebuildFromInputs(); setPlaying(true); render(); });
+buttons.rerun.addEventListener('click', () => { currentSeed = randomSeed(); rebuildFromInputs(); setPlaying(true); render(); });
 buttons.resetDefaults.addEventListener('click', () => { simParams = { ...defaultSim }; displayParams = { ...defaultDisplay }; currentSeed = randomSeed(); writeInputs(); rebuildFromInputs(); setPlaying(true); render(); });
-for (const el of [inputs.numParticles, inputs.diffusionSd, inputs.electricStrength, inputs.channelPermeability, inputs.seed, inputs.totalTime, inputs.dt, inputs.boxWidth, inputs.boxHeight, inputs.wallThickness, inputs.voltageScale, inputs.nernstScale]) {
+for (const el of [inputs.numParticles, inputs.diffusionSd, inputs.electricStrength, inputs.channelPermeability]) {
   el.addEventListener('change', () => { applyLiveSimParams(); render(); });
 }
-for (const el of [inputs.playbackSpeed, inputs.traceYLim, inputs.pointSize, inputs.targetFps]) {
-  el.addEventListener('change', () => { refreshDisplayFromInputs(); render(); });
-}
+inputs.playbackSpeed.addEventListener('change', () => { refreshDisplayFromInputs(); render(); });
 window.addEventListener('resize', () => render());
+
+getEl<HTMLButtonElement>('#theme-toggle').addEventListener('click', () => {
+  const isLight = document.documentElement.classList.toggle('light');
+  getEl<HTMLButtonElement>('#theme-toggle').textContent = isLight ? '☽' : '☀';
+});
 function animate(ts: number): void {
   const dtSec = Math.max(0, (ts - lastTs) / 1000);
   lastTs = ts;

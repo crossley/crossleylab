@@ -41,5 +41,10 @@ mountTwoIonRestingPage({
   defaultType0Permeability: 0.35,
   defaultType1Permeability: 0.65,
   defaultType0Charge: 1,
-  defaultType1Charge: 1
+  defaultType1Charge: 1,
+  guidedQuestions: [
+    'Set K⁺ permeability high, Na⁺ low — where does V_m settle?',
+    'Reverse the permeabilities — does V_m shift toward E_Na?',
+    'Can you find a setting where V_m sits exactly midway between E_K and E_Na?',
+  ],
 });

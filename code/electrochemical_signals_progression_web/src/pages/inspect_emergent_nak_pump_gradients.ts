@@ -692,23 +692,30 @@ function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: 
 const app = getEl<HTMLDivElement>('#app');
 app.innerHTML = `
   <div class="site-shell">
-    <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>inspect_emergent_nak_pump_gradients</code></span></div>
+    <div class="nav-line">
+      <a href="./index.html">← Back</a>
+      <div class="spacer"></div>
+      <button id="theme-toggle" class="theme-btn">☀</button>
+    </div>
     <header class="page-head">
       <p class="eyebrow">Passive Selective Permeability vs Active Pumping</p>
-      <h1>Na/K Pump</h1>
+      <h1>The Na/K Pump</h1>
+      <p class="teaching-label">Key concepts</p>
       <ul class="key-points">
-        <li>The NA/K pump establishes a concentration gradient for Na and K across the membrane</li>
-        <li>Na+ and K+ diffuse through separate passive channels.</li>
-        <li>Pump moves 3 Na+ out for 2 K+ in</li>
-        <li>Try different Na/K pump strengths and observe how equilibrium concentration gradients change.</li>
-        <li>The Na/K pump is an active transporter that helps cells maintain concentration gradients.</li>
+        <li>The Na/K pump uses energy (ATP) to move Na⁺ out and K⁺ in against concentration gradients.</li>
+        <li>Active transport opposes diffusion and electrical attraction.</li>
+        <li>With the pump running, the cell maintains its concentration gradients at steady state.</li>
+      </ul>
+      <p class="teaching-label questions">Questions to explore</p>
+      <ul class="guided-questions">
+        <li>What happens to the Na⁺ and K⁺ concentrations when pump rate = 0?</li>
+        <li>How does pump rate affect how well the gradients are maintained?</li>
       </ul>
     </header>
     <div class="sim-layout">
       <aside class="controls">
         <div class="panel">
           <div class="group">
-            <p class="group-label">Classroom Controls</p>
             <div class="button-row">
               <button id="toggle-play" class="primary">Pause</button>
               <button id="rerun">Rerun</button>
@@ -867,7 +874,10 @@ buttons.pumpToggle.addEventListener('click', () => {
   render();
 });
 buttons.rerun.addEventListener('click', () => {
+  currentSeed = randomSeed();
   rebuild();
+  isPlaying = true;
+  buttons.togglePlay.textContent = 'Pause';
   render();
 });
 buttons.resetDefaults.addEventListener('click', () => {
@@ -893,6 +903,11 @@ displayInputs.playbackSpeed.addEventListener('change', () => {
 });
 
 window.addEventListener('resize', () => render());
+
+getEl<HTMLButtonElement>('#theme-toggle').addEventListener('click', () => {
+  const isLight = document.documentElement.classList.toggle('light');
+  getEl<HTMLButtonElement>('#theme-toggle').textContent = isLight ? '☽' : '☀';
+});
 
 function animate(ts: number): void {
   const dtSec = Math.max(0, (ts - lastTs) / 1000);

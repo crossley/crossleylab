@@ -335,23 +335,31 @@ function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: 
 const app = getEl<HTMLDivElement>('#app');
 app.innerHTML = `
   <div class="site-shell">
-    <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>inspect_emergent_membrane_potential_intro</code></span></div>
+    <div class="nav-line">
+      <a href="./index.html">← Back</a>
+      <div class="spacer"></div>
+      <button id="theme-toggle" class="theme-btn">☀</button>
+    </div>
     <header class="page-head">
       
-      <h1>What Is a Membrane Potential?</h1>
+      <h1>Voltage as Charge Separation</h1>
+      <p class="teaching-label">Key concepts</p>
       <ul class="key-points">
-        <li>Membrane potential is a charge difference across the membrane.</li>
-        <li>Here the membrane is impermeable, so ions cannot cross sides.</li>
-        <li>Vary positive and negative particle counts on each side of the membrane.</li>
-        <li>Find multiple ways to produce a negative membrane potential.</li>
-        <li>Find multiple ways to produce a positive membrane potential.</li>
+        <li>Membrane potential is the net charge difference across the membrane.</li>
+        <li>More positive charge on one side = positive voltage on that side.</li>
+        <li>Equal charges on both sides = zero voltage.</li>
+        <li>Voltage is a property of the imbalance, not the absolute number of ions.</li>
+      </ul>
+      <p class="teaching-label questions">Questions to explore</p>
+      <ul class="guided-questions">
+        <li>What combination gives the largest positive voltage?</li>
+        <li>Can you produce a negative voltage?</li>
       </ul>
     </header>
     <div class="sim-layout">
       <aside class="controls">
         <div class="panel">
           <div class="group">
-            <p class="group-label">Classroom Controls</p>
             <div class="button-row">
               <button id="toggle-play" class="primary">Pause</button>
               <button id="rerun">Rerun</button>
@@ -362,8 +370,6 @@ app.innerHTML = `
               <div class="field"><label for="pos-right">Positive ions on right</label><input id="pos-right" type="number" min="0" max="5000" step="1" /></div>
               <div class="field"><label for="neg-left">Negative ions on left</label><input id="neg-left" type="number" min="0" max="5000" step="1" /></div>
               <div class="field"><label for="neg-right">Negative ions on right</label><input id="neg-right" type="number" min="0" max="5000" step="1" /></div>
-              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="8" step="0.05" /></div>
-              <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="12" step="0.05" /></div>
             </div>
           </div>
         </div>
@@ -388,11 +394,7 @@ const inputs = {
   posLeft: getEl<HTMLInputElement>('#pos-left'),
   posRight: getEl<HTMLInputElement>('#pos-right'),
   negLeft: getEl<HTMLInputElement>('#neg-left'),
-  negRight: getEl<HTMLInputElement>('#neg-right'),
-  diffusionSd: getEl<HTMLInputElement>('#diffusion-sd')
-};
-const displayInputs = {
-  playbackSpeed: getEl<HTMLInputElement>('#playback-speed')
+  negRight: getEl<HTMLInputElement>('#neg-right')
 };
 const buttons = {
   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
@@ -414,8 +416,6 @@ function writeInputs(): void {
   setNumberInput(inputs.posRight, simParams.posRight, 0);
   setNumberInput(inputs.negLeft, simParams.negLeft, 0);
   setNumberInput(inputs.negRight, simParams.negRight, 0);
-  setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 2);
-  setNumberInput(displayInputs.playbackSpeed, displayParams.playbackSpeed, 2);
 }
 
 function readInputs(): SimParams {
@@ -425,15 +425,8 @@ function readInputs(): SimParams {
     posRight: Number(inputs.posRight.value) || 0,
     negLeft: Number(inputs.negLeft.value) || 0,
     negRight: Number(inputs.negRight.value) || 0,
-    diffusionSd: Number(inputs.diffusionSd.value) || 0
+    diffusionSd: defaultSim.diffusionSd
   });
-}
-
-function readDisplayInputs(): DisplayParams {
-  return {
-    ...displayParams,
-    playbackSpeed: clamp(Number(displayInputs.playbackSpeed.value) || defaultDisplay.playbackSpeed, 0.1, 12)
-  };
 }
 
 function rebuild(): void {
@@ -491,13 +484,12 @@ for (const input of Object.values(inputs)) {
     render();
   });
 }
-displayInputs.playbackSpeed.addEventListener('change', () => {
-  displayParams = readDisplayInputs();
-  writeInputs();
-  render();
-});
-
 window.addEventListener('resize', () => render());
+
+getEl<HTMLButtonElement>('#theme-toggle').addEventListener('click', () => {
+  const isLight = document.documentElement.classList.toggle('light');
+  getEl<HTMLButtonElement>('#theme-toggle').textContent = isLight ? '☽' : '☀';
+});
 
 function animate(ts: number): void {
   const dtSec = Math.max(0, (ts - lastTs) / 1000);

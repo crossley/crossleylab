@@ -48,6 +48,7 @@ interface VariantConfig {
   defaultType1Permeability?: number;
   defaultType0Charge?: 1 | -1;
   defaultType1Charge?: 1 | -1;
+  guidedQuestions?: string[];
 }
 
 interface SimParams {
@@ -711,21 +712,29 @@ export function mountTwoIonRestingPage(variant: VariantConfig): void {
   const app = getEl<HTMLDivElement>('#app');
   app.innerHTML = `
     <div class="site-shell">
-      <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>${variant.pageId}</code></span></div>
+      <div class="nav-line">
+        <a href="./index.html">← Back</a>
+        <div class="spacer"></div>
+        <button id="theme-toggle" class="theme-btn">☀</button>
+      </div>
       <header class="page-head">
         <p class="eyebrow">${variant.eyebrow ?? 'Resting Potential Sequence'}</p>
         <h1>${variant.title}</h1>
+        <p class="teaching-label">Key concepts</p>
         <ul class="key-points">
           ${subtitlePoints.map((point) => `<li>${point}</li>`).join('')}
         </ul>
+        ${variant.guidedQuestions && variant.guidedQuestions.length > 0 ? `
+        <p class="teaching-label questions">Questions to explore</p>
+        <ul class="guided-questions">
+          ${variant.guidedQuestions.map((q) => `<li>${q}</li>`).join('')}
+        </ul>` : ''}
       </header>
       <div class="sim-layout">
         <aside class="controls">
           <div class="panel">
             <div class="group">
-              <p class="group-label">Basic Controls</p>
               <div class="button-row"><button id="toggle-play" class="primary">Pause</button><button id="rerun">Rerun</button><button id="reset-defaults" class="warn">Reset Defaults</button></div>
-              <div class="button-row"><button id="rewind">Rewind</button><button id="random-seed">Randomize Seed</button></div>
               <div class="control-grid">
                 <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="10" max="5000" step="1" /></div>
                 <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
@@ -734,30 +743,9 @@ export function mountTwoIonRestingPage(variant: VariantConfig): void {
                 <div class="field"><label for="type1-permeability">K+ permeability</label><input id="type1-permeability" type="number" min="0" max="1" step="0.01" /></div>
                 <div class="field"><label for="pump-strength">NA+/K+ pump strength</label><input id="pump-strength" type="number" min="0" max="2" step="0.05" /></div>
                 <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
-                <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+                ${variant.withGoldman ? '<div class="field"><label for="goldman-scale">Voltage scale</label><input id="goldman-scale" type="number" min="1" max="200" step="1" /></div>' : ''}
               </div>
             </div>
-            <details><summary>Advanced Controls</summary><div class="group" style="margin-top:8px;"><div class="control-grid">
-              <div class="field"><label for="total-time">Trace window T (ms)</label><input id="total-time" type="number" min="100" max="20000" step="10" /></div>
-              <div class="field"><label for="dt">dt (ms)</label><input id="dt" type="number" min="0.05" max="20" step="0.05" /></div>
-              <div class="field"><label for="box-width">Box width</label><input id="box-width" type="number" min="40" max="500" step="1" /></div>
-              <div class="field"><label for="box-height">Box height</label><input id="box-height" type="number" min="40" max="500" step="1" /></div>
-              <div class="field"><label for="wall-thickness">Wall thickness</label><input id="wall-thickness" type="number" min="0.5" max="50" step="0.5" /></div>
-              <div class="field"><label for="neg-x">Immobile anion reference x (fixed)</label><input id="neg-x" type="number" step="1" readonly /></div>
-              <div class="field"><label for="neg-y">Immobile anion reference y (fixed)</label><input id="neg-y" type="number" step="1" readonly /></div>
-              <div class="field"><label for="initial-left-frac">Initial left fraction</label><input id="initial-left-frac" type="number" min="0" max="1" step="0.01" /></div>
-              <div class="field"><label for="trace-ylim">Min trace y-range</label><input id="trace-ylim" type="number" min="10" max="500" step="1" /></div>
-              <div class="field"><label for="point-size">Point size</label><input id="point-size" type="number" min="0.5" max="8" step="0.25" /></div>
-              <div class="field"><label for="target-fps">Playback FPS</label><input id="target-fps" type="number" min="1" max="120" step="1" /></div>
-              ${variant.withGoldman ? '<div class="field"><label for="goldman-scale">Voltage scale</label><input id="goldman-scale" type="number" min="1" max="200" step="1" /></div>' : ''}
-            </div></div></details>
-            <div class="group"><p class="group-label">Status</p><dl class="status-list">
-              <dt>Step</dt><dd id="status-frame">0</dd><dt>Time (ms)</dt><dd id="status-time">0.0</dd>
-              <dt>V_NA+ (mV proxy)</dt><dd id="status-va">0</dd><dt>V_K+ (mV proxy)</dt><dd id="status-vb">0</dd>
-              <dt>V_total (mV proxy)</dt><dd id="status-vt">0</dd><dt>dt</dt><dd id="status-dt">0</dd>
-              <dt>Step SD</dt><dd id="status-step-sd">0</dd><dt>Seed</dt><dd id="status-seed">0</dd>
-            </dl></div>
-            <div class="group"><p class="group-label">${variant.equationGroupLabel ?? 'Equation + Trace Readout'}</p><div class="equation-card"><pre class="equation" id="equation-block"></pre><p>${variant.equationDescription ?? (variant.withGoldman ? 'Per-ion and total compartment imbalances are qualitative charge-separation proxies. The dashed white line is a permeability-weighted Goldman-style prediction scaled for comparison.' : 'Per-ion and total compartment imbalances are qualitative charge-separation proxies built from the point-charge resting-potential model.')}</p></div></div>
           </div>
         </aside>
         <section class="panel canvas-panel">
@@ -781,7 +769,6 @@ export function mountTwoIonRestingPage(variant: VariantConfig): void {
   const particleCanvas = getEl<HTMLCanvasElement>('#particle-canvas');
   const concentrationCanvas = getEl<HTMLCanvasElement>('#concentration-canvas');
   const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
-  const equationBlock = getEl<HTMLElement>('#equation-block');
   const inputs = {
     numParticles: getEl<HTMLInputElement>('#num-particles'),
     diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
@@ -790,36 +777,12 @@ export function mountTwoIonRestingPage(variant: VariantConfig): void {
     type1Permeability: getEl<HTMLInputElement>('#type1-permeability'),
     pumpStrength: getEl<HTMLInputElement>('#pump-strength'),
     playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
-    seed: getEl<HTMLInputElement>('#seed'),
-    totalTime: getEl<HTMLInputElement>('#total-time'),
-    dt: getEl<HTMLInputElement>('#dt'),
-    boxWidth: getEl<HTMLInputElement>('#box-width'),
-    boxHeight: getEl<HTMLInputElement>('#box-height'),
-    wallThickness: getEl<HTMLInputElement>('#wall-thickness'),
-    negX: getEl<HTMLInputElement>('#neg-x'),
-    negY: getEl<HTMLInputElement>('#neg-y'),
-    initialLeftFrac: getEl<HTMLInputElement>('#initial-left-frac'),
-    traceYLim: getEl<HTMLInputElement>('#trace-ylim'),
-    pointSize: getEl<HTMLInputElement>('#point-size'),
-    targetFps: getEl<HTMLInputElement>('#target-fps'),
     goldmanScale: variant.withGoldman ? getEl<HTMLInputElement>('#goldman-scale') : null
-  };
-  const statusEls = {
-    frame: getEl<HTMLElement>('#status-frame'),
-    time: getEl<HTMLElement>('#status-time'),
-    va: getEl<HTMLElement>('#status-va'),
-    vb: getEl<HTMLElement>('#status-vb'),
-    vt: getEl<HTMLElement>('#status-vt'),
-    dt: getEl<HTMLElement>('#status-dt'),
-    stepSd: getEl<HTMLElement>('#status-step-sd'),
-    seed: getEl<HTMLElement>('#status-seed')
   };
   const buttons = {
     togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
     rerun: getEl<HTMLButtonElement>('#rerun'),
-    resetDefaults: getEl<HTMLButtonElement>('#reset-defaults'),
-    rewind: getEl<HTMLButtonElement>('#rewind'),
-    randomSeed: getEl<HTMLButtonElement>('#random-seed')
+    resetDefaults: getEl<HTMLButtonElement>('#reset-defaults')
   };
 
   let simParams: SimParams = { ...defaultSim };
@@ -840,32 +803,20 @@ export function mountTwoIonRestingPage(variant: VariantConfig): void {
     setNumberInput(inputs.type1Permeability, simParams.type1Permeability, 2);
     setNumberInput(inputs.pumpStrength, simParams.pumpStrength, 2);
     setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
-    setNumberInput(inputs.seed, currentSeed, 0);
-    setNumberInput(inputs.totalTime, simParams.T, 0);
-    setNumberInput(inputs.dt, simParams.dt, 3);
-    setNumberInput(inputs.boxWidth, simParams.boxWidth, 1);
-    setNumberInput(inputs.boxHeight, simParams.boxHeight, 1);
-    setNumberInput(inputs.wallThickness, simParams.wallThickness, 2);
-    setNumberInput(inputs.negX, simParams.negX, 1);
-    setNumberInput(inputs.negY, simParams.negY, 1);
-    setNumberInput(inputs.initialLeftFrac, simParams.initialLeftFrac, 2);
-    setNumberInput(inputs.traceYLim, displayParams.traceYLimit, 0);
-    setNumberInput(inputs.pointSize, displayParams.pointSize, 2);
-    setNumberInput(inputs.targetFps, displayParams.targetFps, 0);
     if (inputs.goldmanScale) setNumberInput(inputs.goldmanScale, simParams.goldmanScale, 0);
   }
 
   function readSimInputs(): SimParams {
-    const boxHeight = clamp(Number(inputs.boxHeight.value) || defaultSim.boxHeight, 40, 500);
-    const boxWidth = clamp(Number(inputs.boxWidth.value) || defaultSim.boxWidth, 40, 500);
-    const wallThickness = clamp(Number(inputs.wallThickness.value) || defaultSim.wallThickness, 0.5, Math.min(50, boxWidth - 2));
+    const boxHeight = defaultSim.boxHeight;
+    const boxWidth = defaultSim.boxWidth;
+    const wallThickness = defaultSim.wallThickness;
     const electricStrengthRaw = Number(inputs.electricStrength.value);
     const electricStrength = Number.isNaN(electricStrengthRaw)
       ? defaultSim.electricStrength
       : electricStrengthRaw;
     return {
-      T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
-      dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+      T: defaultSim.T,
+      dt: defaultSim.dt,
       numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 10, MAX_PARTICLES),
       type0Fraction: simParams.type0Fraction,
       boxWidth,
@@ -881,7 +832,7 @@ export function mountTwoIonRestingPage(variant: VariantConfig): void {
       type1Permeability: clamp(Number(inputs.type1Permeability.value) || 0, 0, 1),
       type0Charge: simParams.type0Charge,
       type1Charge: simParams.type1Charge,
-      initialLeftFrac: clamp(Number(inputs.initialLeftFrac.value) || defaultSim.initialLeftFrac, 0, 1),
+      initialLeftFrac: defaultSim.initialLeftFrac,
       goldmanScale: variant.withGoldman ? clamp(Number(inputs.goldmanScale?.value) || defaultSim.goldmanScale, 1, 200) : defaultSim.goldmanScale,
       pumpStrength: clamp(Number(inputs.pumpStrength.value) || 0, 0, 2)
     };
@@ -889,10 +840,10 @@ export function mountTwoIonRestingPage(variant: VariantConfig): void {
 
   function readDisplayInputs(): DisplayParams {
     return {
-      pointSize: clamp(Number(inputs.pointSize.value) || defaultDisplay.pointSize, 0.5, 8),
+      pointSize: defaultDisplay.pointSize,
       playbackSpeed: clamp(Number(inputs.playbackSpeed.value) || defaultDisplay.playbackSpeed, 0.1, 8),
-      targetFps: clamp(Math.round(Number(inputs.targetFps.value) || defaultDisplay.targetFps), 1, 120),
-      traceYLimit: clamp(Number(inputs.traceYLim.value) || defaultDisplay.traceYLimit, 10, 500)
+      targetFps: defaultDisplay.targetFps,
+      traceYLimit: defaultDisplay.traceYLimit
     };
   }
 
@@ -993,69 +944,7 @@ export function mountTwoIonRestingPage(variant: VariantConfig): void {
     }
   }
 
-  function updateEquationText(): void {
-    const stepSd = simParams.diffusionSd * simParams.dt;
-    const fieldLine = 'drift_(x,y) = Σ pointFieldDrift(fixed_anion_k - ion) + Σ pointFieldDrift(sampled_mobile_k - ion)';
-    const xLine = 'x_new = reflect(x_old + (dxdt + drift_x) · dt, -W/2, W/2)';
-    const focusHeading = variant.focusMode === 'permeability'
-      ? '<span class="accent-2">Permeability ratio focus</span>'
-      : variant.focusMode === 'goldman'
-        ? '<span class="accent-2">Goldman-style comparison</span>'
-        : '<span class="accent-2">Two-ion resting-potential proxies</span>';
-    const focusLines = variant.focusMode === 'permeability'
-      ? [
-          'Permeability is set by channel open probability: P_A = pA, P_B = pB',
-          'Increasing one channel\'s p raises that ion species\' influence on inside-vs-outside voltage',
-          'Channel geometry is fixed; permeability changes only by probabilistic gating'
-        ]
-      : variant.focusMode === 'goldman'
-      ? [
-            'Permeability is set by channel open probability: P_Na = pNa, P_K = pK',
-            `Goldman equation = ln((P_Na·Na_outside + P_K·K_outside)/(P_Na·Na_inside + P_K·K_inside)) × ${simParams.goldmanScale.toFixed(0)}`,
-            'Pump term applies 3 Na+ out / 2 K+ in active transport with adjustable strength'
-          ]
-      : [
-            'Na+ and K+ can start at equal concentrations across the membrane in this model',
-            'Immobile anion points provide the intracellular electrical field',
-            'V_total = ([+]_inside - [-]_inside) - ([+]_outside - [-]_outside)'
-          ];
-    equationBlock.innerHTML = [
-      '<span class="accent">Live update (two-ion resting-potential toy model)</span>',
-      fieldLine,
-      'Negative electric_strength attracts positive charge and repels negative charge',
-      'Positive electric_strength attracts negative charge and repels positive charge',
-      xLine,
-      'y_new = reflect(y_old + (dydt + drift_y) · dt, -H/2, H/2)',
-      'dxdt, dydt ~ Normal(0, diffusionSd²)',
-      '',
-      focusHeading,
-      'Compartment convention: left = inside, right = outside.',
-      'Immobile anions are sampled uniformly in the intracellular (left) chamber.',
-      'Na+ and K+ use fixed channel windows; in-channel crossing is accepted with ion-specific probability p',
-      'V_Na = scale · ln((Na_out + ε)/(Na_in + ε)), V_K = scale · ln((K_out + ε)/(K_in + ε))',
-      'V_total uses the Goldman concentration-ratio form in this two-ion view',
-      ...focusLines,
-      '',
-      `Per-step Brownian displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`,
-      `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
-      `Na+/K+ pump strength = ${simParams.pumpStrength.toFixed(2)}`,
-      `Trace window T = ${simParams.T.toFixed(0)} ms`
-    ].join('\n');
-  }
-
-  function updateStatus(): void {
-    statusEls.frame.textContent = `${state.stepCount}`;
-    statusEls.time.textContent = state.simTime.toFixed(1);
-    statusEls.va.textContent = state.VA.toFixed(0);
-    statusEls.vb.textContent = state.VB.toFixed(0);
-    statusEls.vt.textContent = state.VTotal.toFixed(0);
-    statusEls.dt.textContent = state.dt.toFixed(2);
-    statusEls.stepSd.textContent = (simParams.diffusionSd * simParams.dt).toFixed(3);
-    statusEls.seed.textContent = `${currentSeed >>> 0}`;
-  }
-
   function render(): void {
-    updateStatus();
     drawParticleCanvas(particleCanvas, state, displayParams.pointSize, variant, simParams.electricStrength);
     drawConcentrationCanvas(concentrationCanvas, trace, state.simTime, simParams.T);
     drawTraceCanvas(traceCanvas, trace, state.simTime, simParams.T, displayParams.traceYLimit, variant.traceTitle ?? 'Membrane Potential Proxy Traces', variant);
@@ -1064,22 +953,15 @@ export function mountTwoIonRestingPage(variant: VariantConfig): void {
   function rebuildFromInputs(): void {
     simParams = readSimInputs();
     displayParams = readDisplayInputs();
-    currentSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
     rng = new Rng(currentSeed);
     state = createState(simParams, currentSeed, variant);
     trace = createTrace(state, simParams.T);
     stepAccumulator = 0;
     writeInputs();
-    updateEquationText();
   }
 
   function applyLiveSimParams(): void {
     const next = readSimInputs();
-    const nextSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
-    if (nextSeed !== currentSeed) {
-      currentSeed = nextSeed;
-      rng = new Rng(currentSeed);
-    }
     simParams = next;
     state = resizeState(state, simParams.numParticles, rng);
     state = retargetTypes(state, simParams.type0Fraction, rng);
@@ -1104,28 +986,29 @@ export function mountTwoIonRestingPage(variant: VariantConfig): void {
     enforceGeometry(state);
     trimTrace(trace, state.simTime, simParams.T);
     writeInputs();
-    updateEquationText();
   }
 
   function refreshDisplayFromInputs(): void { displayParams = readDisplayInputs(); writeInputs(); }
   function setPlaying(next: boolean): void { isPlaying = next; buttons.togglePlay.textContent = isPlaying ? 'Pause' : 'Play'; }
 
   writeInputs();
-  updateEquationText();
   render();
 
   buttons.togglePlay.addEventListener('click', () => setPlaying(!isPlaying));
-  buttons.rerun.addEventListener('click', () => { rebuildFromInputs(); setPlaying(true); render(); });
-  buttons.rewind.addEventListener('click', () => { rebuildFromInputs(); render(); });
-  buttons.randomSeed.addEventListener('click', () => { currentSeed = randomSeed(); setNumberInput(inputs.seed, currentSeed, 0); rebuildFromInputs(); setPlaying(true); render(); });
+  buttons.rerun.addEventListener('click', () => { currentSeed = randomSeed(); rebuildFromInputs(); setPlaying(true); render(); });
   buttons.resetDefaults.addEventListener('click', () => { simParams = { ...defaultSim }; displayParams = { ...defaultDisplay }; currentSeed = randomSeed(); writeInputs(); rebuildFromInputs(); setPlaying(true); render(); });
 
   const simKeys = [
-    inputs.numParticles, inputs.diffusionSd, inputs.electricStrength, inputs.type0Permeability, inputs.type1Permeability, inputs.pumpStrength, inputs.seed, inputs.totalTime, inputs.dt, inputs.boxWidth, inputs.boxHeight, inputs.wallThickness, inputs.negX, inputs.negY, inputs.initialLeftFrac, ...(inputs.goldmanScale ? [inputs.goldmanScale] : [])
+    inputs.numParticles, inputs.diffusionSd, inputs.electricStrength, inputs.type0Permeability, inputs.type1Permeability, inputs.pumpStrength, ...(inputs.goldmanScale ? [inputs.goldmanScale] : [])
   ];
   for (const el of simKeys) el.addEventListener('change', () => { applyLiveSimParams(); render(); });
-  for (const el of [inputs.playbackSpeed, inputs.traceYLim, inputs.pointSize, inputs.targetFps]) el.addEventListener('change', () => { refreshDisplayFromInputs(); render(); });
+  inputs.playbackSpeed.addEventListener('change', () => { refreshDisplayFromInputs(); render(); });
   window.addEventListener('resize', () => render());
+
+  getEl<HTMLButtonElement>('#theme-toggle').addEventListener('click', () => {
+    const isLight = document.documentElement.classList.toggle('light');
+    getEl<HTMLButtonElement>('#theme-toggle').textContent = isLight ? '☽' : '☀';
+  });
 
   function animate(ts: number): void {
     const dtSec = Math.max(0, (ts - lastTs) / 1000);
