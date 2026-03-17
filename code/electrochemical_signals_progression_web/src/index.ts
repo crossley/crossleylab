@@ -78,6 +78,17 @@ app.innerHTML = `
     </header>
 
     ${groupedCardsHtml}
+
+    <section class="panel lesson-group">
+      <h2 class="section-title">Python Lab Guides</h2>
+      <p class="arc-description">Step-by-step worksheets that pair with the Python scripts. Work through these if you are building the simulations yourself rather than just running them.</p>
+      <div class="link-list">
+        <a class="link-card ready" href="./guide_lesson_01.html">
+          <strong>Lesson 1 — Free Diffusion and Euler's Method</strong>
+          <span>Write the core position-update rule, discover why the anchor matters, and meet Euler's method</span>
+        </a>
+      </div>
+    </section>
   </div>
 `;
 

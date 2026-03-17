@@ -9,13 +9,18 @@ const lessonInputs = Object.fromEntries(
     .map((lesson) => [lesson.id, resolve(__dirname, lesson.htmlPath)])
 );
 
+const guideInputs = {
+  guide_lesson_01: resolve(__dirname, 'guide_lesson_01.html')
+};
+
 export default defineConfig({
   base: './',
   build: {
     rollupOptions: {
       input: {
         index: resolve(__dirname, 'index.html'),
-        ...lessonInputs
+        ...lessonInputs,
+        ...guideInputs
       }
     }
   }
