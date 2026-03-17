@@ -1,0 +1,1325 @@
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccc98-6723-7ea3-bd4d-fc04ea2e8c69
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Two-Ion Selective Channels with Electrical Attraction
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Two-Ion Selective Channels with Electrical Attraction
+
+- remove Ion A fraction from UI controls and fix to 0.5
+
+- reorder the remaining UI controls to be in the following
+  order:
+
+  - Particles
+  - Diffusion SD
+  - Electric strength
+  - Ion A charge
+  - Ion B charge
+  - Ion A pore permeability
+  - Ion B pore permeability
+
+- Remove the upper limit on the Electric strength UI control
+
+- Make the trace plot and the particle sim plot the saem
+  size.
+
+mcp startup: no servers
+codex
+I’ll locate the “Two-Ion Selective Channels with Electrical Attraction” implementation, then apply only those UI and plotting changes in this repo and run the project checks/build.
+exec
+/bin/zsh -lc 'rg --files' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'rg -n "Ion A fraction|Electric strength|pore permeability|Diffusion SD|Particles|Two-Ion|Ion A charge|Ion B charge|trace|particle sim|change_requests"' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+src/pages/resting_two_ion_common.ts
+src/pages/inspect_nernst_one_ion.ts
+src/pages/sim_shared.ts
+src/pages/inspect_ap_threshold_all_or_none.ts
+src/pages/inspect_resting_potential_charge_wall.ts
+src/pages/action_potential_common.ts
+src/pages/inspect_field_attraction.ts
+src/pages/inspect_diffusion_selective_permeability_rate.ts
+src/pages/inspect_diffusion_permeability.ts
+src/pages/inspect_two_ion_selective_channels.ts
+src/pages/inspect_diffusion_pore.ts
+src/pages/inspect_ap_phases.ts
+src/pages/inspect_diffusion_selective.ts
+src/pages/inspect_membrane_potential_intro.ts
+src/pages/inspect_diffusion_free.ts
+src/pages/inspect_ap_subthreshold.ts
+src/pages/inspect_nak_pump_gradients.ts
+src/lessons.ts
+src/index.ts
+src/style.css
+ succeeded in 51ms:
+Total output lines: 2855
+
+src/pages/resting_two_ion_common.ts:30:  defaultNumParticles: number;
+src/pages/resting_two_ion_common.ts:41:  tracePanelTitle?: string;
+src/pages/resting_two_ion_common.ts:42:  traceHint?: string;
+src/pages/resting_two_ion_common.ts:43:  traceTitle?: string;
+src/pages/resting_two_ion_common.ts:55:  numParticles: number;
+src/pages/resting_two_ion_common.ts:79:  traceYLimit: number;
+src/pages/resting_two_ion_common.ts:87:  numParticles: number;
+src/pages/resting_two_ion_common.ts:176:  for (let i = 0; i < state.numParticles; i += 1) {
+src/pages/resting_two_ion_common.ts:185:  const denom = Math.max(1, state.numParticles);
+src/pages/resting_two_ion_common.ts:205:  const numParticles = clamp(Math.round(params.numParticles), 10, MAX_PARTICLES);
+src/pages/resting_two_ion_common.ts:219:  const x = new Float32Array(numParticles);
+src/pages/resting_two_ion_common.ts:220:  const y = new Float32Array(numParticles);
+src/pages/resting_two_ion_common.ts:221:  const types = new Uint8Array(numParticles);
+src/pages/resting_two_ion_common.ts:222:  const charges = new Int8Array(numParticles);
+src/pages/resting_two_ion_common.ts:225:  for (let i = 0; i < numParticles; i += 1) {
+src/pages/resting_two_ion_common.ts:244:    x, y, types, charges, numParticles, dt, simTime: 0, stepCount: 0, boxWidth, boxHeight, leftWall, rightWall,
+src/pages/resting_two_ion_common.ts:258:  for (let i = 0; i < state.numParticles; i += 1) {
+src/pages/resting_two_ion_common.ts:314:  for (let i = 0; i < state.numParticles; i += 1) {
+codex
+I found the likely target in `src/pages/inspect_two_ion_selective_channels.ts` with shared UI/layout in `src/pages/resting_two_ion_common.ts`; I’m reading both to implement exactly this section’s bullets only.
+exec
+/bin/zsh -lc "sed -n '1,260p' src/pages/inspect_two_ion_selective_channels.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '1,260p' src/pages/resting_two_ion_common.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_NUM_PARTICLES,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  drawMembraneWall,
+  evenlySpacedChannelBounds,
+  fieldColor,
+  leftEdgeChargeWallX,
+  wallFieldDrift
+} from './sim_shared';
+
+type IonType = 0 | 1;
+
+interface SimParams {
+  T: number;
+  dt: number;
+  numParticles: number;
+  type0Fraction: number;
+ succeeded in 51ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_POTENTIAL_SCALE,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  drawMembraneWall,
+  evenlySpacedChannelBounds,
+  fieldColor,
+  leftEdgeChargeWallX,
+  pointFieldDrift,
+  wallFieldDrift
+} from './sim_shared';
+
+type IonType = 0 | 1;
+type FieldMode = 'point' | 'wall';
+type TeachingFocus = 'resting' | 'permeability' | 'goldman';
+
+interface VariantConfig {
+  pageId: string;
+exec
+/bin/zsh -lc "sed -n '260,620p' src/pages/resting_two_ion_common.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '620,1020p' src/pages/resting_two_ion_common.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+    const yPrev = state.y[i];
+    let attractX = 0;
+    let attractY = 0;
+    if (variant.fieldMode === 'point') {
+      const dx = state.negX - xPrev;
+      const dy = state.negY - yPrev;
+      [attractX, attractY] = pointFieldDrift(dx, dy, params.electricStrength, state.charges[i]);
+    } else {
+      const dx = state.negX - xPrev;
+      attractX = wallFieldDrift(dx, params.electricStrength, state.charges[i]);
+    }
+    const xTrial = reflectIntoBounds(xPrev + (rng.normal(0, params.diffusionSd) + attractX) * state.dt, minX, halfW);
+    const yNew = reflectIntoBounds(yPrev + (rng.normal(0, params.diffusionSd) + attractY) * state.dt, -halfH, halfH);
+    let xNew = xTrial;
+    const tryingToCrossLeft = xPrev > state.rightWall && xTrial <= state.rightWall;
+    const tryingToCrossRight = xPrev < state.leftWall && xTrial >= state.leftWall;
+    const type = state.types[i] as IonType;
+    const cMin = type === 0 ? state.type0YMin : state.type1YMin;
+    const cMax = type === 0 ? state.type0YMax : state.type1YMax;
+    const inChannel = yNew >= cMin && yNew <= cMax;
+ succeeded in 51ms:
+    type1Permeability: getEl<HTMLInputElement>('#type1-permeability'),
+    pumpStrength: getEl<HTMLInputElement>('#pump-strength'),
+    playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
+    seed: getEl<HTMLInputElement>('#seed'),
+    totalTime: getEl<HTMLInputElement>('#total-time'),
+    dt: getEl<HTMLInputElement>('#dt'),
+    boxWidth: getEl<HTMLInputElement>('#box-width'),
+    boxHeight: getEl<HTMLInputElement>('#box-height'),
+    wallThickness: getEl<HTMLInputElement>('#wall-thickness'),
+    negX: getEl<HTMLInputElement>('#neg-x'),
+    negY: getEl<HTMLInputElement>('#neg-y'),
+    initialLeftFrac: getEl<HTMLInputElement>('#initial-left-frac'),
+    traceYLim: getEl<HTMLInputElement>('#trace-ylim'),
+    pointSize: getEl<HTMLInputElement>('#point-size'),
+    targetFps: getEl<HTMLInputElement>('#target-fps'),
+    goldmanScale: variant.withGoldman ? getEl<HTMLInputElement>('#goldman-scale') : null
+  };
+  const statusEls = {
+    frame: getEl<HTMLElement>('#status-frame'),
+    time: getEl<HTMLElement>('#status-time'),
+codex
+I’ve identified where the controls/layout are generated in the shared two-ion page module. I’m now verifying which entry page actually mounts this section so edits hit only the requested lesson behavior.
+exec
+/bin/zsh -lc "sed -n '1,260p' src/pages/inspect_two_ion_selective_channels.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '1,260p' src/lessons.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '1,220p' src/pages/inspect_two_ion_selective_channels.ts | rg -n \"mountTwoIonRestingPage|control-grid|type0-fraction|electric-strength|trace-canvas|particle-canvas|Ion A|permeability|canvas\" -n --no-line-number" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '1,240p' src/index.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_NUM_PARTICLES,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  drawMembraneWall,
+  evenlySpacedChannelBounds,
+  fieldColor,
+  leftEdgeChargeWallX,
+  wallFieldDrift
+} from './sim_shared';
+
+type IonType = 0 | 1;
+
+interface SimParams {
+  T: number;
+  dt: number;
+  numParticles: number;
+  type0Fraction: number;
+ succeeded in 52ms:
+import lessonsData from './lessons.json';
+
+export type LessonUnit = 'diffusion' | 'membrane_potential' | 'action_potential';
+export type LessonStatus = 'active' | 'draft' | 'archived';
+
+export interface LessonMeta {
+  id: string;
+  title: string;
+  description: string;
+  htmlPath: string;
+  tsEntry: string;
+  unit: LessonUnit;
+  order: number;
+  status: LessonStatus;
+}
+
+export const lessons: LessonMeta[] = [...(lessonsData as LessonMeta[])].sort((a, b) => a.order - b.order);
+ exited 1 in 52ms:
+
+ succeeded in 50ms:
+import './style.css';
+import { lessons } from './lessons';
+
+const app = document.querySelector<HTMLDivElement>('#app');
+if (!app) {
+  throw new Error('Missing #app root');
+}
+
+const unitOrder = ['diffusion', 'membrane_potential', 'action_potential'] as const;
+const unitLabels: Record<(typeof unitOrder)[number], string> = {
+  diffusion: 'Diffusion Foundations',
+  membrane_potential: 'Electrical Forces and Membrane Potential',
+  action_potential: 'Action Potentials'
+};
+
+const groupedCardsHtml = unitOrder
+  .map((unit) => {
+    const unitLessons = lessons.filter((lesson) => lesson.status === 'active' && lesson.unit === unit);
+    if (unitLessons.length === 0) return '';
+    const cards = unitLessons
+codex
+I confirmed there are two implementations; next I’m checking lesson routing to ensure we edit the active page for this section and avoid touching unrelated content.
+exec
+/bin/zsh -lc 'rg -n "two_ion_selective_channels|inspect_two_ion_selective_channels|mountTwoIonRestingPage" src lessons.json src/lessons.json inspect_two_ion_selective_channels.html inspect_resting_potential_charge_wall.html src/pages' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '1,260p' src/lessons.json" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '1,220p' inspect_two_ion_selective_channels.html" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '1,220p' src/pages/inspect_resting_potential_charge_wall.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web exited 2 in 51ms:
+rg: lessons.json: No such file or directory (os error 2)
+src/lessons.json:83:    "id": "inspect_two_ion_selective_channels",
+src/lessons.json:86:    "htmlPath": "inspect_two_ion_selective_channels.html",
+src/lessons.json:87:    "tsEntry": "src/pages/inspect_two_ion_selective_channels.ts",
+inspect_two_ion_selective_channels.html:10:    <script type="module" src="/src/pages/inspect_two_ion_selective_channels.ts"></script>
+src/pages/resting_two_ion_common.ts:517:export function mountTwoIonRestingPage(variant: VariantConfig): void {
+src/pages/inspect_resting_potential_charge_wall.ts:1:import { mountTwoIonRestingPage } from './resting_two_ion_common';
+src/pages/inspect_resting_potential_charge_wall.ts:4:mountTwoIonRestingPage({
+src/pages/inspect_two_ion_selective_channels.ts:606:      <span>Page: <code>inspect_two_ion_selective_channels</code></span>
+src/pages/inspect_two_ion_selective_channels.ts:606:      <span>Page: <code>inspect_two_ion_selective_channels</code></span>
+src/pages/resting_two_ion_common.ts:517:export function mountTwoIonRestingPage(variant: VariantConfig): void {
+src/lessons.json:83:    "id": "inspect_two_ion_selective_channels",
+src/lessons.json:86:    "htmlPath": "inspect_two_ion_selective_channels.html",
+src/lessons.json:87:    "tsEntry": "src/pages/inspect_two_ion_selective_channels.ts",
+src/pages/inspect_resting_potential_charge_wall.ts:1:import { mountTwoIonRestingPage } from './resting_two_ion_common';
+src/pages/inspect_resting_potential_charge_wall.ts:4:mountTwoIonRestingPage({
+ succeeded in 52ms:
+[
+  {
+    "id": "inspect_diffusion_free",
+    "title": "Free Diffusion",
+    "description": "Particles spread through a box with no membrane and no electrical forces",
+    "htmlPath": "inspect_diffusion_free.html",
+    "tsEntry": "src/pages/inspect_diffusion_free.ts",
+    "unit": "diffusion",
+    "order": 1,
+    "status": "active"
+  },
+  {
+    "id": "inspect_diffusion_pore",
+    "title": "Diffusion Through a Membrane Pore",
+    "description": "A membrane separates two compartments and particles can cross only through one pore",
+    "htmlPath": "inspect_diffusion_pore.html",
+    "tsEntry": "src/pages/inspect_diffusion_pore.ts",
+    "unit": "diffusion",
+    "order": 2,
+    "status": "active"
+ succeeded in 51ms:
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Two-Ion Selective Channels with Electrical Attraction</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/pages/inspect_two_ion_selective_channels.ts"></script>
+  </body>
+</html>
+ succeeded in 51ms:
+import { mountTwoIonRestingPage } from './resting_two_ion_common';
+import { DEFAULT_NUM_PARTICLES, DEFAULT_POTENTIAL_SCALE, SIM_COLORS } from './sim_shared';
+
+mountTwoIonRestingPage({
+  pageId: 'inspect_resting_potential_charge_wall',
+  title: 'Resting Potential from a Charge Wall',
+  subtitle: 'Two-ion resting potential teaching model.',
+  subtitlePoints: [
+    'Convention: left = inside, right = outside.',
+    'Resting voltage reflects diffusion, field effects, and selective permeability together.',
+    'Changing Na+ and K+ permeability shifts ion influence and total membrane voltage.'
+  ],
+  fieldMode: 'wall',
+  withGoldman: true,
+  focusMode: 'goldman',
+  type1Color: SIM_COLORS.ionB,
+  type1Label: 'K+',
+  negMarkerLabel: 'Charge wall',
+  eyebrow: 'Selective Membranes and the Emergence of Resting Potential',
+  equationGroupLabel: 'Teaching Note',
+codex
+The active lesson for this section is the standalone `inspect_two_ion_selective_channels.ts`, so I’ll make the requested control/order/limit/plot-size changes there only. I’m now extracting its UI template and input parsing blocks to patch safely.
+exec
+/bin/zsh -lc 'rg -n "control-grid|type0-fraction|electric-strength|type0-charge|type1-charge|type0-permeability|type1-permeability|particle-canvas|trace-canvas|drawTrace|drawParticle|syncCanvasSize|readSimInputs|writeInputs|simKeys" src/pages/inspect_two_ion_selective_channels.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '520,860p' src/pages/inspect_two_ion_selective_channels.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '860,1180p' src/pages/inspect_two_ion_selective_channels.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+425:function syncCanvasSize(canvas: HTMLCanvasElement): void {
+509:  syncCanvasSize(canvas);
+530:  syncCanvasSize(canvas);
+632:            <div class="control-grid">
+634:              <div class="field"><label for="type0-fraction">Ion A fraction</label><input id="type0-fraction" type="number" min="0" max="1" step="0.01" /></div>
+635:              <div class="field"><label for="type0-charge">Ion A charge</label><input id="type0-charge" type="number" min="-5" max="5" step="0.1" /></div>
+636:              <div class="field"><label for="type1-charge">Ion B charge</label><input id="type1-charge" type="number" min="-5" max="5" step="0.1" /></div>
+638:              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+639:              <div class="field"><label for="type0-permeability">Ion A pore permeability</label><input id="type0-permeability" type="number" min="0" max="1" step="0.01" /></div>
+640:              <div class="field"><label for="type1-permeability">Ion B pore permeability</label><input id="type1-permeability" type="number" min="0" max="1" step="0.01" /></div>
+648:              <div class="control-grid">
+696:            <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+705:const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
+709:  type0Fraction: getEl<HTMLInputElement>('#type0-fraction'),
+710:  type0Charge: getEl<HTMLInputElement>('#type0-charge'),
+711:  type1Charge: getEl<HTMLInputElement>('#type1-charge'),
+713:  electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+714:  type0Permeability: getEl<HTMLInputElement>('#type0-permeability'),
+715:  type1Permeability: getEl<HTMLInputElement>('#type1-permeability'),
+759:function writeInputs(): void {
+ succeeded in 51ms:
+    ctx.fillStyle = state.types[i] === 0 ? SIM_COLORS.ionA : SIM_COLORS.ionB;
+    ctx.beginPath();
+    ctx.arc(px, py, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = 'rgba(232, 243, 255, 0.92)';
+  ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+}
+
+function drawSideTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: number, traceWindowMs: number): void {
+  syncCanvasSize(canvas);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const w = canvas.width;
+  const h = canvas.height;
+  const dpr = window.devicePixelRatio || 1;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#03060b';
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = 'rgba(120, 170, 255, 0.10)';
+ succeeded in 50ms:
+  statusEls.type0Right.textContent = `${state.type0Right}`;
+  statusEls.type1Left.textContent = `${state.type1Left}`;
+  statusEls.type1Right.textContent = `${state.type1Right}`;
+  statusEls.type0RightFrac.textContent = state.type0Total > 0 ? (state.type0Right / state.type0Total).toFixed(3) : '0.000';
+  statusEls.type1RightFrac.textContent = state.type1Total > 0 ? (state.type1Right / state.type1Total).toFixed(3) : '0.000';
+  statusEls.dt.textContent = state.dt.toFixed(2);
+  statusEls.stepSd.textContent = (simParams.diffusionSd * simParams.dt).toFixed(3);
+  statusEls.seed.textContent = `${currentSeed >>> 0}`;
+  statusEls.frames.textContent = `${trace.times.length}`;
+}
+
+function rebuildFromInputs(): void {
+  simParams = readSimInputs();
+  displayParams = readDisplayInputs();
+  currentSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
+  rng = new Rng(currentSeed);
+  state = createState(simParams, currentSeed);
+  trace = createTrace(state, simParams.T);
+  stepAccumulator = 0;
+  writeInputs();
+exec
+/bin/zsh -lc "rg -n \"#sim-canvas|#trace-canvas|trace-canvas|square-canvas|canvas-subpanel canvas|canvas-grid-2|canvas-panel|canvas-subpanel\" src/style.css && sed -n '280,460p' src/style.css" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+283:.canvas-panel {
+288:.canvas-grid-2 {
+301:  .canvas-grid-2 {
+306:.canvas-subpanel {
+362:.trace-canvas {
+366:.diffusion-pore-panel .pore-trace-canvas {
+370:.square-canvas {
+  font-variant-numeric: tabular-nums;
+}
+
+.canvas-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.canvas-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+codex
+I’m now patching `inspect_two_ion_selective_channels.ts`: removing the Ion A fraction control and wiring, enforcing a fixed `0.5` fraction in sim input handling, reordering controls as requested, removing electric-strength upper clamping, and making the sim canvas size match the trace canvas.
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+@@ -170,3 +170,3 @@
+     numParticles: clamp(Math.round(params.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(params.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(params.type0Charge, -5, 5),
+@@ -181,3 +181,3 @@
+     type1Permeability: clamp(params.type1Permeability, 0, 1),
+-    electricStrength: clamp(params.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, params.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+@@ -633,7 +633,6 @@
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+-              <div class="field"><label for="type0-fraction">Ion A fraction</label><input id="type0-fraction" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" step="0.01" /></div>
+               <div class="field"><label for="type0-charge">Ion A charge</label><input id="type0-charge" type="number" min="-5" max="5" step="0.1" /></div>
+               <div class="field"><label for="type1-charge">Ion B charge</label><input id="type1-charge" type="number" min="-5" max="5" step="0.1" /></div>
+-              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="type0-permeability">Ion A pore permeability</label><input id="type0-permeability" type="number" min="0" max="1" step="0.01" /></div>
+@@ -692,3 +691,3 @@
+           <div class="canvas-subpanel">
+-            <canvas id="sim-canvas"></canvas>
++            <canvas id="sim-canvas" class="square-canvas"></canvas>
+           </div>
+@@ -708,3 +707,2 @@
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  type0Fraction: getEl<HTMLInputElement>('#type0-fraction'),
+   type0Charge: getEl<HTMLInputElement>('#type0-charge'),
+@@ -760,3 +758,2 @@
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.type0Fraction, simParams.type0Fraction, 2);
+   setNumberInput(inputs.type0Charge, simParams.type0Charge, 2);
+@@ -788,3 +785,3 @@
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(Number(inputs.type0Fraction.value) || defaultSim.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(type0Charge, -5, 5),
+@@ -799,3 +796,3 @@
+     type1Permeability: clamp(Number(inputs.type1Permeability.value) || 0, 0, 1),
+-    electricStrength: clamp(Number(inputs.electricStrength.value) || defaultSim.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, Number(inputs.electricStrength.value) || defaultSim.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+@@ -954,3 +951,2 @@
+   inputs.numParticles,
+-  inputs.type0Fraction,
+   inputs.type0Charge,
+apply_patch(auto_approved=true) exited 0 in 86ms:
+Success. Updated the following files:
+M src/pages/inspect_two_ion_selective_channels.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+index 7fa463d1f3ff7b538ae24ad7626835ca9f4159f3..78e4b9997d06c983e25ccc80bd9ab87cf6893027
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+@@ -168,7 +168,7 @@
+     T: clamp(Math.round(params.T), 100, 20000),
+     dt: clamp(params.dt, 0.05, 20),
+     numParticles: clamp(Math.round(params.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(params.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(params.type0Charge, -5, 5),
+     type1Charge: clamp(params.type1Charge, -5, 5),
+     boxWidth,
+@@ -179,7 +179,7 @@
+     type1ChannelWidth: clamp(params.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(params.type0Permeability, 0, 1),
+     type1Permeability: clamp(params.type1Permeability, 0, 1),
+-    electricStrength: clamp(params.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, params.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   };
+ }
+@@ -631,11 +631,10 @@
+             </div>
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+-              <div class="field"><label for="type0-fraction">Ion A fraction</label><input id="type0-fraction" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" step="0.01" /></div>
+               <div class="field"><label for="type0-charge">Ion A charge</label><input id="type0-charge" type="number" min="-5" max="5" step="0.1" /></div>
+               <div class="field"><label for="type1-charge">Ion B charge</label><input id="type1-charge" type="number" min="-5" max="5" step="0.1" /></div>
+-              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="type0-permeability">Ion A pore permeability</label><input id="type0-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="type1-permeability">Ion B pore permeability</label><input id="type1-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+@@ -690,7 +689,7 @@
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+           <div class="canvas-subpanel">
+-            <canvas id="sim-canvas"></canvas>
++            <canvas id="sim-canvas" class="square-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+             <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+@@ -706,7 +705,6 @@
+ const equationBlock = getEl<HTMLElement>('#equation-block');
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  type0Fraction: getEl<HTMLInputElement>('#type0-fraction'),
+   type0Charge: getEl<HTMLInputElement>('#type0-charge'),
+   type1Charge: getEl<HTMLInputElement>('#type1-charge'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+@@ -758,7 +756,6 @@
+ 
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.type0Fraction, simParams.type0Fraction, 2);
+   setNumberInput(inputs.type0Charge, simParams.type0Charge, 2);
+   setNumberInput(inputs.type1Charge, simParams.type1Charge, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+@@ -786,7 +783,7 @@
+     T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
+     dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(Number(inputs.type0Fraction.value) || defaultSim.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(type0Charge, -5, 5),
+     type1Charge: clamp(type1Charge, -5, 5),
+     boxWidth,
+@@ -797,7 +794,7 @@
+     type1ChannelWidth: clamp(simParams.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(Number(inputs.type0Permeability.value) || 0, 0, 1),
+     type1Permeability: clamp(Number(inputs.type1Permeability.value) || 0, 0, 1),
+-    electricStrength: clamp(Number(inputs.electricStrength.value) || defaultSim.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, Number(inputs.electricStrength.value) || defaultSim.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   });
+ }
+@@ -952,7 +949,6 @@
+ });
+ for (const input of [
+   inputs.numParticles,
+-  inputs.type0Fraction,
+   inputs.type0Charge,
+   inputs.type1Charge,
+   inputs.diffusionSd,
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+index 7fa463d1f3ff7b538ae24ad7626835ca9f4159f3..78e4b9997d06c983e25ccc80bd9ab87cf6893027
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+@@ -168,7 +168,7 @@
+     T: clamp(Math.round(params.T), 100, 20000),
+     dt: clamp(params.dt, 0.05, 20),
+     numParticles: clamp(Math.round(params.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(params.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(params.type0Charge, -5, 5),
+     type1Charge: clamp(params.type1Charge, -5, 5),
+     boxWidth,
+@@ -179,7 +179,7 @@
+     type1ChannelWidth: clamp(params.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(params.type0Permeability, 0, 1),
+     type1Permeability: clamp(params.type1Permeability, 0, 1),
+-    electricStrength: clamp(params.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, params.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   };
+ }
+@@ -631,11 +631,10 @@
+             </div>
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+-              <div class="field"><label for="type0-fraction">Ion A fraction</label><input id="type0-fraction" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" step="0.01" /></div>
+               <div class="field"><label for="type0-charge">Ion A charge</label><input id="type0-charge" type="number" min="-5" max="5" step="0.1" /></div>
+               <div class="field"><label for="type1-charge">Ion B charge</label><input id="type1-charge" type="number" min="-5" max="5" step="0.1" /></div>
+-              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="type0-permeability">Ion A pore permeability</label><input id="type0-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="type1-permeability">Ion B pore permeability</label><input id="type1-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+@@ -690,7 +689,7 @@
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+           <div class="canvas-subpanel">
+-            <canvas id="sim-canvas"></canvas>
++            <canvas id="sim-canvas" class="square-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+             <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+@@ -706,7 +705,6 @@
+ const equationBlock = getEl<HTMLElement>('#equation-block');
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  type0Fraction: getEl<HTMLInputElement>('#type0-fraction'),
+   type0Charge: getEl<HTMLInputElement>('#type0-charge'),
+   type1Charge: getEl<HTMLInputElement>('#type1-charge'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+@@ -758,7 +756,6 @@
+ 
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.type0Fraction, simParams.type0Fraction, 2);
+   setNumberInput(inputs.type0Charge, simParams.type0Charge, 2);
+   setNumberInput(inputs.type1Charge, simParams.type1Charge, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+@@ -786,7 +783,7 @@
+     T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
+     dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(Number(inputs.type0Fraction.value) || defaultSim.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(type0Charge, -5, 5),
+     type1Charge: clamp(type1Charge, -5, 5),
+     boxWidth,
+@@ -797,7 +794,7 @@
+     type1ChannelWidth: clamp(simParams.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(Number(inputs.type0Permeability.value) || 0, 0, 1),
+     type1Permeability: clamp(Number(inputs.type1Permeability.value) || 0, 0, 1),
+-    electricStrength: clamp(Number(inputs.electricStrength.value) || defaultSim.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, Number(inputs.electricStrength.value) || defaultSim.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   });
+ }
+@@ -952,7 +949,6 @@
+ });
+ for (const input of [
+   inputs.numParticles,
+-  inputs.type0Fraction,
+   inputs.type0Charge,
+   inputs.type1Charge,
+   inputs.diffusionSd,
+
+exec
+/bin/zsh -lc "rg -n \"type0Fraction|type0-fraction|electricStrength: clamp\\(|max=\\\"10\\\"\" src/pages/inspect_two_ion_selective_channels.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+20:  type0Fraction: number;
+118:  type0Fraction: 0.5,
+171:    type0Fraction: 0.5,
+241:    const type = (rng.next() < p.type0Fraction ? 0 : 1) as IonType;
+786:    type0Fraction: 0.5,
+811:  state = retargetTypes(state, simParams.type0Fraction, rng);
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+index 7fa463d1f3ff7b538ae24ad7626835ca9f4159f3..78e4b9997d06c983e25ccc80bd9ab87cf6893027
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+@@ -168,7 +168,7 @@
+     T: clamp(Math.round(params.T), 100, 20000),
+     dt: clamp(params.dt, 0.05, 20),
+     numParticles: clamp(Math.round(params.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(params.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(params.type0Charge, -5, 5),
+     type1Charge: clamp(params.type1Charge, -5, 5),
+     boxWidth,
+@@ -179,7 +179,7 @@
+     type1ChannelWidth: clamp(params.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(params.type0Permeability, 0, 1),
+     type1Permeability: clamp(params.type1Permeability, 0, 1),
+-    electricStrength: clamp(params.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, params.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   };
+ }
+@@ -631,11 +631,10 @@
+             </div>
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+-              <div class="field"><label for="type0-fraction">Ion A fraction</label><input id="type0-fraction" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" step="0.01" /></div>
+               <div class="field"><label for="type0-charge">Ion A charge</label><input id="type0-charge" type="number" min="-5" max="5" step="0.1" /></div>
+               <div class="field"><label for="type1-charge">Ion B charge</label><input id="type1-charge" type="number" min="-5" max="5" step="0.1" /></div>
+-              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="type0-permeability">Ion A pore permeability</label><input id="type0-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="type1-permeability">Ion B pore permeability</label><input id="type1-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+@@ -690,7 +689,7 @@
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+           <div class="canvas-subpanel">
+-            <canvas id="sim-canvas"></canvas>
++            <canvas id="sim-canvas" class="square-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+             <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+@@ -706,7 +705,6 @@
+ const equationBlock = getEl<HTMLElement>('#equation-block');
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  type0Fraction: getEl<HTMLInputElement>('#type0-fraction'),
+   type0Charge: getEl<HTMLInputElement>('#type0-charge'),
+   type1Charge: getEl<HTMLInputElement>('#type1-charge'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+@@ -758,7 +756,6 @@
+ 
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.type0Fraction, simParams.type0Fraction, 2);
+   setNumberInput(inputs.type0Charge, simParams.type0Charge, 2);
+   setNumberInput(inputs.type1Charge, simParams.type1Charge, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+@@ -786,7 +783,7 @@
+     T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
+     dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(Number(inputs.type0Fraction.value) || defaultSim.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(type0Charge, -5, 5),
+     type1Charge: clamp(type1Charge, -5, 5),
+     boxWidth,
+@@ -797,7 +794,7 @@
+     type1ChannelWidth: clamp(simParams.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(Number(inputs.type0Permeability.value) || 0, 0, 1),
+     type1Permeability: clamp(Number(inputs.type1Permeability.value) || 0, 0, 1),
+-    electricStrength: clamp(Number(inputs.electricStrength.value) || defaultSim.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, Number(inputs.electricStrength.value) || defaultSim.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   });
+ }
+@@ -952,7 +949,6 @@
+ });
+ for (const input of [
+   inputs.numParticles,
+-  inputs.type0Fraction,
+   inputs.type0Charge,
+   inputs.type1Charge,
+   inputs.diffusionSd,
+
+codex
+I’ve finished the code edits and confirmed the removed control is no longer referenced. Next I’ll run the repository’s build/check scripts to validate the change.
+exec
+/bin/zsh -lc 'cat package.json' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+{
+  "name": "electrochemical-signals-progression-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "lint": "tsc --noEmit",
+    "check-pages": "node scripts/check-pages.mjs",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.4.1"
+  }
+}
+exec
+/bin/zsh -lc 'npm run build' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 1.49s:
+
+> electrochemical-signals-progression-web@0.1.0 build
+> tsc && vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 37 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                         0.50 kB │ gzip: 0.31 kB
+dist/inspect_diffusion_free.html                                        0.58 kB │ gzip: 0.32 kB
+dist/inspect_diffusion_selective.html                                   0.59 kB │ gzip: 0.33 kB
+dist/inspect_nernst_one_ion.html                                        0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_pore.html                                        0.60 kB │ gzip: 0.34 kB
+dist/inspect_nak_pump_gradients.html                                    0.60 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_permeability.html                                0.60 kB │ gzip: 0.34 kB
+dist/inspect_membrane_potential_intro.html                              0.60 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_charge_wall.html                         0.60 kB │ gzip: 0.34 kB
+dist/inspect_field_attraction.html                                      0.61 kB │ gzip: 0.34 kB
+dist/inspect_two_ion_selective_channels.html                            0.63 kB │ gzip: 0.35 kB
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+index 7fa463d1f3ff7b538ae24ad7626835ca9f4159f3..78e4b9997d06c983e25ccc80bd9ab87cf6893027
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+@@ -168,7 +168,7 @@
+     T: clamp(Math.round(params.T), 100, 20000),
+     dt: clamp(params.dt, 0.05, 20),
+     numParticles: clamp(Math.round(params.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(params.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(params.type0Charge, -5, 5),
+     type1Charge: clamp(params.type1Charge, -5, 5),
+     boxWidth,
+@@ -179,7 +179,7 @@
+     type1ChannelWidth: clamp(params.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(params.type0Permeability, 0, 1),
+     type1Permeability: clamp(params.type1Permeability, 0, 1),
+-    electricStrength: clamp(params.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, params.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   };
+ }
+@@ -631,11 +631,10 @@
+             </div>
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+-              <div class="field"><label for="type0-fraction">Ion A fraction</label><input id="type0-fraction" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" step="0.01" /></div>
+               <div class="field"><label for="type0-charge">Ion A charge</label><input id="type0-charge" type="number" min="-5" max="5" step="0.1" /></div>
+               <div class="field"><label for="type1-charge">Ion B charge</label><input id="type1-charge" type="number" min="-5" max="5" step="0.1" /></div>
+-              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="type0-permeability">Ion A pore permeability</label><input id="type0-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="type1-permeability">Ion B pore permeability</label><input id="type1-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+@@ -690,7 +689,7 @@
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+           <div class="canvas-subpanel">
+-            <canvas id="sim-canvas"></canvas>
++            <canvas id="sim-canvas" class="square-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+             <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+@@ -706,7 +705,6 @@
+ const equationBlock = getEl<HTMLElement>('#equation-block');
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  type0Fraction: getEl<HTMLInputElement>('#type0-fraction'),
+   type0Charge: getEl<HTMLInputElement>('#type0-charge'),
+   type1Charge: getEl<HTMLInputElement>('#type1-charge'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+@@ -758,7 +756,6 @@
+ 
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.type0Fraction, simParams.type0Fraction, 2);
+   setNumberInput(inputs.type0Charge, simParams.type0Charge, 2);
+   setNumberInput(inputs.type1Charge, simParams.type1Charge, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+@@ -786,7 +783,7 @@
+     T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
+     dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(Number(inputs.type0Fraction.value) || defaultSim.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(type0Charge, -5, 5),
+     type1Charge: clamp(type1Charge, -5, 5),
+     boxWidth,
+@@ -797,7 +794,7 @@
+     type1ChannelWidth: clamp(simParams.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(Number(inputs.type0Permeability.value) || 0, 0, 1),
+     type1Permeability: clamp(Number(inputs.type1Permeability.value) || 0, 0, 1),
+-    electricStrength: clamp(Number(inputs.electricStrength.value) || defaultSim.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, Number(inputs.electricStrength.value) || defaultSim.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   });
+ }
+@@ -952,7 +949,6 @@
+ });
+ for (const input of [
+   inputs.numParticles,
+-  inputs.type0Fraction,
+   inputs.type0Charge,
+   inputs.type1Charge,
+   inputs.diffusionSd,
+
+exec
+/bin/zsh -lc 'git diff -- src/pages/inspect_two_ion_selective_channels.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+index 7fa463d1f3ff7b538ae24ad7626835ca9f4159f3..78e4b9997d06c983e25ccc80bd9ab87cf6893027
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+@@ -168,7 +168,7 @@
+     T: clamp(Math.round(params.T), 100, 20000),
+     dt: clamp(params.dt, 0.05, 20),
+     numParticles: clamp(Math.round(params.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(params.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(params.type0Charge, -5, 5),
+     type1Charge: clamp(params.type1Charge, -5, 5),
+     boxWidth,
+@@ -179,7 +179,7 @@
+     type1ChannelWidth: clamp(params.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(params.type0Permeability, 0, 1),
+     type1Permeability: clamp(params.type1Permeability, 0, 1),
+-    electricStrength: clamp(params.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, params.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   };
+ }
+@@ -631,11 +631,10 @@
+             </div>
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+-              <div class="field"><label for="type0-fraction">Ion A fraction</label><input id="type0-fraction" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" step="0.01" /></div>
+               <div class="field"><label for="type0-charge">Ion A charge</label><input id="type0-charge" type="number" min="-5" max="5" step="0.1" /></div>
+               <div class="field"><label for="type1-charge">Ion B charge</label><input id="type1-charge" type="number" min="-5" max="5" step="0.1" /></div>
+-              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="type0-permeability">Ion A pore permeability</label><input id="type0-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="type1-permeability">Ion B pore permeability</label><input id="type1-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+@@ -690,7 +689,7 @@
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+           <div class="canvas-subpanel">
+-            <canvas id="sim-canvas"></canvas>
++            <canvas id="sim-canvas" class="square-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+             <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+@@ -706,7 +705,6 @@
+ const equationBlock = getEl<HTMLElement>('#equation-block');
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  type0Fraction: getEl<HTMLInputElement>('#type0-fraction'),
+   type0Charge: getEl<HTMLInputElement>('#type0-charge'),
+   type1Charge: getEl<HTMLInputElement>('#type1-charge'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+@@ -758,7 +756,6 @@
+ 
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.type0Fraction, simParams.type0Fraction, 2);
+   setNumberInput(inputs.type0Charge, simParams.type0Charge, 2);
+   setNumberInput(inputs.type1Charge, simParams.type1Charge, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+@@ -786,7 +783,7 @@
+     T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
+     dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(Number(inputs.type0Fraction.value) || defaultSim.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(type0Charge, -5, 5),
+     type1Charge: clamp(type1Charge, -5, 5),
+     boxWidth,
+@@ -797,7 +794,7 @@
+     type1ChannelWidth: clamp(simParams.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(Number(inputs.type0Permeability.value) || 0, 0, 1),
+     type1Permeability: clamp(Number(inputs.type1Permeability.value) || 0, 0, 1),
+-    electricStrength: clamp(Number(inputs.electricStrength.value) || defaultSim.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, Number(inputs.electricStrength.value) || defaultSim.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   });
+ }
+@@ -952,7 +949,6 @@
+ });
+ for (const input of [
+   inputs.numParticles,
+-  inputs.type0Fraction,
+   inputs.type0Charge,
+   inputs.type1Charge,
+   inputs.diffusionSd,
+
+exec
+/bin/zsh -lc 'git status --short' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+ M README.md
+ D inspect_diffusion_1.html
+ D inspect_diffusion_2.html
+ D inspect_diffusion_3.html
+ D inspect_diffusion_4.html
+ D inspect_electrochemical_1.html
+ D inspect_electrochemical_2.html
+ D inspect_electrochemical_3.html
+ D inspect_resting_potential_1.html
+ D inspect_resting_potential_2.html
+ D inspect_resting_potential_3.html
+ D inspect_resting_potential_4.html
+ M package.json
+ M src/index.ts
+ D src/pages/inspect_diffusion_1.ts
+ D src/pages/inspect_diffusion_2.ts
+ D src/pages/inspect_diffusion_3.ts
+ D src/pages/inspect_diffusion_4.ts
+ D src/pages/inspect_electrochemical_1.ts
+ D src/pages/inspect_electrochemical_2.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+index 7fa463d1f3ff7b538ae24ad7626835ca9f4159f3..78e4b9997d06c983e25ccc80bd9ab87cf6893027
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+@@ -168,7 +168,7 @@
+     T: clamp(Math.round(params.T), 100, 20000),
+     dt: clamp(params.dt, 0.05, 20),
+     numParticles: clamp(Math.round(params.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(params.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(params.type0Charge, -5, 5),
+     type1Charge: clamp(params.type1Charge, -5, 5),
+     boxWidth,
+@@ -179,7 +179,7 @@
+     type1ChannelWidth: clamp(params.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(params.type0Permeability, 0, 1),
+     type1Permeability: clamp(params.type1Permeability, 0, 1),
+-    electricStrength: clamp(params.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, params.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   };
+ }
+@@ -631,11 +631,10 @@
+             </div>
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+-              <div class="field"><label for="type0-fraction">Ion A fraction</label><input id="type0-fraction" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" step="0.01" /></div>
+               <div class="field"><label for="type0-charge">Ion A charge</label><input id="type0-charge" type="number" min="-5" max="5" step="0.1" /></div>
+               <div class="field"><label for="type1-charge">Ion B charge</label><input id="type1-charge" type="number" min="-5" max="5" step="0.1" /></div>
+-              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="type0-permeability">Ion A pore permeability</label><input id="type0-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="type1-permeability">Ion B pore permeability</label><input id="type1-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+@@ -690,7 +689,7 @@
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+           <div class="canvas-subpanel">
+-            <canvas id="sim-canvas"></canvas>
++            <canvas id="sim-canvas" class="square-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+             <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+@@ -706,7 +705,6 @@
+ const equationBlock = getEl<HTMLElement>('#equation-block');
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  type0Fraction: getEl<HTMLInputElement>('#type0-fraction'),
+   type0Charge: getEl<HTMLInputElement>('#type0-charge'),
+   type1Charge: getEl<HTMLInputElement>('#type1-charge'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+@@ -758,7 +756,6 @@
+ 
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.type0Fraction, simParams.type0Fraction, 2);
+   setNumberInput(inputs.type0Charge, simParams.type0Charge, 2);
+   setNumberInput(inputs.type1Charge, simParams.type1Charge, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+@@ -786,7 +783,7 @@
+     T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
+     dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(Number(inputs.type0Fraction.value) || defaultSim.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(type0Charge, -5, 5),
+     type1Charge: clamp(type1Charge, -5, 5),
+     boxWidth,
+@@ -797,7 +794,7 @@
+     type1ChannelWidth: clamp(simParams.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(Number(inputs.type0Permeability.value) || 0, 0, 1),
+     type1Permeability: clamp(Number(inputs.type1Permeability.value) || 0, 0, 1),
+-    electricStrength: clamp(Number(inputs.electricStrength.value) || defaultSim.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, Number(inputs.electricStrength.value) || defaultSim.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   });
+ }
+@@ -952,7 +949,6 @@
+ });
+ for (const input of [
+   inputs.numParticles,
+-  inputs.type0Fraction,
+   inputs.type0Charge,
+   inputs.type1Charge,
+   inputs.diffusionSd,
+
+codex
+Build passed. I’m doing one final pass on the updated file to confirm each requested bullet is reflected exactly before I summarize.
+exec
+/bin/zsh -lc "nl -ba src/pages/inspect_two_ion_selective_channels.ts | sed -n '150,210p;620,740p;760,840p;930,980p'" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+   150	  return (Math.random() * 0xffffffff) >>> 0;
+   151	}
+   152	
+   153	function getEl<T extends Element>(selector: string): T {
+   154	  const el = document.querySelector<T>(selector);
+   155	  if (!el) throw new Error(`Missing element: ${selector}`);
+   156	  return el;
+   157	}
+   158	
+   159	function setNumberInput(input: HTMLInputElement, value: number, digits = 3): void {
+   160	  input.value = Number.isInteger(value) ? String(value) : Number(value.toFixed(digits)).toString();
+   161	}
+   162	
+   163	function normalizeSimParams(params: SimParams): SimParams {
+   164	  const boxWidth = clamp(params.boxWidth, 20, 500);
+   165	  const boxHeight = clamp(params.boxHeight, 20, 500);
+   166	  const wallThickness = clamp(params.wallThickness, 0.5, Math.min(50, boxWidth - 2));
+   167	  return {
+   168	    T: clamp(Math.round(params.T), 100, 20000),
+   169	    dt: clamp(params.dt, 0.05, 20),
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+index 7fa463d1f3ff7b538ae24ad7626835ca9f4159f3..78e4b9997d06c983e25ccc80bd9ab87cf6893027
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+@@ -168,7 +168,7 @@
+     T: clamp(Math.round(params.T), 100, 20000),
+     dt: clamp(params.dt, 0.05, 20),
+     numParticles: clamp(Math.round(params.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(params.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(params.type0Charge, -5, 5),
+     type1Charge: clamp(params.type1Charge, -5, 5),
+     boxWidth,
+@@ -179,7 +179,7 @@
+     type1ChannelWidth: clamp(params.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(params.type0Permeability, 0, 1),
+     type1Permeability: clamp(params.type1Permeability, 0, 1),
+-    electricStrength: clamp(params.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, params.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   };
+ }
+@@ -631,11 +631,10 @@
+             </div>
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+-              <div class="field"><label for="type0-fraction">Ion A fraction</label><input id="type0-fraction" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" step="0.01" /></div>
+               <div class="field"><label for="type0-charge">Ion A charge</label><input id="type0-charge" type="number" min="-5" max="5" step="0.1" /></div>
+               <div class="field"><label for="type1-charge">Ion B charge</label><input id="type1-charge" type="number" min="-5" max="5" step="0.1" /></div>
+-              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="type0-permeability">Ion A pore permeability</label><input id="type0-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="type1-permeability">Ion B pore permeability</label><input id="type1-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+@@ -690,7 +689,7 @@
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+           <div class="canvas-subpanel">
+-            <canvas id="sim-canvas"></canvas>
++            <canvas id="sim-canvas" class="square-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+             <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+@@ -706,7 +705,6 @@
+ const equationBlock = getEl<HTMLElement>('#equation-block');
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  type0Fraction: getEl<HTMLInputElement>('#type0-fraction'),
+   type0Charge: getEl<HTMLInputElement>('#type0-charge'),
+   type1Charge: getEl<HTMLInputElement>('#type1-charge'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+@@ -758,7 +756,6 @@
+ 
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.type0Fraction, simParams.type0Fraction, 2);
+   setNumberInput(inputs.type0Charge, simParams.type0Charge, 2);
+   setNumberInput(inputs.type1Charge, simParams.type1Charge, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+@@ -786,7 +783,7 @@
+     T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
+     dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(Number(inputs.type0Fraction.value) || defaultSim.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(type0Charge, -5, 5),
+     type1Charge: clamp(type1Charge, -5, 5),
+     boxWidth,
+@@ -797,7 +794,7 @@
+     type1ChannelWidth: clamp(simParams.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(Number(inputs.type0Permeability.value) || 0, 0, 1),
+     type1Permeability: clamp(Number(inputs.type1Permeability.value) || 0, 0, 1),
+-    electricStrength: clamp(Number(inputs.electricStrength.value) || defaultSim.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, Number(inputs.electricStrength.value) || defaultSim.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   });
+ }
+@@ -952,7 +949,6 @@
+ });
+ for (const input of [
+   inputs.numParticles,
+-  inputs.type0Fraction,
+   inputs.type0Charge,
+   inputs.type1Charge,
+   inputs.diffusionSd,
+
+codex
+Implemented only the requested section changes in [src/pages/inspect_two_ion_selective_channels.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts).
+
+What changed:
+- Removed `Ion A fraction` control from Basic Controls.
+- Fixed Ion A fraction to `0.5` in simulation input normalization/parsing (no UI path to change it).
+- Reordered the remaining Basic Controls to:
+  1. Particles
+  2. Diffusion SD
+  3. Electric strength
+  4. Ion A charge
+  5. Ion B charge
+  6. Ion A pore permeability
+  7. Ion B pore permeability
+- Removed Electric strength upper limit:
+  - UI input no longer has a `max` attribute.
+  - Code no longer clamps to `+10`; it now only enforces minimum `-10`.
+- Made particle sim plot and trace plot the same size by applying `square-canvas` to the sim canvas so both panels share the same square sizing behavior.
+
+Validation run:
+- `npm run build` passed (`tsc && vite build`).
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+index 7fa463d1f3ff7b538ae24ad7626835ca9f4159f3..78e4b9997d06c983e25ccc80bd9ab87cf6893027
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts
+@@ -168,7 +168,7 @@
+     T: clamp(Math.round(params.T), 100, 20000),
+     dt: clamp(params.dt, 0.05, 20),
+     numParticles: clamp(Math.round(params.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(params.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(params.type0Charge, -5, 5),
+     type1Charge: clamp(params.type1Charge, -5, 5),
+     boxWidth,
+@@ -179,7 +179,7 @@
+     type1ChannelWidth: clamp(params.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(params.type0Permeability, 0, 1),
+     type1Permeability: clamp(params.type1Permeability, 0, 1),
+-    electricStrength: clamp(params.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, params.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   };
+ }
+@@ -631,11 +631,10 @@
+             </div>
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+-              <div class="field"><label for="type0-fraction">Ion A fraction</label><input id="type0-fraction" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" step="0.01" /></div>
+               <div class="field"><label for="type0-charge">Ion A charge</label><input id="type0-charge" type="number" min="-5" max="5" step="0.1" /></div>
+               <div class="field"><label for="type1-charge">Ion B charge</label><input id="type1-charge" type="number" min="-5" max="5" step="0.1" /></div>
+-              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="type0-permeability">Ion A pore permeability</label><input id="type0-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="type1-permeability">Ion B pore permeability</label><input id="type1-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+@@ -690,7 +689,7 @@
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+           <div class="canvas-subpanel">
+-            <canvas id="sim-canvas"></canvas>
++            <canvas id="sim-canvas" class="square-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+             <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+@@ -706,7 +705,6 @@
+ const equationBlock = getEl<HTMLElement>('#equation-block');
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  type0Fraction: getEl<HTMLInputElement>('#type0-fraction'),
+   type0Charge: getEl<HTMLInputElement>('#type0-charge'),
+   type1Charge: getEl<HTMLInputElement>('#type1-charge'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+@@ -758,7 +756,6 @@
+ 
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.type0Fraction, simParams.type0Fraction, 2);
+   setNumberInput(inputs.type0Charge, simParams.type0Charge, 2);
+   setNumberInput(inputs.type1Charge, simParams.type1Charge, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+@@ -786,7 +783,7 @@
+     T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
+     dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+-    type0Fraction: clamp(Number(inputs.type0Fraction.value) || defaultSim.type0Fraction, 0, 1),
++    type0Fraction: 0.5,
+     type0Charge: clamp(type0Charge, -5, 5),
+     type1Charge: clamp(type1Charge, -5, 5),
+     boxWidth,
+@@ -797,7 +794,7 @@
+     type1ChannelWidth: clamp(simParams.type1ChannelWidth, 0.5, boxHeight - 8),
+     type0Permeability: clamp(Number(inputs.type0Permeability.value) || 0, 0, 1),
+     type1Permeability: clamp(Number(inputs.type1Permeability.value) || 0, 0, 1),
+-    electricStrength: clamp(Number(inputs.electricStrength.value) || defaultSim.electricStrength, -10, 10),
++    electricStrength: Math.max(-10, Number(inputs.electricStrength.value) || defaultSim.electricStrength),
+     negX: leftEdgeChargeWallX(boxWidth)
+   });
+ }
+@@ -952,7 +949,6 @@
+ });
+ for (const input of [
+   inputs.numParticles,
+-  inputs.type0Fraction,
+   inputs.type0Charge,
+   inputs.type1Charge,
+   inputs.diffusionSd,
+
+tokens used
+71,569
+Implemented only the requested section changes in [src/pages/inspect_two_ion_selective_channels.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_two_ion_selective_channels.ts).
+
+What changed:
+- Removed `Ion A fraction` control from Basic Controls.
+- Fixed Ion A fraction to `0.5` in simulation input normalization/parsing (no UI path to change it).
+- Reordered the remaining Basic Controls to:
+  1. Particles
+  2. Diffusion SD
+  3. Electric strength
+  4. Ion A charge
+  5. Ion B charge
+  6. Ion A pore permeability
+  7. Ion B pore permeability
+- Removed Electric strength upper limit:
+  - UI input no longer has a `max` attribute.
+  - Code no longer clamps to `+10`; it now only enforces minimum `-10`.
+- Made particle sim plot and trace plot the same size by applying `square-canvas` to the sim canvas so both panels share the same square sizing behavior.
+
+Validation run:
+- `npm run build` passed (`tsc && vite build`).

@@ -1,0 +1,30 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Two-Ion Selective Channels with Electrical Attraction
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Two-Ion Selective Channels with Electrical Attraction
+
+- remove Ion A fraction from UI controls and fix to 0.5
+
+- reorder the remaining UI controls to be in the following
+  order:
+
+  - Particles
+  - Diffusion SD
+  - Electric strength
+  - Ion A charge
+  - Ion B charge
+  - Ion A pore permeability
+  - Ion B pore permeability
+
+- Remove the upper limit on the Electric strength UI control
+
+- Make the trace plot and the particle sim plot the saem
+  size.

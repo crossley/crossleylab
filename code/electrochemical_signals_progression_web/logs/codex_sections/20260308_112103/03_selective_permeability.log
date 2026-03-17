@@ -1,0 +1,540 @@
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccad1-a839-7a40-8d4b-f686c3f551f2
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Selective Permeability
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Selective Permeability
+
+- Change to two column layout with particle sims on the left
+  and trace on the right
+
+mcp startup: no servers
+codex
+I’ll locate the “Selective Permeability” content and the related layout code, then update only that section to a two-column arrangement with particle simulations on the left and the trace on the right. After editing, I’ll run the project checks/build.
+exec
+/bin/zsh -lc 'rg -n "Selective Permeability|permeability|particle sim|trace" -S .' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'ls -la' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+Total output lines: 706
+
+./src/pages/resting_two_ion_common.ts:17:type TeachingFocus = 'resting' | 'permeability' | 'goldman';
+./src/pages/resting_two_ion_common.ts:41:  tracePanelTitle?: string;
+./src/pages/resting_two_ion_common.ts:42:  traceHint?: string;
+./src/pages/resting_two_ion_common.ts:43:  traceTitle?: string;
+./src/pages/resting_two_ion_common.ts:74:  traceYLimit: number;
+./src/pages/resting_two_ion_common.ts:282:function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
+./src/pages/resting_two_ion_common.ts:283:  const trace: TraceHistory = { times: [], va: [], vb: [], vTotal: [], vGoldman: [] };
+./src/pages/resting_two_ion_common.ts:284:  pushTrace(trace, state, traceWindowMs);
+./src/pages/resting_two_ion_common.ts:285:  return trace;
+./src/pages/resting_two_ion_common.ts:288:function pushTrace(trace: TraceHistory, state: LiveState, traceWindowMs: number): void {
+./src/pages/resting_two_ion_common.ts:289:  trace.times.push(state.simTime);
+./src/pages/resting_two_ion_common.ts:290:  trace.va.push(state.VA);
+./src/pages/resting_two_ion_common.ts:291:  trace.vb.push(state.VB);
+./src/pages/resting_two_ion_common.ts:292:  trace.vTotal.push(state.VTotal);
+./src/pages/resting_two_ion_common.ts:293:  trace.vGoldman.push(state.VGoldman);
+./src/pages/resting_two_ion_common.ts:294:  const minTime = Math.max(0, state.simTime - traceWindowMs);
+./src/pages/resting_two_ion_common.ts:295:  while (trace.times.length > 1 && trace.times[0] < minTime) {
+./src/pages/resting_two_ion_common.ts:296:    trace.times.shift(); trace.va.shift(); trace.vb.shift(); trace.vTotal.shift(); trace.vGoldman.shift();
+ succeeded in 51ms:
+total 272
+drwxr-xr-x@ 34 mq20185996  staff   1088 Mar  8 11:18 .
+drwxr-xr-x@ 16 mq20185996  staff    512 Mar  6 21:53 ..
+-rw-r--r--@  1 mq20185996  staff     37 Feb 20 19:46 .gitignore
+-rw-r--r--@  1 mq20185996  staff   1239 Mar  7 18:41 README.md
+-rw-r--r--@  1 mq20185996  staff   2315 Mar  8 11:16 change_requests.md
+drwxr-xr-x@ 18 mq20185996  staff    576 Mar  8 10:06 dist
+drwxr-xr-x@  3 mq20185996  staff     96 Mar  6 21:52 docs
+-rw-r--r--@  1 mq20185996  staff    327 Feb 24 00:31 index.html
+-rw-r--r--@  1 mq20185996  staff    352 Mar  7 22:32 inspect_action_potential_1.html
+-rw-r--r--@  1 mq20185996  staff    355 Mar  7 22:32 inspect_action_potential_2.html
+-rw-r--r--@  1 mq20185996  staff    353 Mar  7 22:32 inspect_action_potential_3.html
+-rw-r--r--@  1 mq20185996  staff    322 Mar  1 21:52 inspect_diffusion_1.html
+-rw-r--r--@  1 mq20185996  staff    339 Mar  1 21:52 inspect_diffusion_2.html
+-rw-r--r--@  1 mq20185996  staff    335 Mar  1 21:52 inspect_diffusion_3.html
+-rw-r--r--@  1 mq20185996  staff    328 Mar  1 21:52 inspect_diffusion_4.html
+-rw-r--r--@  1 mq20185996  staff    353 Mar  1 21:52 inspect_electrochemical_1.html
+-rw-r--r--@  1 mq20185996  staff    346 Mar  7 17:50 inspect_electrochemical_2.html
+-rw-r--r--@  1 mq20185996  staff    365 Mar  7 17:33 inspect_electrochemical_3.html
+-rw-r--r--@  1 mq20185996  staff    361 Mar  1 21:52 inspect_electrochemical_4.html
+codex
+I found the likely implementation files; next I’m mapping the exact “Selective Permeability” section to its page file so only that section is changed.
+exec
+/bin/zsh -lc "sed -n '1,220p' change_requests.md" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+# Diffusion Through a Membrane Pore
+
+- Change to two column layout with particle sims on the left
+  and trace on the right
+
+# Narrow vs Wide Pore Diffusion
+
+- Change to two column layout with particle sims on the left
+  and trace on the right. Stack wide vs narrow on top of
+  each other.
+
+# Selective Permeability
+
+- Change to two column layout with particle sims on the left
+  and trace on the right
+
+# Free Diffusion with Electrical Attraction
+
+- Add 3 more eelctrial source (attractor / repulser) one for
+  each major eaxis in the plot. Initial particles still at
+exec
+/bin/zsh -lc 'rg -n "Selective Permeability|selective permeability|selective channels|inspect_electrochemical_4|electrochemical_4" src index.html inspect_*.html -S' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'ls src/pages' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+inspect_electrochemical_3.html:10:    <script type="module" src="/src/pages/inspect_electrochemical_4.ts"></script>
+inspect_diffusion_4.html:6:    <title>Selective Permeability</title>
+inspect_electrochemical_4.html:6:    <title>Selective Permeability with Electrical Attraction</title>
+inspect_electrochemical_4.html:10:    <script type="module" src="/src/pages/inspect_electrochemical_4.ts"></script>
+src/pages/inspect_diffusion_4.ts:442:  ctx.fillText('Selective Permeability', 12 * dpr, 20 * dpr);
+src/pages/inspect_diffusion_4.ts:535:      <h1>Selective Permeability</h1>
+src/pages/inspect_nak_pump.ts:605:      <p class="eyebrow">Passive Selective Permeability vs Active Pumping</p>
+src/pages/inspect_resting_potential_2.ts:10:    'Resting voltage reflects diffusion, field effects, and selective permeability together.',
+src/pages/inspect_resting_potential_2.ts:21:  equationDescription: 'Ion A and Ion B contribute separate electrical effects, while the dashed comparison line shows a permeability-weighted prediction built from the same compartments. Use the pore widths to connect selective permeability to resting potential.',
+src/pages/inspect_electrochemical_4.ts:663:            <div class="subhead"><h3>Particle Simulation</h3><span class="tiny">Two selective channels with one shared electric field</span></div>
+src/index.ts:30:          <strong>Selective Permeability</strong>
+src/index.ts:31:          <span>Two particle types cross different pores, introducing selective permeability</span>
+ succeeded in 50ms:
+action_potential_common.ts
+inspect_action_potential_1.ts
+inspect_action_potential_2.ts
+inspect_action_potential_3.ts
+inspect_diffusion_1.ts
+inspect_diffusion_2.ts
+inspect_diffusion_3.ts
+inspect_diffusion_4.ts
+inspect_electrochemical_1.ts
+inspect_electrochemical_2.ts
+inspect_electrochemical_3.ts
+inspect_electrochemical_4.ts
+inspect_goldman_three_ion.ts
+inspect_nak_pump.ts
+inspect_resting_potential_1.ts
+inspect_resting_potential_2.ts
+inspect_resting_potential_3.ts
+inspect_resting_potential_4.ts
+inspect_resting_potential_nernst.ts
+resting_two_ion_common.ts
+codex
+The “Selective Permeability” section maps to `src/pages/inspect_diffusion_4.ts`; I’m now editing only that page’s layout markup/CSS so simulations sit left and the trace sits right.
+exec
+/bin/zsh -lc "sed -n '1,260p' src/pages/inspect_diffusion_4.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_NUM_PARTICLES,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  drawMembraneWall,
+  evenlySpacedChannelBounds
+} from './sim_shared';
+
+type IonType = 0 | 1;
+
+interface SimParams {
+  T: number;
+  dt: number;
+  numParticles: number;
+  type0Fraction: number;
+  boxWidth: number;
+  boxHeight: number;
+  wallThickness: number;
+exec
+/bin/zsh -lc "sed -n '500,760p' src/pages/inspect_diffusion_4.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+      const px = xMap(trace.times[i]);
+      const py = yMap(seriesEntry.data[i]);
+      if (!started) {
+        ctx.moveTo(px, py);
+        started = true;
+      } else {
+        ctx.lineTo(px, py);
+      }
+    }
+    if (started) ctx.stroke();
+    ctx.restore();
+  }
+  ctx.fillStyle = 'rgba(232, 243, 255, 0.78)';
+  ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+  ctx.save();
+  ctx.translate(18 * dpr, padT + plotH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+  ctx.fillText('fraction in compartment', 0, 0);
+  ctx.restore();
+exec
+/bin/zsh -lc "sed -n '1,260p' src/style.css" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'rg -n "sim-layout|canvas-panel|trace-canvas|Particle Animation|controls" src/style.css src/pages/inspect_diffusion_4.ts -S' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+:root {
+  --bg0: #05070b;
+  --bg1: #020307;
+  --ink: #eaf2ff;
+  --muted: #9eafc7;
+  --panel: rgba(12, 16, 24, 0.86);
+  --panel-border: rgba(160, 190, 255, 0.12);
+  --accent: #42c8ff;
+  --accent-2: #9fff6a;
+  --danger: #ff6f8f;
+  --canvas-bg: #03060b;
+  --gridline: rgba(130, 178, 255, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+ succeeded in 51ms:
+src/style.css:150:.sim-layout {
+src/style.css:158:  .sim-layout {
+src/style.css:163:.controls {
+src/style.css:169:.controls .panel {
+src/style.css:175:  .controls .panel {
+src/style.css:283:.canvas-panel {
+src/style.css:343:.trace-canvas {
+src/pages/inspect_diffusion_4.ts:543:    <div class="sim-layout">
+src/pages/inspect_diffusion_4.ts:544:      <aside class="controls">
+src/pages/inspect_diffusion_4.ts:611:      <section class="panel canvas-panel">
+src/pages/inspect_diffusion_4.ts:613:          <h2>Particle Animation</h2>
+src/pages/inspect_diffusion_4.ts:620:        <canvas id="trace-canvas" class="trace-canvas" aria-label="Per-ion fraction traces"></canvas>
+src/pages/inspect_diffusion_4.ts:631:const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
+exec
+/bin/zsh -lc "sed -n '260,420p' src/style.css" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.status-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  font-size: 0.84rem;
+}
+
+.status-list dt {
+  margin: 0;
+  color: var(--muted);
+}
+
+.status-list dd {
+  margin: 0;
+  text-align: right;
+codex
+I confirmed the target page uses a single stacked canvas panel right now. I’m updating that panel to a true two-column canvas grid in this file only, with the particle simulation block on the left and the trace block on the right.
+exec
+/bin/zsh -lc "sed -n '520,660p' src/pages/inspect_diffusion_2.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+            </div>
+          </div>
+
+          <details>
+            <summary>Advanced Controls</summary>
+            <div class="group" style="margin-top: 8px;">
+              <div class="control-grid">
+                <div class="field"><label for="total-time">Trace window T (ms)</label><input id="total-time" type="number" min="100" max="20000" step="10" /></div>
+                <div class="field"><label for="dt">dt (ms)</label><input id="dt" type="number" min="0.05" max="20" step="0.05" /></div>
+                <div class="field"><label for="box-width">Box width</label><input id="box-width" type="number" min="20" max="500" step="1" /></div>
+                <div class="field"><label for="box-height">Box height</label><input id="box-height" type="number" min="20" max="500" step="1" /></div>
+                <div class="field"><label for="wall-thickness">Wall thickness</label><input id="wall-thickness" type="number" min="0.5" max="50" step="0.5" /></div>
+                <div class="field"><label for="point-size">Point size</label><input id="point-size" type="number" min="0.5" max="8" step="0.25" /></div>
+                <div class="field"><label for="target-fps">Playback FPS</label><input id="target-fps" type="number" min="1" max="120" step="1" /></div>
+              </div>
+            </div>
+          </details>
+
+          <div class="group">
+            <p class="group-label">Status</p>
+exec
+/bin/zsh -lc 'cat package.json' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+{
+  "name": "electrochemical-signals-progression-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.4.1"
+  }
+}
+codex
+I’m applying a focused HTML-template change in `inspect_diffusion_4.ts` so the canvas area is a two-column grid: simulation left, trace right. Then I’ll run `npm run build` to verify.
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts
+@@ -611,14 +611,20 @@
+       <section class="panel canvas-panel">
+-        <div class="canvas-head">
+-          <h2>Particle Animation</h2>
+-          <span class="tiny">Evenly spaced ion-specific pores with live selective transport</span>
+-        </div>
+-        <canvas id="sim-canvas" aria-label="Selective permeability simulation"></canvas>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <canvas id="trace-canvas" class="trace-canvas" aria-label="Per-ion fraction traces"></canvas>
+-        <div class="legend">
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
++        <div class="canvas-grid-2">
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Particle Animation</h2>
++              <span class="tiny">Evenly spaced ion-specific pores with live selective transport</span>
++            </div>
++            <canvas id="sim-canvas" aria-label="Selective permeability simulation"></canvas>
++          </div>
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Compartment Fractions Over Time</h2>
++            </div>
++            <canvas id="trace-canvas" aria-label="Per-ion fraction traces"></canvas>
++            <div class="legend">
++              <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
++              <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
++            </div>
++          </div>
+         </div>
+apply_patch(auto_approved=true) exited 0 in 77ms:
+Success. Updated the following files:
+M src/pages/inspect_diffusion_4.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts
+index 90b9d3dce8a7fbc4e18d1ab3b635ffa160b62b39..ea20492dc3b1484a07b4f697508cc0aa65f89b6a
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts
+@@ -609,18 +609,24 @@
+       </aside>
+ 
+       <section class="panel canvas-panel">
+-        <div class="canvas-head">
+-          <h2>Particle Animation</h2>
+-          <span class="tiny">Evenly spaced ion-specific pores with live selective transport</span>
+-        </div>
+-        <canvas id="sim-canvas" aria-label="Selective permeability simulation"></canvas>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <canvas id="trace-canvas" class="trace-canvas" aria-label="Per-ion fraction traces"></canvas>
+-        <div class="legend">
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
++        <div class="canvas-grid-2">
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Particle Animation</h2>
++              <span class="tiny">Evenly spaced ion-specific pores with live selective transport</span>
++            </div>
++            <canvas id="sim-canvas" aria-label="Selective permeability simulation"></canvas>
++          </div>
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Compartment Fractions Over Time</h2>
++            </div>
++            <canvas id="trace-canvas" aria-label="Per-ion fraction traces"></canvas>
++            <div class="legend">
++              <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
++              <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
++            </div>
++          </div>
+         </div>
+       </section>
+     </div>
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts
+index 90b9d3dce8a7fbc4e18d1ab3b635ffa160b62b39..ea20492dc3b1484a07b4f697508cc0aa65f89b6a
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts
+@@ -609,18 +609,24 @@
+       </aside>
+ 
+       <section class="panel canvas-panel">
+-        <div class="canvas-head">
+-          <h2>Particle Animation</h2>
+-          <span class="tiny">Evenly spaced ion-specific pores with live selective transport</span>
+-        </div>
+-        <canvas id="sim-canvas" aria-label="Selective permeability simulation"></canvas>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <canvas id="trace-canvas" class="trace-canvas" aria-label="Per-ion fraction traces"></canvas>
+-        <div class="legend">
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
++        <div class="canvas-grid-2">
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Particle Animation</h2>
++              <span class="tiny">Evenly spaced ion-specific pores with live selective transport</span>
++            </div>
++            <canvas id="sim-canvas" aria-label="Selective permeability simulation"></canvas>
++          </div>
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Compartment Fractions Over Time</h2>
++            </div>
++            <canvas id="trace-canvas" aria-label="Per-ion fraction traces"></canvas>
++            <div class="legend">
++              <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
++              <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
++            </div>
++          </div>
+         </div>
+       </section>
+     </div>
+
+exec
+/bin/zsh -lc 'npm run build' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 1.22s:
+
+> electrochemical-signals-progression-web@0.1.0 build
+> tsc && vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 33 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                            0.50 kB │ gzip: 0.31 kB
+dist/inspect_diffusion_1.html                              0.58 kB │ gzip: 0.32 kB
+dist/inspect_diffusion_4.html                              0.58 kB │ gzip: 0.33 kB
+dist/inspect_nak_pump.html                                 0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_3.html                              0.59 kB │ gzip: 0.33 kB
+dist/inspect_diffusion_2.html                              0.59 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_2.html                      0.59 kB │ gzip: 0.33 kB
+dist/inspect_resting_potential_1.html                      0.60 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_nernst.html                 0.60 kB │ gzip: 0.34 kB
+dist/inspect_electrochemical_1.html                        0.61 kB │ gzip: 0.34 kB
+dist/inspect_electrochemical_3.html                        0.62 kB │ gzip: 0.35 kB
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts
+index 90b9d3dce8a7fbc4e18d1ab3b635ffa160b62b39..ea20492dc3b1484a07b4f697508cc0aa65f89b6a
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts
+@@ -609,18 +609,24 @@
+       </aside>
+ 
+       <section class="panel canvas-panel">
+-        <div class="canvas-head">
+-          <h2>Particle Animation</h2>
+-          <span class="tiny">Evenly spaced ion-specific pores with live selective transport</span>
+-        </div>
+-        <canvas id="sim-canvas" aria-label="Selective permeability simulation"></canvas>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <canvas id="trace-canvas" class="trace-canvas" aria-label="Per-ion fraction traces"></canvas>
+-        <div class="legend">
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
++        <div class="canvas-grid-2">
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Particle Animation</h2>
++              <span class="tiny">Evenly spaced ion-specific pores with live selective transport</span>
++            </div>
++            <canvas id="sim-canvas" aria-label="Selective permeability simulation"></canvas>
++          </div>
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Compartment Fractions Over Time</h2>
++            </div>
++            <canvas id="trace-canvas" aria-label="Per-ion fraction traces"></canvas>
++            <div class="legend">
++              <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
++              <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
++            </div>
++          </div>
+         </div>
+       </section>
+     </div>
+
+codex
+Implemented only the **Selective Permeability** request by updating the page layout to two columns in:
+
+- [src/pages/inspect_diffusion_4.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts)
+
+What changed:
+- Reworked the canvas area from a stacked layout to a `canvas-grid-2` two-column layout.
+- Left column now contains the particle simulation (`sim-canvas`).
+- Right column now contains the trace (`trace-canvas`) and legend.
+
+Validation:
+- Ran `npm run build` successfully (`tsc && vite build` passed).
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts
+index 90b9d3dce8a7fbc4e18d1ab3b635ffa160b62b39..ea20492dc3b1484a07b4f697508cc0aa65f89b6a
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts
+@@ -609,18 +609,24 @@
+       </aside>
+ 
+       <section class="panel canvas-panel">
+-        <div class="canvas-head">
+-          <h2>Particle Animation</h2>
+-          <span class="tiny">Evenly spaced ion-specific pores with live selective transport</span>
+-        </div>
+-        <canvas id="sim-canvas" aria-label="Selective permeability simulation"></canvas>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <canvas id="trace-canvas" class="trace-canvas" aria-label="Per-ion fraction traces"></canvas>
+-        <div class="legend">
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
++        <div class="canvas-grid-2">
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Particle Animation</h2>
++              <span class="tiny">Evenly spaced ion-specific pores with live selective transport</span>
++            </div>
++            <canvas id="sim-canvas" aria-label="Selective permeability simulation"></canvas>
++          </div>
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Compartment Fractions Over Time</h2>
++            </div>
++            <canvas id="trace-canvas" aria-label="Per-ion fraction traces"></canvas>
++            <div class="legend">
++              <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
++              <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
++            </div>
++          </div>
+         </div>
+       </section>
+     </div>
+
+tokens used
+31,345
+Implemented only the **Selective Permeability** request by updating the page layout to two columns in:
+
+- [src/pages/inspect_diffusion_4.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_4.ts)
+
+What changed:
+- Reworked the canvas area from a stacked layout to a `canvas-grid-2` two-column layout.
+- Left column now contains the particle simulation (`sim-canvas`).
+- Right column now contains the trace (`trace-canvas`) and legend.
+
+Validation:
+- Ran `npm run build` successfully (`tsc && vite build` passed).

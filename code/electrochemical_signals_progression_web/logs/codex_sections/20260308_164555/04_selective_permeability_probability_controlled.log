@@ -1,0 +1,597 @@
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccbfb-140d-7141-b893-7f2426991ca1
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Selective Permeability (Probability-Controlled)
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Selective Permeability (Probability-Controlled)
+
+- Change title to: Selective Permeability by Probabilistic Gating
+
+mcp startup: no servers
+codex
+I’m going to locate where the “Selective Permeability (Probability-Controlled)” section is represented in the code/content, then update only that section’s title to “Selective Permeability by Probabilistic Gating” and run the project checks/build.
+exec
+/bin/zsh -lc 'rg -n "Selective Permeability|Probability-Controlled|change_requests" -S' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'rg --files' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+src/pages/inspect_diffusion_selective_permeability_rate.ts:558:      <h1>Selective Permeability (Probability-Controlled)</h1>
+src/pages/inspect_diffusion_selective.ts:533:      <h1>Selective Permeability</h1>
+src/pages/inspect_nak_pump_gradients.ts:605:      <p class="eyebrow">Passive Selective Permeability vs Active Pumping</p>
+src/lessons.json:34:    "title": "Selective Permeability",
+src/lessons.json:44:    "title": "Selective Permeability by Pore Probability",
+change_requests.md:16:# Selective Permeability (Probability-Controlled)
+change_requests.md:18:- Change title to: Selective Permeability by Probabilistic Gating
+scripts/run_codex_per_section.py:102:        default="change_requests.md",
+scripts/run_codex_per_section.py:103:        help="Path to markdown file with top-level # sections (default: change_requests.md)",
+inspect_diffusion_selective.html:6:    <title>Selective Permeability</title>
+inspect_diffusion_selective_permeability_rate.html:6:    <title>Selective Permeability by Pore Probability</title>
+logs/codex_sections/20260308_111832/08_two_ion_selective_channels_with_electrical_attraction.prompt.txt:2:Source file: change_requests.md
+logs/codex_sections/20260308_111832/05_what_is_a_membrane_potential.prompt.txt:2:Source file: change_requests.md
+logs/codex_sections/20260308_111832/03_selective_permeability.prompt.txt:2:Source file: change_requests.md
+logs/codex_sections/20260308_111832/03_selective_permeability.prompt.txt:3:Section title: Selective Permeability
+logs/codex_sections/20260308_111832/03_selective_permeability.prompt.txt:12:# Selective Permeability
+logs/codex_sections/20260308_111832/04_free_diffusion_with_electrical_attraction.prompt.txt:2:Source file: change_requests.md
+logs/codex_sections/20260308_111832/01_diffusion_through_a_membrane_pore.prompt.txt:2:Source file: change_requests.md
+logs/codex_sections/20260308_111832/07_one_ion_membrane_transport_balance.prompt.txt:2:Source file: change_requests.md
+logs/codex_sections/20260308_111832/02_narrow_vs_wide_pore_diffusion.prompt.txt:2:Source file: change_requests.md
+ succeeded in 52ms:
+src/pages/resting_two_ion_common.ts
+src/pages/inspect_nernst_one_ion.ts
+src/pages/sim_shared.ts
+src/pages/inspect_ap_threshold_all_or_none.ts
+src/pages/inspect_resting_potential_charge_wall.ts
+src/pages/action_potential_common.ts
+src/pages/inspect_field_attraction.ts
+src/pages/inspect_diffusion_selective_permeability_rate.ts
+src/pages/inspect_diffusion_permeability.ts
+src/pages/inspect_two_ion_selective_channels.ts
+src/pages/inspect_diffusion_pore.ts
+src/pages/inspect_ap_phases.ts
+src/pages/inspect_diffusion_selective.ts
+src/pages/inspect_membrane_potential_intro.ts
+src/pages/inspect_diffusion_free.ts
+src/pages/inspect_ap_subthreshold.ts
+src/pages/inspect_nak_pump_gradients.ts
+src/lessons.ts
+src/index.ts
+src/style.css
+codex
+I found the exact old title string in the probability-controlled selective permeability page. I’ll patch that title text and then run the build/checks to confirm no regressions.
+exec
+/bin/zsh -lc "sed -n '1,120p' src/lessons.json" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '520,590p' src/pages/inspect_diffusion_selective_permeability_rate.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'cat package.json' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+[
+  {
+    "id": "inspect_diffusion_free",
+    "title": "Free Diffusion",
+    "description": "Particles spread through a box with no membrane and no electrical forces",
+    "htmlPath": "inspect_diffusion_free.html",
+    "tsEntry": "src/pages/inspect_diffusion_free.ts",
+    "unit": "diffusion",
+    "order": 1,
+    "status": "active"
+  },
+  {
+    "id": "inspect_diffusion_pore",
+    "title": "Diffusion Through a Membrane Pore",
+    "description": "A membrane separates two compartments and particles can cross only through one pore",
+    "htmlPath": "inspect_diffusion_pore.html",
+    "tsEntry": "src/pages/inspect_diffusion_pore.ts",
+    "unit": "diffusion",
+    "order": 2,
+    "status": "active"
+ succeeded in 51ms:
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < trace.times.length; i += 1) {
+      if (trace.times[i] < startTime) continue;
+      const px = xMap(trace.times[i]);
+      const py = yMap(seriesEntry.data[i]);
+      if (!started) {
+        ctx.moveTo(px, py);
+        started = true;
+      } else {
+        ctx.lineTo(px, py);
+      }
+    }
+    if (started) ctx.stroke();
+    ctx.restore();
+  }
+  ctx.fillStyle = 'rgba(232, 243, 255, 0.78)';
+  ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+  ctx.save();
+  ctx.translate(18 * dpr, padT + plotH / 2);
+ succeeded in 51ms:
+{
+  "name": "electrochemical-signals-progression-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "lint": "tsc --noEmit",
+    "check-pages": "node scripts/check-pages.mjs",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.4.1"
+  }
+}
+codex
+I confirmed the page header still uses the old wording, and the lesson catalog plus HTML page title still use a different old label. I’m updating all title labels for this one section to the requested phrase, then running `npm run build`.
+exec
+/bin/zsh -lc "sed -n '1,80p' inspect_diffusion_selective_permeability_rate.html" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "rg -n \"Selective Permeability by Pore Probability|Selective Permeability \\(Probability-Controlled\\)\" src inspect_diffusion_selective_permeability_rate.html -S" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Selective Permeability by Pore Probability</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/pages/inspect_diffusion_selective_permeability_rate.ts"></script>
+  </body>
+</html>
+ succeeded in 52ms:
+inspect_diffusion_selective_permeability_rate.html:6:    <title>Selective Permeability by Pore Probability</title>
+src/pages/inspect_diffusion_selective_permeability_rate.ts:558:      <h1>Selective Permeability (Probability-Controlled)</h1>
+src/lessons.json:44:    "title": "Selective Permeability by Pore Probability",
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+@@ -557,3 +557,3 @@
+       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
+-      <h1>Selective Permeability (Probability-Controlled)</h1>
++      <h1>Selective Permeability by Probabilistic Gating</h1>
+       <ul class="key-points">
+apply_patch(auto_approved=true) exited 0 in 66ms:
+Success. Updated the following files:
+M src/pages/inspect_diffusion_selective_permeability_rate.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+index eeff99e6d1f76046fc7777a474b4a8f7ae1e9de2..9ec8e95dd56915fdc82e8fb12dac7e8c33d2baa9
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+@@ -555,7 +555,7 @@
+     </div>
+     <header class="page-head">
+       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
+-      <h1>Selective Permeability (Probability-Controlled)</h1>
++      <h1>Selective Permeability by Probabilistic Gating</h1>
+       <ul class="key-points">
+         <li>Ion A and Ion B have the same diffusion dynamics.</li>
+         <li>Each ion crosses only through its own pore.</li>
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+index eeff99e6d1f76046fc7777a474b4a8f7ae1e9de2..9ec8e95dd56915fdc82e8fb12dac7e8c33d2baa9
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+@@ -555,7 +555,7 @@
+     </div>
+     <header class="page-head">
+       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
+-      <h1>Selective Permeability (Probability-Controlled)</h1>
++      <h1>Selective Permeability by Probabilistic Gating</h1>
+       <ul class="key-points">
+         <li>Ion A and Ion B have the same diffusion dynamics.</li>
+         <li>Each ion crosses only through its own pore.</li>
+
+codex
+I’ve updated the in-page H1 for the probability-controlled selective permeability section. Next I’m aligning the lesson/index and HTML document title text to the same requested title and then building.
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/lessons.json
+@@ -43,3 +43,3 @@
+     "id": "inspect_diffusion_selective_permeability_rate",
+-    "title": "Selective Permeability by Pore Probability",
++    "title": "Selective Permeability by Probabilistic Gating",
+     "description": "Hold pore geometry fixed and control cross-membrane flow by ion-specific pore permeability probabilities.",
+apply_patch(auto_approved=true) exited 0 in 71ms:
+Success. Updated the following files:
+M src/lessons.json
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/lessons.json b/code/electrochemical_signals_progression_web/src/lessons.json
+index dced4fdccd9780d15896d535dbcf1df50bf2c868..74e1712d6225df4145dc0f2c244039bbb53a32f0
+--- a/code/electrochemical_signals_progression_web/src/lessons.json
++++ b/code/electrochemical_signals_progression_web/src/lessons.json
+@@ -41,7 +41,7 @@
+   },
+   {
+     "id": "inspect_diffusion_selective_permeability_rate",
+-    "title": "Selective Permeability by Pore Probability",
++    "title": "Selective Permeability by Probabilistic Gating",
+     "description": "Hold pore geometry fixed and control cross-membrane flow by ion-specific pore permeability probabilities.",
+     "htmlPath": "inspect_diffusion_selective_permeability_rate.html",
+     "tsEntry": "src/pages/inspect_diffusion_selective_permeability_rate.ts",
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+index eeff99e6d1f76046fc7777a474b4a8f7ae1e9de2..9ec8e95dd56915fdc82e8fb12dac7e8c33d2baa9
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+@@ -555,7 +555,7 @@
+     </div>
+     <header class="page-head">
+       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
+-      <h1>Selective Permeability (Probability-Controlled)</h1>
++      <h1>Selective Permeability by Probabilistic Gating</h1>
+       <ul class="key-points">
+         <li>Ion A and Ion B have the same diffusion dynamics.</li>
+         <li>Each ion crosses only through its own pore.</li>
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/lessons.json b/code/electrochemical_signals_progression_web/src/lessons.json
+index dced4fdccd9780d15896d535dbcf1df50bf2c868..74e1712d6225df4145dc0f2c244039bbb53a32f0
+--- a/code/electrochemical_signals_progression_web/src/lessons.json
++++ b/code/electrochemical_signals_progression_web/src/lessons.json
+@@ -41,7 +41,7 @@
+   },
+   {
+     "id": "inspect_diffusion_selective_permeability_rate",
+-    "title": "Selective Permeability by Pore Probability",
++    "title": "Selective Permeability by Probabilistic Gating",
+     "description": "Hold pore geometry fixed and control cross-membrane flow by ion-specific pore permeability probabilities.",
+     "htmlPath": "inspect_diffusion_selective_permeability_rate.html",
+     "tsEntry": "src/pages/inspect_diffusion_selective_permeability_rate.ts",
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+index eeff99e6d1f76046fc7777a474b4a8f7ae1e9de2..9ec8e95dd56915fdc82e8fb12dac7e8c33d2baa9
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+@@ -555,7 +555,7 @@
+     </div>
+     <header class="page-head">
+       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
+-      <h1>Selective Permeability (Probability-Controlled)</h1>
++      <h1>Selective Permeability by Probabilistic Gating</h1>
+       <ul class="key-points">
+         <li>Ion A and Ion B have the same diffusion dynamics.</li>
+         <li>Each ion crosses only through its own pore.</li>
+
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
+@@ -5,3 +5,3 @@
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>Selective Permeability by Pore Probability</title>
++    <title>Selective Permeability by Probabilistic Gating</title>
+   </head>
+apply_patch(auto_approved=true) exited 0 in 77ms:
+Success. Updated the following files:
+M inspect_diffusion_selective_permeability_rate.html
+file update:
+diff --git a/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html b/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
+index ce48f38264c43e583b95bfda1727ed4b33f9df25..9a684fe35d675dcd1fb1b68eb5d2bfe5529bce9f
+--- a/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
++++ b/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
+@@ -3,7 +3,7 @@
+   <head>
+     <meta charset="UTF-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>Selective Permeability by Pore Probability</title>
++    <title>Selective Permeability by Probabilistic Gating</title>
+   </head>
+   <body>
+     <div id="app"></div>
+diff --git a/code/electrochemical_signals_progression_web/src/lessons.json b/code/electrochemical_signals_progression_web/src/lessons.json
+index dced4fdccd9780d15896d535dbcf1df50bf2c868..74e1712d6225df4145dc0f2c244039bbb53a32f0
+--- a/code/electrochemical_signals_progression_web/src/lessons.json
++++ b/code/electrochemical_signals_progression_web/src/lessons.json
+@@ -41,7 +41,7 @@
+   },
+   {
+     "id": "inspect_diffusion_selective_permeability_rate",
+-    "title": "Selective Permeability by Pore Probability",
++    "title": "Selective Permeability by Probabilistic Gating",
+     "description": "Hold pore geometry fixed and control cross-membrane flow by ion-specific pore permeability probabilities.",
+     "htmlPath": "inspect_diffusion_selective_permeability_rate.html",
+     "tsEntry": "src/pages/inspect_diffusion_selective_permeability_rate.ts",
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+index eeff99e6d1f76046fc7777a474b4a8f7ae1e9de2..9ec8e95dd56915fdc82e8fb12dac7e8c33d2baa9
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+@@ -555,7 +555,7 @@
+     </div>
+     <header class="page-head">
+       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
+-      <h1>Selective Permeability (Probability-Controlled)</h1>
++      <h1>Selective Permeability by Probabilistic Gating</h1>
+       <ul class="key-points">
+         <li>Ion A and Ion B have the same diffusion dynamics.</li>
+         <li>Each ion crosses only through its own pore.</li>
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html b/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
+index ce48f38264c43e583b95bfda1727ed4b33f9df25..9a684fe35d675dcd1fb1b68eb5d2bfe5529bce9f
+--- a/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
++++ b/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
+@@ -3,7 +3,7 @@
+   <head>
+     <meta charset="UTF-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>Selective Permeability by Pore Probability</title>
++    <title>Selective Permeability by Probabilistic Gating</title>
+   </head>
+   <body>
+     <div id="app"></div>
+diff --git a/code/electrochemical_signals_progression_web/src/lessons.json b/code/electrochemical_signals_progression_web/src/lessons.json
+index dced4fdccd9780d15896d535dbcf1df50bf2c868..74e1712d6225df4145dc0f2c244039bbb53a32f0
+--- a/code/electrochemical_signals_progression_web/src/lessons.json
++++ b/code/electrochemical_signals_progression_web/src/lessons.json
+@@ -41,7 +41,7 @@
+   },
+   {
+     "id": "inspect_diffusion_selective_permeability_rate",
+-    "title": "Selective Permeability by Pore Probability",
++    "title": "Selective Permeability by Probabilistic Gating",
+     "description": "Hold pore geometry fixed and control cross-membrane flow by ion-specific pore permeability probabilities.",
+     "htmlPath": "inspect_diffusion_selective_permeability_rate.html",
+     "tsEntry": "src/pages/inspect_diffusion_selective_permeability_rate.ts",
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+index eeff99e6d1f76046fc7777a474b4a8f7ae1e9de2..9ec8e95dd56915fdc82e8fb12dac7e8c33d2baa9
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+@@ -555,7 +555,7 @@
+     </div>
+     <header class="page-head">
+       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
+-      <h1>Selective Permeability (Probability-Controlled)</h1>
++      <h1>Selective Permeability by Probabilistic Gating</h1>
+       <ul class="key-points">
+         <li>Ion A and Ion B have the same diffusion dynamics.</li>
+         <li>Each ion crosses only through its own pore.</li>
+
+exec
+/bin/zsh -lc 'npm run build' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 1.27s:
+
+> electrochemical-signals-progression-web@0.1.0 build
+> tsc && vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 37 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                         0.50 kB │ gzip: 0.31 kB
+dist/inspect_diffusion_free.html                                        0.58 kB │ gzip: 0.32 kB
+dist/inspect_diffusion_selective.html                                   0.59 kB │ gzip: 0.33 kB
+dist/inspect_nernst_one_ion.html                                        0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_pore.html                                        0.60 kB │ gzip: 0.34 kB
+dist/inspect_nak_pump_gradients.html                                    0.60 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_permeability.html                                0.60 kB │ gzip: 0.34 kB
+dist/inspect_membrane_potential_intro.html                              0.60 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_charge_wall.html                         0.60 kB │ gzip: 0.34 kB
+dist/inspect_field_attraction.html                                      0.61 kB │ gzip: 0.34 kB
+dist/inspect_two_ion_selective_channels.html                            0.63 kB │ gzip: 0.35 kB
+file update:
+diff --git a/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html b/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
+index ce48f38264c43e583b95bfda1727ed4b33f9df25..9a684fe35d675dcd1fb1b68eb5d2bfe5529bce9f
+--- a/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
++++ b/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
+@@ -3,7 +3,7 @@
+   <head>
+     <meta charset="UTF-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>Selective Permeability by Pore Probability</title>
++    <title>Selective Permeability by Probabilistic Gating</title>
+   </head>
+   <body>
+     <div id="app"></div>
+diff --git a/code/electrochemical_signals_progression_web/src/lessons.json b/code/electrochemical_signals_progression_web/src/lessons.json
+index dced4fdccd9780d15896d535dbcf1df50bf2c868..74e1712d6225df4145dc0f2c244039bbb53a32f0
+--- a/code/electrochemical_signals_progression_web/src/lessons.json
++++ b/code/electrochemical_signals_progression_web/src/lessons.json
+@@ -41,7 +41,7 @@
+   },
+   {
+     "id": "inspect_diffusion_selective_permeability_rate",
+-    "title": "Selective Permeability by Pore Probability",
++    "title": "Selective Permeability by Probabilistic Gating",
+     "description": "Hold pore geometry fixed and control cross-membrane flow by ion-specific pore permeability probabilities.",
+     "htmlPath": "inspect_diffusion_selective_permeability_rate.html",
+     "tsEntry": "src/pages/inspect_diffusion_selective_permeability_rate.ts",
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+index eeff99e6d1f76046fc7777a474b4a8f7ae1e9de2..9ec8e95dd56915fdc82e8fb12dac7e8c33d2baa9
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+@@ -555,7 +555,7 @@
+     </div>
+     <header class="page-head">
+       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
+-      <h1>Selective Permeability (Probability-Controlled)</h1>
++      <h1>Selective Permeability by Probabilistic Gating</h1>
+       <ul class="key-points">
+         <li>Ion A and Ion B have the same diffusion dynamics.</li>
+         <li>Each ion crosses only through its own pore.</li>
+
+exec
+/bin/zsh -lc 'git status --short' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+ M README.md
+ D inspect_diffusion_1.html
+ D inspect_diffusion_2.html
+ D inspect_diffusion_3.html
+ D inspect_diffusion_4.html
+ D inspect_electrochemical_1.html
+ D inspect_electrochemical_2.html
+ D inspect_electrochemical_3.html
+ D inspect_resting_potential_1.html
+ D inspect_resting_potential_2.html
+ D inspect_resting_potential_3.html
+ D inspect_resting_potential_4.html
+ M package.json
+ M src/index.ts
+ D src/pages/inspect_diffusion_1.ts
+ D src/pages/inspect_diffusion_2.ts
+ D src/pages/inspect_diffusion_3.ts
+ D src/pages/inspect_diffusion_4.ts
+ D src/pages/inspect_electrochemical_1.ts
+ D src/pages/inspect_electrochemical_2.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html b/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
+index ce48f38264c43e583b95bfda1727ed4b33f9df25..9a684fe35d675dcd1fb1b68eb5d2bfe5529bce9f
+--- a/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
++++ b/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
+@@ -3,7 +3,7 @@
+   <head>
+     <meta charset="UTF-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>Selective Permeability by Pore Probability</title>
++    <title>Selective Permeability by Probabilistic Gating</title>
+   </head>
+   <body>
+     <div id="app"></div>
+diff --git a/code/electrochemical_signals_progression_web/src/lessons.json b/code/electrochemical_signals_progression_web/src/lessons.json
+index dced4fdccd9780d15896d535dbcf1df50bf2c868..74e1712d6225df4145dc0f2c244039bbb53a32f0
+--- a/code/electrochemical_signals_progression_web/src/lessons.json
++++ b/code/electrochemical_signals_progression_web/src/lessons.json
+@@ -41,7 +41,7 @@
+   },
+   {
+     "id": "inspect_diffusion_selective_permeability_rate",
+-    "title": "Selective Permeability by Pore Probability",
++    "title": "Selective Permeability by Probabilistic Gating",
+     "description": "Hold pore geometry fixed and control cross-membrane flow by ion-specific pore permeability probabilities.",
+     "htmlPath": "inspect_diffusion_selective_permeability_rate.html",
+     "tsEntry": "src/pages/inspect_diffusion_selective_permeability_rate.ts",
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+index eeff99e6d1f76046fc7777a474b4a8f7ae1e9de2..9ec8e95dd56915fdc82e8fb12dac7e8c33d2baa9
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+@@ -555,7 +555,7 @@
+     </div>
+     <header class="page-head">
+       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
+-      <h1>Selective Permeability (Probability-Controlled)</h1>
++      <h1>Selective Permeability by Probabilistic Gating</h1>
+       <ul class="key-points">
+         <li>Ion A and Ion B have the same diffusion dynamics.</li>
+         <li>Each ion crosses only through its own pore.</li>
+
+exec
+/bin/zsh -lc 'rg -n "Selective Permeability by Probabilistic Gating" src/pages/inspect_diffusion_selective_permeability_rate.ts src/lessons.json inspect_diffusion_selective_permeability_rate.html -S' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "rg -n \"Selective Permeability \\(Probability-Controlled\\)|Selective Permeability by Pore Probability\" src/pages/inspect_diffusion_selective_permeability_rate.ts src/lessons.json inspect_diffusion_selective_permeability_rate.html -S" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+inspect_diffusion_selective_permeability_rate.html:6:    <title>Selective Permeability by Probabilistic Gating</title>
+src/lessons.json:44:    "title": "Selective Permeability by Probabilistic Gating",
+src/pages/inspect_diffusion_selective_permeability_rate.ts:558:      <h1>Selective Permeability by Probabilistic Gating</h1>
+ exited 1 in 51ms:
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html b/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
+index ce48f38264c43e583b95bfda1727ed4b33f9df25..9a684fe35d675dcd1fb1b68eb5d2bfe5529bce9f
+--- a/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
++++ b/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
+@@ -3,7 +3,7 @@
+   <head>
+     <meta charset="UTF-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>Selective Permeability by Pore Probability</title>
++    <title>Selective Permeability by Probabilistic Gating</title>
+   </head>
+   <body>
+     <div id="app"></div>
+diff --git a/code/electrochemical_signals_progression_web/src/lessons.json b/code/electrochemical_signals_progression_web/src/lessons.json
+index dced4fdccd9780d15896d535dbcf1df50bf2c868..74e1712d6225df4145dc0f2c244039bbb53a32f0
+--- a/code/electrochemical_signals_progression_web/src/lessons.json
++++ b/code/electrochemical_signals_progression_web/src/lessons.json
+@@ -41,7 +41,7 @@
+   },
+   {
+     "id": "inspect_diffusion_selective_permeability_rate",
+-    "title": "Selective Permeability by Pore Probability",
++    "title": "Selective Permeability by Probabilistic Gating",
+     "description": "Hold pore geometry fixed and control cross-membrane flow by ion-specific pore permeability probabilities.",
+     "htmlPath": "inspect_diffusion_selective_permeability_rate.html",
+     "tsEntry": "src/pages/inspect_diffusion_selective_permeability_rate.ts",
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+index eeff99e6d1f76046fc7777a474b4a8f7ae1e9de2..9ec8e95dd56915fdc82e8fb12dac7e8c33d2baa9
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+@@ -555,7 +555,7 @@
+     </div>
+     <header class="page-head">
+       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
+-      <h1>Selective Permeability (Probability-Controlled)</h1>
++      <h1>Selective Permeability by Probabilistic Gating</h1>
+       <ul class="key-points">
+         <li>Ion A and Ion B have the same diffusion dynamics.</li>
+         <li>Each ion crosses only through its own pore.</li>
+
+codex
+Implemented only the requested title change for **Selective Permeability (Probability-Controlled)**.
+
+Updated:
+- [src/pages/inspect_diffusion_selective_permeability_rate.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts:558): changed page `<h1>` to `Selective Permeability by Probabilistic Gating`
+- [src/lessons.json](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/lessons.json:44): changed lesson title to `Selective Permeability by Probabilistic Gating`
+- [inspect_diffusion_selective_permeability_rate.html](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html:6): changed HTML `<title>` to `Selective Permeability by Probabilistic Gating`
+
+Checks run:
+- `npm run build` passed successfully (`tsc && vite build`).
+file update:
+diff --git a/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html b/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
+index ce48f38264c43e583b95bfda1727ed4b33f9df25..9a684fe35d675dcd1fb1b68eb5d2bfe5529bce9f
+--- a/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
++++ b/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html
+@@ -3,7 +3,7 @@
+   <head>
+     <meta charset="UTF-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>Selective Permeability by Pore Probability</title>
++    <title>Selective Permeability by Probabilistic Gating</title>
+   </head>
+   <body>
+     <div id="app"></div>
+diff --git a/code/electrochemical_signals_progression_web/src/lessons.json b/code/electrochemical_signals_progression_web/src/lessons.json
+index dced4fdccd9780d15896d535dbcf1df50bf2c868..74e1712d6225df4145dc0f2c244039bbb53a32f0
+--- a/code/electrochemical_signals_progression_web/src/lessons.json
++++ b/code/electrochemical_signals_progression_web/src/lessons.json
+@@ -41,7 +41,7 @@
+   },
+   {
+     "id": "inspect_diffusion_selective_permeability_rate",
+-    "title": "Selective Permeability by Pore Probability",
++    "title": "Selective Permeability by Probabilistic Gating",
+     "description": "Hold pore geometry fixed and control cross-membrane flow by ion-specific pore permeability probabilities.",
+     "htmlPath": "inspect_diffusion_selective_permeability_rate.html",
+     "tsEntry": "src/pages/inspect_diffusion_selective_permeability_rate.ts",
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+index eeff99e6d1f76046fc7777a474b4a8f7ae1e9de2..9ec8e95dd56915fdc82e8fb12dac7e8c33d2baa9
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts
+@@ -555,7 +555,7 @@
+     </div>
+     <header class="page-head">
+       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
+-      <h1>Selective Permeability (Probability-Controlled)</h1>
++      <h1>Selective Permeability by Probabilistic Gating</h1>
+       <ul class="key-points">
+         <li>Ion A and Ion B have the same diffusion dynamics.</li>
+         <li>Each ion crosses only through its own pore.</li>
+
+tokens used
+18,908
+Implemented only the requested title change for **Selective Permeability (Probability-Controlled)**.
+
+Updated:
+- [src/pages/inspect_diffusion_selective_permeability_rate.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_selective_permeability_rate.ts:558): changed page `<h1>` to `Selective Permeability by Probabilistic Gating`
+- [src/lessons.json](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/lessons.json:44): changed lesson title to `Selective Permeability by Probabilistic Gating`
+- [inspect_diffusion_selective_permeability_rate.html](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/inspect_diffusion_selective_permeability_rate.html:6): changed HTML `<title>` to `Selective Permeability by Probabilistic Gating`
+
+Checks run:
+- `npm run build` passed successfully (`tsc && vite build`).

@@ -1,0 +1,907 @@
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccc98-6790-7741-bbe2-74d487a4a7c4
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Resting Potential from a Charge Wall
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Resting Potential from a Charge Wall
+
+- Remove text: Resting Potential from a Charge Wall Live
+  two-ion membrane model Particle Dynamics Both ions start
+  on the right and respond to the same membrane-scale
+  electrical bias Resting-Potential Traces Track Na+, K+,
+  and total resting-potential proxy traces over time
+
+- Remove: Convention: left = inside, right = outside.
+
+- Change "Changing Na+ and K+ permeability shifts ion
+  influence and total membrane voltage." to "Resing
+  potential is closer to the Nernst potential of the ion
+  with higher permeability"
+
+mcp startup: no servers
+codex
+I’m going to locate the “Resting Potential from a Charge Wall” content in the repo, then apply only the text changes you listed for that section and run the relevant build/check command.
+exec
+/bin/zsh -lc "rg -n \"Resting Potential from a Charge Wall|Convention: left = inside, right = outside|Changing Na\\+ and K\\+ permeability shifts ion\" -S" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'ls -la' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+src/pages/inspect_resting_potential_charge_wall.ts:6:  title: 'Resting Potential from a Charge Wall',
+src/pages/inspect_resting_potential_charge_wall.ts:9:    'Convention: left = inside, right = outside.',
+src/pages/inspect_resting_potential_charge_wall.ts:11:    'Changing Na+ and K+ permeability shifts ion influence and total membrane voltage.'
+src/pages/inspect_resting_potential_charge_wall.ts:22:  canvasTitle: 'Resting Potential from a Charge Wall',
+src/pages/inspect_nak_pump_gradients.ts:608:        <li>Convention: left = inside, right = outside.</li>
+src/lessons.json:104:    "title": "Resting Potential from a Charge Wall",
+change_requests.md:44:- Remove: Convention: left = inside, right = outside.
+change_requests.md:49:# Resting Potential from a Charge Wall
+change_requests.md:51:- Remove text: Resting Potential from a Charge Wall Live
+change_requests.md:57:- Remove: Convention: left = inside, right = outside.
+change_requests.md:59:- Change "Changing Na+ and K+ permeability shifts ion
+logs/codex_sections/20260308_112103/09_na_k_pump_particle_simulation.log:472:         <li>Convention: left = inside, right = outside.</li>
+logs/codex_sections/20260308_112103/09_na_k_pump_particle_simulation.log:679:         <li>Convention: left = inside, right = outside.</li>
+logs/codex_sections/20260308_112103/09_na_k_pump_particle_simulation.log:893:         <li>Convention: left = inside, right = outside.</li>
+logs/codex_sections/20260308_112103/09_na_k_pump_particle_simulation.log:1122:         <li>Convention: left = inside, right = outside.</li>
+logs/codex_sections/20260308_112103/09_na_k_pump_particle_simulation.log:1332:         <li>Convention: left = inside, right = outside.</li>
+logs/codex_sections/20260308_112103/09_na_k_pump_particle_simulation.log:1561:         <li>Convention: left = inside, right = outside.</li>
+logs/codex_sections/20260308_112103/09_na_k_pump_particle_simulation.log:1634:        <li>Convention: left = inside, right = outside.</li>
+logs/codex_sections/20260308_112103/09_na_k_pump_particle_simulation.log:1792:         <li>Convention: left = inside, right = outside.</li>
+logs/codex_sections/20260308_112103/09_na_k_pump_particle_simulation.log:2018:         <li>Convention: left = inside, right = outside.</li>
+ succeeded in 51ms:
+total 240
+drwxr-xr-x@ 31 mq20185996  staff    992 Mar  8 19:37 .
+drwxr-xr-x@ 16 mq20185996  staff    512 Mar  6 21:53 ..
+drwxr-xr-x@  3 mq20185996  staff     96 Mar  8 12:18 .github
+-rw-r--r--@  1 mq20185996  staff     37 Feb 20 19:46 .gitignore
+-rw-r--r--@  1 mq20185996  staff   1667 Mar  8 12:19 README.md
+-rw-r--r--@  1 mq20185996  staff   2267 Mar  8 19:37 change_requests.md
+drwxr-xr-x@ 18 mq20185996  staff    576 Mar  8 17:07 dist
+drwxr-xr-x@  3 mq20185996  staff     96 Mar  6 21:52 docs
+-rw-r--r--@  1 mq20185996  staff    327 Feb 24 00:31 index.html
+-rw-r--r--@  1 mq20185996  staff    344 Mar  8 11:53 inspect_ap_phases.html
+-rw-r--r--@  1 mq20185996  staff    349 Mar  8 11:53 inspect_ap_subthreshold.html
+-rw-r--r--@  1 mq20185996  staff    361 Mar  8 11:53 inspect_ap_threshold_all_or_none.html
+-rw-r--r--@  1 mq20185996  staff    325 Mar  8 11:53 inspect_diffusion_free.html
+-rw-r--r--@  1 mq20185996  staff    346 Mar  8 11:53 inspect_diffusion_permeability.html
+-rw-r--r--@  1 mq20185996  staff    342 Mar  8 11:53 inspect_diffusion_pore.html
+-rw-r--r--@  1 mq20185996  staff    336 Mar  8 11:53 inspect_diffusion_selective.html
+-rw-r--r--@  1 mq20185996  staff    378 Mar  8 16:46 inspect_diffusion_selective_permeability_rate.html
+-rw-r--r--@  1 mq20185996  staff    352 Mar  8 11:53 inspect_field_attraction.html
+-rw-r--r--@  1 mq20185996  staff    348 Mar  8 11:53 inspect_membrane_potential_intro.html
+codex
+I found the target strings in `src/pages/inspect_resting_potential_charge_wall.ts`; next I’ll edit just that page copy for this section and then run the project build to verify.
+exec
+/bin/zsh -lc "sed -n '1,220p' src/pages/inspect_resting_potential_charge_wall.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+import { mountTwoIonRestingPage } from './resting_two_ion_common';
+import { DEFAULT_NUM_PARTICLES, DEFAULT_POTENTIAL_SCALE, SIM_COLORS } from './sim_shared';
+
+mountTwoIonRestingPage({
+  pageId: 'inspect_resting_potential_charge_wall',
+  title: 'Resting Potential from a Charge Wall',
+  subtitle: 'Two-ion resting potential teaching model.',
+  subtitlePoints: [
+    'Convention: left = inside, right = outside.',
+    'Resting voltage reflects diffusion, field effects, and selective permeability together.',
+    'Changing Na+ and K+ permeability shifts ion influence and total membrane voltage.'
+  ],
+  fieldMode: 'wall',
+  withGoldman: true,
+  focusMode: 'goldman',
+  type1Color: SIM_COLORS.ionB,
+  type1Label: 'K+',
+  negMarkerLabel: 'Charge wall',
+  eyebrow: 'Selective Membranes and the Emergence of Resting Potential',
+  equationGroupLabel: 'Teaching Note',
+codex
+I confirmed the section file has the exact sentence swap and the removable lines; I’m checking the shared page component now to remove only the requested visible text block without changing behavior.
+exec
+/bin/zsh -lc "sed -n '1,280p' src/pages/resting_two_ion_common.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_POTENTIAL_SCALE,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  drawMembraneWall,
+  evenlySpacedChannelBounds,
+  fieldColor,
+  leftEdgeChargeWallX,
+  pointFieldDrift,
+  wallFieldDrift
+} from './sim_shared';
+
+type IonType = 0 | 1;
+type FieldMode = 'point' | 'wall';
+type TeachingFocus = 'resting' | 'permeability' | 'goldman';
+
+interface VariantConfig {
+  pageId: string;
+exec
+/bin/zsh -lc 'rg -n "canvasTitle|particleHint|tracePanelTitle|traceHint|Live two-ion membrane model|Particle Dynamics" src/pages/resting_two_ion_common.ts -n -S' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+39:  canvasTitle?: string;
+40:  particleHint?: string;
+41:  tracePanelTitle?: string;
+42:  traceHint?: string;
+596:          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">Live two-ion membrane model</span></div>
+598:            <div class="canvas-subpanel"><div class="subhead"><h3>Particle Dynamics</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
+599:            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.tracePanelTitle ?? 'Membrane Potential Proxy Traces'}</h3><span class="tiny">${variant.traceHint ?? `V_Na / V_K / V_total${variant.withGoldman ? ' / Goldman' : ''}`}</span></div><canvas id="trace-canvas"></canvas></div>
+codex
+I identified two hardcoded labels in the shared renderer (`Live two-ion membrane model`, `Particle Dynamics`) that need per-page overrides, so I’m adding optional config fields there and setting them to empty for only this section’s page.
+codex
+I hit a patch context mismatch, so I’m pulling the exact block around the renderer markup and reapplying a precise patch.
+exec
+/bin/zsh -lc "sed -n '560,660p' src/pages/resting_two_ion_common.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+              <div class="button-row"><button id="rewind">Rewind</button><button id="random-seed">Randomize Seed</button></div>
+              <div class="control-grid">
+                <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="10" max="5000" step="1" /></div>
+                <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+                <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+                <div class="field"><label for="type0-permeability">NA+ permeability</label><input id="type0-permeability" type="number" min="0" max="1" step="0.01" /></div>
+                <div class="field"><label for="type1-permeability">K+ permeability</label><input id="type1-permeability" type="number" min="0" max="1" step="0.01" /></div>
+                <div class="field"><label for="pump-strength">NA+/K+ pump strength</label><input id="pump-strength" type="number" min="0" max="2" step="0.05" /></div>
+                <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+                <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+              </div>
+            </div>
+            <details><summary>Advanced Controls</summary><div class="group" style="margin-top:8px;"><div class="control-grid">
+              <div class="field"><label for="total-time">Trace window T (ms)</label><input id="total-time" type="number" min="100" max="20000" step="10" /></div>
+              <div class="field"><label for="dt">dt (ms)</label><input id="dt" type="number" min="0.05" max="20" step="0.05" /></div>
+              <div class="field"><label for="box-width">Box width</label><input id="box-width" type="number" min="40" max="500" step="1" /></div>
+              <div class="field"><label for="box-height">Box height</label><input id="box-height" type="number" min="40" max="500" step="1" /></div>
+              <div class="field"><label for="wall-thickness">Wall thickness</label><input id="wall-thickness" type="number" min="0.5" max="50" step="0.5" /></div>
+              <div class="field"><label for="neg-x">${variant.fieldMode === 'point' ? 'Field source x' : 'Charge wall x (fixed)'}</label><input id="neg-x" type="number" step="1"${variant.fieldMode === 'wall' ? ' readonly' : ''} /></div>
+              <div class="field"><label for="neg-y">Field source y (point mode)</label><input id="neg-y" type="number" step="1" /></div>
+exec
+/bin/zsh -lc "sed -n '20,70p' src/pages/resting_two_ion_common.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+  pageId: string;
+  title: string;
+  subtitle: string;
+  subtitlePoints?: string[];
+  fieldMode: FieldMode;
+  withGoldman: boolean;
+  focusMode: TeachingFocus;
+  type1Color: string;
+  type1Label: string;
+  negMarkerLabel: string;
+  defaultNumParticles: number;
+  defaultElectricStrength: number;
+  defaultDt?: number;
+  defaultT?: number;
+  defaultNegX?: number;
+  goldmanScaleDefault?: number;
+  eyebrow?: string;
+  equationGroupLabel?: string;
+  equationDescription?: string;
+  canvasTitle?: string;
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -39,2 +39,4 @@
+   canvasTitle?: string;
++  canvasModeLabel?: string;
++  particlePanelTitle?: string;
+   particleHint?: string;
+@@ -595,5 +597,5 @@
+         <section class="panel canvas-panel">
+-          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">Live two-ion membrane model</span></div>
++          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">${variant.canvasModeLabel ?? 'Live two-ion membrane model'}</span></div>
+           <div class="canvas-grid-2">
+-            <div class="canvas-subpanel"><div class="subhead"><h3>Particle Dynamics</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
++            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.particlePanelTitle ?? 'Particle Dynamics'}</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
+             <div class="canvas-subpanel"><div class="subhead"><h3>${variant.tracePanelTitle ?? 'Membrane Potential Proxy Traces'}</h3><span class="tiny">${variant.traceHint ?? `V_Na / V_K / V_total${variant.withGoldman ? ' / Goldman' : ''}`}</span></div><canvas id="trace-canvas"></canvas></div>
+apply_patch(auto_approved=true) exited 0 in 81ms:
+Success. Updated the following files:
+M src/pages/resting_two_ion_common.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index 826632f6916297eadf52aa324133454f2f7ddd23..3f443a573b1a0beb5181195471f5d3858e235bd3
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -37,6 +37,8 @@
+   equationGroupLabel?: string;
+   equationDescription?: string;
+   canvasTitle?: string;
++  canvasModeLabel?: string;
++  particlePanelTitle?: string;
+   particleHint?: string;
+   tracePanelTitle?: string;
+   traceHint?: string;
+@@ -593,9 +595,9 @@
+           </div>
+         </aside>
+         <section class="panel canvas-panel">
+-          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">Live two-ion membrane model</span></div>
++          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">${variant.canvasModeLabel ?? 'Live two-ion membrane model'}</span></div>
+           <div class="canvas-grid-2">
+-            <div class="canvas-subpanel"><div class="subhead"><h3>Particle Dynamics</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
++            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.particlePanelTitle ?? 'Particle Dynamics'}</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
+             <div class="canvas-subpanel"><div class="subhead"><h3>${variant.tracePanelTitle ?? 'Membrane Potential Proxy Traces'}</h3><span class="tiny">${variant.traceHint ?? `V_Na / V_K / V_total${variant.withGoldman ? ' / Goldman' : ''}`}</span></div><canvas id="trace-canvas"></canvas></div>
+           </div>
+           <div class="legend">
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index 826632f6916297eadf52aa324133454f2f7ddd23..3f443a573b1a0beb5181195471f5d3858e235bd3
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -37,6 +37,8 @@
+   equationGroupLabel?: string;
+   equationDescription?: string;
+   canvasTitle?: string;
++  canvasModeLabel?: string;
++  particlePanelTitle?: string;
+   particleHint?: string;
+   tracePanelTitle?: string;
+   traceHint?: string;
+@@ -593,9 +595,9 @@
+           </div>
+         </aside>
+         <section class="panel canvas-panel">
+-          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">Live two-ion membrane model</span></div>
++          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">${variant.canvasModeLabel ?? 'Live two-ion membrane model'}</span></div>
+           <div class="canvas-grid-2">
+-            <div class="canvas-subpanel"><div class="subhead"><h3>Particle Dynamics</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
++            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.particlePanelTitle ?? 'Particle Dynamics'}</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
+             <div class="canvas-subpanel"><div class="subhead"><h3>${variant.tracePanelTitle ?? 'Membrane Potential Proxy Traces'}</h3><span class="tiny">${variant.traceHint ?? `V_Na / V_K / V_total${variant.withGoldman ? ' / Goldman' : ''}`}</span></div><canvas id="trace-canvas"></canvas></div>
+           </div>
+           <div class="legend">
+
+codex
+I’ve added optional per-page labels in the shared renderer; now I’m updating only `inspect_resting_potential_charge_wall.ts` to remove the requested text and apply the exact replacement sentence.
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+@@ -8,5 +8,4 @@
+   subtitlePoints: [
+-    'Convention: left = inside, right = outside.',
+     'Resting voltage reflects diffusion, field effects, and selective permeability together.',
+-    'Changing Na+ and K+ permeability shifts ion influence and total membrane voltage.'
++    'Resing potential is closer to the Nernst potential of the ion with higher permeability'
+   ],
+@@ -21,6 +20,8 @@
+   equationDescription: 'Na+ and K+ contribute separate electrical effects in a shared charge-wall field, with active transport controlled by Na+/K+ pump strength.',
+-  canvasTitle: 'Resting Potential from a Charge Wall',
+-  particleHint: 'Both ions start on the right and respond to the same membrane-scale electrical bias',
+-  tracePanelTitle: 'Resting-Potential Traces',
+-  traceHint: 'Track Na+, K+, and total resting-potential proxy traces over time',
++  canvasTitle: '',
++  canvasModeLabel: '',
++  particlePanelTitle: '',
++  particleHint: '',
++  tracePanelTitle: '',
++  traceHint: '',
+   traceTitle: 'Resting Potential Traces',
+apply_patch(auto_approved=true) exited 0 in 74ms:
+Success. Updated the following files:
+M src/pages/inspect_resting_potential_charge_wall.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+index 3a789899ddaff30f910d9d9669b071b6370c3b5f..203799174bd1d954be26e46de3987ef9bfe3d88d
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+@@ -6,9 +6,8 @@
+   title: 'Resting Potential from a Charge Wall',
+   subtitle: 'Two-ion resting potential teaching model.',
+   subtitlePoints: [
+-    'Convention: left = inside, right = outside.',
+     'Resting voltage reflects diffusion, field effects, and selective permeability together.',
+-    'Changing Na+ and K+ permeability shifts ion influence and total membrane voltage.'
++    'Resing potential is closer to the Nernst potential of the ion with higher permeability'
+   ],
+   fieldMode: 'wall',
+   withGoldman: true,
+@@ -19,10 +18,12 @@
+   eyebrow: 'Selective Membranes and the Emergence of Resting Potential',
+   equationGroupLabel: 'Teaching Note',
+   equationDescription: 'Na+ and K+ contribute separate electrical effects in a shared charge-wall field, with active transport controlled by Na+/K+ pump strength.',
+-  canvasTitle: 'Resting Potential from a Charge Wall',
+-  particleHint: 'Both ions start on the right and respond to the same membrane-scale electrical bias',
+-  tracePanelTitle: 'Resting-Potential Traces',
+-  traceHint: 'Track Na+, K+, and total resting-potential proxy traces over time',
++  canvasTitle: '',
++  canvasModeLabel: '',
++  particlePanelTitle: '',
++  particleHint: '',
++  tracePanelTitle: '',
++  traceHint: '',
+   traceTitle: 'Resting Potential Traces',
+   defaultNumParticles: DEFAULT_NUM_PARTICLES,
+   defaultElectricStrength: -0.1,
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index 826632f6916297eadf52aa324133454f2f7ddd23..3f443a573b1a0beb5181195471f5d3858e235bd3
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -37,6 +37,8 @@
+   equationGroupLabel?: string;
+   equationDescription?: string;
+   canvasTitle?: string;
++  canvasModeLabel?: string;
++  particlePanelTitle?: string;
+   particleHint?: string;
+   tracePanelTitle?: string;
+   traceHint?: string;
+@@ -593,9 +595,9 @@
+           </div>
+         </aside>
+         <section class="panel canvas-panel">
+-          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">Live two-ion membrane model</span></div>
++          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">${variant.canvasModeLabel ?? 'Live two-ion membrane model'}</span></div>
+           <div class="canvas-grid-2">
+-            <div class="canvas-subpanel"><div class="subhead"><h3>Particle Dynamics</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
++            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.particlePanelTitle ?? 'Particle Dynamics'}</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
+             <div class="canvas-subpanel"><div class="subhead"><h3>${variant.tracePanelTitle ?? 'Membrane Potential Proxy Traces'}</h3><span class="tiny">${variant.traceHint ?? `V_Na / V_K / V_total${variant.withGoldman ? ' / Goldman' : ''}`}</span></div><canvas id="trace-canvas"></canvas></div>
+           </div>
+           <div class="legend">
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+index 3a789899ddaff30f910d9d9669b071b6370c3b5f..203799174bd1d954be26e46de3987ef9bfe3d88d
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+@@ -6,9 +6,8 @@
+   title: 'Resting Potential from a Charge Wall',
+   subtitle: 'Two-ion resting potential teaching model.',
+   subtitlePoints: [
+-    'Convention: left = inside, right = outside.',
+     'Resting voltage reflects diffusion, field effects, and selective permeability together.',
+-    'Changing Na+ and K+ permeability shifts ion influence and total membrane voltage.'
++    'Resing potential is closer to the Nernst potential of the ion with higher permeability'
+   ],
+   fieldMode: 'wall',
+   withGoldman: true,
+@@ -19,10 +18,12 @@
+   eyebrow: 'Selective Membranes and the Emergence of Resting Potential',
+   equationGroupLabel: 'Teaching Note',
+   equationDescription: 'Na+ and K+ contribute separate electrical effects in a shared charge-wall field, with active transport controlled by Na+/K+ pump strength.',
+-  canvasTitle: 'Resting Potential from a Charge Wall',
+-  particleHint: 'Both ions start on the right and respond to the same membrane-scale electrical bias',
+-  tracePanelTitle: 'Resting-Potential Traces',
+-  traceHint: 'Track Na+, K+, and total resting-potential proxy traces over time',
++  canvasTitle: '',
++  canvasModeLabel: '',
++  particlePanelTitle: '',
++  particleHint: '',
++  tracePanelTitle: '',
++  traceHint: '',
+   traceTitle: 'Resting Potential Traces',
+   defaultNumParticles: DEFAULT_NUM_PARTICLES,
+   defaultElectricStrength: -0.1,
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index 826632f6916297eadf52aa324133454f2f7ddd23..3f443a573b1a0beb5181195471f5d3858e235bd3
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -37,6 +37,8 @@
+   equationGroupLabel?: string;
+   equationDescription?: string;
+   canvasTitle?: string;
++  canvasModeLabel?: string;
++  particlePanelTitle?: string;
+   particleHint?: string;
+   tracePanelTitle?: string;
+   traceHint?: string;
+@@ -593,9 +595,9 @@
+           </div>
+         </aside>
+         <section class="panel canvas-panel">
+-          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">Live two-ion membrane model</span></div>
++          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">${variant.canvasModeLabel ?? 'Live two-ion membrane model'}</span></div>
+           <div class="canvas-grid-2">
+-            <div class="canvas-subpanel"><div class="subhead"><h3>Particle Dynamics</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
++            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.particlePanelTitle ?? 'Particle Dynamics'}</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
+             <div class="canvas-subpanel"><div class="subhead"><h3>${variant.tracePanelTitle ?? 'Membrane Potential Proxy Traces'}</h3><span class="tiny">${variant.traceHint ?? `V_Na / V_K / V_total${variant.withGoldman ? ' / Goldman' : ''}`}</span></div><canvas id="trace-canvas"></canvas></div>
+           </div>
+           <div class="legend">
+
+exec
+/bin/zsh -lc "rg -n \"Convention: left = inside, right = outside\\.|Changing Na\\+ and K\\+ permeability shifts ion influence and total membrane voltage\\.|Live two-ion membrane model|Particle Dynamics|Both ions start on the right and respond to the same membrane-scale electrical bias|Track Na\\+, K\\+, and total resting-potential proxy traces over time\" src/pages/inspect_resting_potential_charge_wall.ts src/pages/resting_two_ion_common.ts -S" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+src/pages/resting_two_ion_common.ts:598:          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">${variant.canvasModeLabel ?? 'Live two-ion membrane model'}</span></div>
+src/pages/resting_two_ion_common.ts:600:            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.particlePanelTitle ?? 'Particle Dynamics'}</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+index 3a789899ddaff30f910d9d9669b071b6370c3b5f..203799174bd1d954be26e46de3987ef9bfe3d88d
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+@@ -6,9 +6,8 @@
+   title: 'Resting Potential from a Charge Wall',
+   subtitle: 'Two-ion resting potential teaching model.',
+   subtitlePoints: [
+-    'Convention: left = inside, right = outside.',
+     'Resting voltage reflects diffusion, field effects, and selective permeability together.',
+-    'Changing Na+ and K+ permeability shifts ion influence and total membrane voltage.'
++    'Resing potential is closer to the Nernst potential of the ion with higher permeability'
+   ],
+   fieldMode: 'wall',
+   withGoldman: true,
+@@ -19,10 +18,12 @@
+   eyebrow: 'Selective Membranes and the Emergence of Resting Potential',
+   equationGroupLabel: 'Teaching Note',
+   equationDescription: 'Na+ and K+ contribute separate electrical effects in a shared charge-wall field, with active transport controlled by Na+/K+ pump strength.',
+-  canvasTitle: 'Resting Potential from a Charge Wall',
+-  particleHint: 'Both ions start on the right and respond to the same membrane-scale electrical bias',
+-  tracePanelTitle: 'Resting-Potential Traces',
+-  traceHint: 'Track Na+, K+, and total resting-potential proxy traces over time',
++  canvasTitle: '',
++  canvasModeLabel: '',
++  particlePanelTitle: '',
++  particleHint: '',
++  tracePanelTitle: '',
++  traceHint: '',
+   traceTitle: 'Resting Potential Traces',
+   defaultNumParticles: DEFAULT_NUM_PARTICLES,
+   defaultElectricStrength: -0.1,
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index 826632f6916297eadf52aa324133454f2f7ddd23..3f443a573b1a0beb5181195471f5d3858e235bd3
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -37,6 +37,8 @@
+   equationGroupLabel?: string;
+   equationDescription?: string;
+   canvasTitle?: string;
++  canvasModeLabel?: string;
++  particlePanelTitle?: string;
+   particleHint?: string;
+   tracePanelTitle?: string;
+   traceHint?: string;
+@@ -593,9 +595,9 @@
+           </div>
+         </aside>
+         <section class="panel canvas-panel">
+-          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">Live two-ion membrane model</span></div>
++          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">${variant.canvasModeLabel ?? 'Live two-ion membrane model'}</span></div>
+           <div class="canvas-grid-2">
+-            <div class="canvas-subpanel"><div class="subhead"><h3>Particle Dynamics</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
++            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.particlePanelTitle ?? 'Particle Dynamics'}</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
+             <div class="canvas-subpanel"><div class="subhead"><h3>${variant.tracePanelTitle ?? 'Membrane Potential Proxy Traces'}</h3><span class="tiny">${variant.traceHint ?? `V_Na / V_K / V_total${variant.withGoldman ? ' / Goldman' : ''}`}</span></div><canvas id="trace-canvas"></canvas></div>
+           </div>
+           <div class="legend">
+
+exec
+/bin/zsh -lc 'cat package.json' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+{
+  "name": "electrochemical-signals-progression-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "lint": "tsc --noEmit",
+    "check-pages": "node scripts/check-pages.mjs",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.4.1"
+  }
+}
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+index 3a789899ddaff30f910d9d9669b071b6370c3b5f..203799174bd1d954be26e46de3987ef9bfe3d88d
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+@@ -6,9 +6,8 @@
+   title: 'Resting Potential from a Charge Wall',
+   subtitle: 'Two-ion resting potential teaching model.',
+   subtitlePoints: [
+-    'Convention: left = inside, right = outside.',
+     'Resting voltage reflects diffusion, field effects, and selective permeability together.',
+-    'Changing Na+ and K+ permeability shifts ion influence and total membrane voltage.'
++    'Resing potential is closer to the Nernst potential of the ion with higher permeability'
+   ],
+   fieldMode: 'wall',
+   withGoldman: true,
+@@ -19,10 +18,12 @@
+   eyebrow: 'Selective Membranes and the Emergence of Resting Potential',
+   equationGroupLabel: 'Teaching Note',
+   equationDescription: 'Na+ and K+ contribute separate electrical effects in a shared charge-wall field, with active transport controlled by Na+/K+ pump strength.',
+-  canvasTitle: 'Resting Potential from a Charge Wall',
+-  particleHint: 'Both ions start on the right and respond to the same membrane-scale electrical bias',
+-  tracePanelTitle: 'Resting-Potential Traces',
+-  traceHint: 'Track Na+, K+, and total resting-potential proxy traces over time',
++  canvasTitle: '',
++  canvasModeLabel: '',
++  particlePanelTitle: '',
++  particleHint: '',
++  tracePanelTitle: '',
++  traceHint: '',
+   traceTitle: 'Resting Potential Traces',
+   defaultNumParticles: DEFAULT_NUM_PARTICLES,
+   defaultElectricStrength: -0.1,
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index 826632f6916297eadf52aa324133454f2f7ddd23..3f443a573b1a0beb5181195471f5d3858e235bd3
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -37,6 +37,8 @@
+   equationGroupLabel?: string;
+   equationDescription?: string;
+   canvasTitle?: string;
++  canvasModeLabel?: string;
++  particlePanelTitle?: string;
+   particleHint?: string;
+   tracePanelTitle?: string;
+   traceHint?: string;
+@@ -593,9 +595,9 @@
+           </div>
+         </aside>
+         <section class="panel canvas-panel">
+-          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">Live two-ion membrane model</span></div>
++          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">${variant.canvasModeLabel ?? 'Live two-ion membrane model'}</span></div>
+           <div class="canvas-grid-2">
+-            <div class="canvas-subpanel"><div class="subhead"><h3>Particle Dynamics</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
++            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.particlePanelTitle ?? 'Particle Dynamics'}</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
+             <div class="canvas-subpanel"><div class="subhead"><h3>${variant.tracePanelTitle ?? 'Membrane Potential Proxy Traces'}</h3><span class="tiny">${variant.traceHint ?? `V_Na / V_K / V_total${variant.withGoldman ? ' / Goldman' : ''}`}</span></div><canvas id="trace-canvas"></canvas></div>
+           </div>
+           <div class="legend">
+
+codex
+I’ve finished the targeted edits and I’m running a full build (`tsc + vite`) to validate the repository still compiles.
+exec
+/bin/zsh -lc 'npm run build' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 1.16s:
+
+> electrochemical-signals-progression-web@0.1.0 build
+> tsc && vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 37 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                         0.50 kB │ gzip: 0.31 kB
+dist/inspect_diffusion_free.html                                        0.58 kB │ gzip: 0.32 kB
+dist/inspect_diffusion_selective.html                                   0.59 kB │ gzip: 0.33 kB
+dist/inspect_nernst_one_ion.html                                        0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_pore.html                                        0.60 kB │ gzip: 0.34 kB
+dist/inspect_nak_pump_gradients.html                                    0.60 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_permeability.html                                0.60 kB │ gzip: 0.34 kB
+dist/inspect_membrane_potential_intro.html                              0.60 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_charge_wall.html                         0.60 kB │ gzip: 0.34 kB
+dist/inspect_field_attraction.html                                      0.61 kB │ gzip: 0.34 kB
+dist/inspect_two_ion_selective_channels.html                            0.63 kB │ gzip: 0.35 kB
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+index 3a789899ddaff30f910d9d9669b071b6370c3b5f..203799174bd1d954be26e46de3987ef9bfe3d88d
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+@@ -6,9 +6,8 @@
+   title: 'Resting Potential from a Charge Wall',
+   subtitle: 'Two-ion resting potential teaching model.',
+   subtitlePoints: [
+-    'Convention: left = inside, right = outside.',
+     'Resting voltage reflects diffusion, field effects, and selective permeability together.',
+-    'Changing Na+ and K+ permeability shifts ion influence and total membrane voltage.'
++    'Resing potential is closer to the Nernst potential of the ion with higher permeability'
+   ],
+   fieldMode: 'wall',
+   withGoldman: true,
+@@ -19,10 +18,12 @@
+   eyebrow: 'Selective Membranes and the Emergence of Resting Potential',
+   equationGroupLabel: 'Teaching Note',
+   equationDescription: 'Na+ and K+ contribute separate electrical effects in a shared charge-wall field, with active transport controlled by Na+/K+ pump strength.',
+-  canvasTitle: 'Resting Potential from a Charge Wall',
+-  particleHint: 'Both ions start on the right and respond to the same membrane-scale electrical bias',
+-  tracePanelTitle: 'Resting-Potential Traces',
+-  traceHint: 'Track Na+, K+, and total resting-potential proxy traces over time',
++  canvasTitle: '',
++  canvasModeLabel: '',
++  particlePanelTitle: '',
++  particleHint: '',
++  tracePanelTitle: '',
++  traceHint: '',
+   traceTitle: 'Resting Potential Traces',
+   defaultNumParticles: DEFAULT_NUM_PARTICLES,
+   defaultElectricStrength: -0.1,
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index 826632f6916297eadf52aa324133454f2f7ddd23..3f443a573b1a0beb5181195471f5d3858e235bd3
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -37,6 +37,8 @@
+   equationGroupLabel?: string;
+   equationDescription?: string;
+   canvasTitle?: string;
++  canvasModeLabel?: string;
++  particlePanelTitle?: string;
+   particleHint?: string;
+   tracePanelTitle?: string;
+   traceHint?: string;
+@@ -593,9 +595,9 @@
+           </div>
+         </aside>
+         <section class="panel canvas-panel">
+-          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">Live two-ion membrane model</span></div>
++          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">${variant.canvasModeLabel ?? 'Live two-ion membrane model'}</span></div>
+           <div class="canvas-grid-2">
+-            <div class="canvas-subpanel"><div class="subhead"><h3>Particle Dynamics</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
++            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.particlePanelTitle ?? 'Particle Dynamics'}</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
+             <div class="canvas-subpanel"><div class="subhead"><h3>${variant.tracePanelTitle ?? 'Membrane Potential Proxy Traces'}</h3><span class="tiny">${variant.traceHint ?? `V_Na / V_K / V_total${variant.withGoldman ? ' / Goldman' : ''}`}</span></div><canvas id="trace-canvas"></canvas></div>
+           </div>
+           <div class="legend">
+
+exec
+/bin/zsh -lc 'git diff -- src/pages/inspect_resting_potential_charge_wall.ts src/pages/resting_two_ion_common.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+Total output lines: 1297
+
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index 2a39398..3f443a5 100644
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -1,24 +1,54 @@
+ import '../style.css';
++import {
++  DEFAULT_DIFFUSION_SD,
++  DEFAULT_POTENTIAL_SCALE,
++  MAX_PARTICLES,
++  SIM_COLORS,
++  drawMembraneWall,
++  evenlySpacedChannelBounds,
++  fieldColor,
++  leftEdgeChargeWallX,
++  pointFieldDrift,
++  wallFieldDrift
++} from './sim_shared';
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+index 3a789899ddaff30f910d9d9669b071b6370c3b5f..203799174bd1d954be26e46de3987ef9bfe3d88d
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+@@ -6,9 +6,8 @@
+   title: 'Resting Potential from a Charge Wall',
+   subtitle: 'Two-ion resting potential teaching model.',
+   subtitlePoints: [
+-    'Convention: left = inside, right = outside.',
+     'Resting voltage reflects diffusion, field effects, and selective permeability together.',
+-    'Changing Na+ and K+ permeability shifts ion influence and total membrane voltage.'
++    'Resing potential is closer to the Nernst potential of the ion with higher permeability'
+   ],
+   fieldMode: 'wall',
+   withGoldman: true,
+@@ -19,10 +18,12 @@
+   eyebrow: 'Selective Membranes and the Emergence of Resting Potential',
+   equationGroupLabel: 'Teaching Note',
+   equationDescription: 'Na+ and K+ contribute separate electrical effects in a shared charge-wall field, with active transport controlled by Na+/K+ pump strength.',
+-  canvasTitle: 'Resting Potential from a Charge Wall',
+-  particleHint: 'Both ions start on the right and respond to the same membrane-scale electrical bias',
+-  tracePanelTitle: 'Resting-Potential Traces',
+-  traceHint: 'Track Na+, K+, and total resting-potential proxy traces over time',
++  canvasTitle: '',
++  canvasModeLabel: '',
++  particlePanelTitle: '',
++  particleHint: '',
++  tracePanelTitle: '',
++  traceHint: '',
+   traceTitle: 'Resting Potential Traces',
+   defaultNumParticles: DEFAULT_NUM_PARTICLES,
+   defaultElectricStrength: -0.1,
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index 826632f6916297eadf52aa324133454f2f7ddd23..3f443a573b1a0beb5181195471f5d3858e235bd3
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -37,6 +37,8 @@
+   equationGroupLabel?: string;
+   equationDescription?: string;
+   canvasTitle?: string;
++  canvasModeLabel?: string;
++  particlePanelTitle?: string;
+   particleHint?: string;
+   tracePanelTitle?: string;
+   traceHint?: string;
+@@ -593,9 +595,9 @@
+           </div>
+         </aside>
+         <section class="panel canvas-panel">
+-          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">Live two-ion membrane model</span></div>
++          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">${variant.canvasModeLabel ?? 'Live two-ion membrane model'}</span></div>
+           <div class="canvas-grid-2">
+-            <div class="canvas-subpanel"><div class="subhead"><h3>Particle Dynamics</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
++            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.particlePanelTitle ?? 'Particle Dynamics'}</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
+             <div class="canvas-subpanel"><div class="subhead"><h3>${variant.tracePanelTitle ?? 'Membrane Potential Proxy Traces'}</h3><span class="tiny">${variant.traceHint ?? `V_Na / V_K / V_total${variant.withGoldman ? ' / Goldman' : ''}`}</span></div><canvas id="trace-canvas"></canvas></div>
+           </div>
+           <div class="legend">
+
+exec
+/bin/zsh -lc "nl -ba src/pages/inspect_resting_potential_charge_wall.ts | sed -n '1,120p'" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "nl -ba src/pages/resting_two_ion_common.ts | sed -n '20,60p;592,608p'" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 50ms:
+     1	import { mountTwoIonRestingPage } from './resting_two_ion_common';
+     2	import { DEFAULT_NUM_PARTICLES, DEFAULT_POTENTIAL_SCALE, SIM_COLORS } from './sim_shared';
+     3	
+     4	mountTwoIonRestingPage({
+     5	  pageId: 'inspect_resting_potential_charge_wall',
+     6	  title: 'Resting Potential from a Charge Wall',
+     7	  subtitle: 'Two-ion resting potential teaching model.',
+     8	  subtitlePoints: [
+     9	    'Resting voltage reflects diffusion, field effects, and selective permeability together.',
+    10	    'Resing potential is closer to the Nernst potential of the ion with higher permeability'
+    11	  ],
+    12	  fieldMode: 'wall',
+    13	  withGoldman: true,
+    14	  focusMode: 'goldman',
+    15	  type1Color: SIM_COLORS.ionB,
+    16	  type1Label: 'K+',
+    17	  negMarkerLabel: 'Charge wall',
+    18	  eyebrow: 'Selective Membranes and the Emergence of Resting Potential',
+    19	  equationGroupLabel: 'Teaching Note',
+    20	  equationDescription: 'Na+ and K+ contribute separate electrical effects in a shared charge-wall field, with active transport controlled by Na+/K+ pump strength.',
+ succeeded in 52ms:
+    20	  pageId: string;
+    21	  title: string;
+    22	  subtitle: string;
+    23	  subtitlePoints?: string[];
+    24	  fieldMode: FieldMode;
+    25	  withGoldman: boolean;
+    26	  focusMode: TeachingFocus;
+    27	  type1Color: string;
+    28	  type1Label: string;
+    29	  negMarkerLabel: string;
+    30	  defaultNumParticles: number;
+    31	  defaultElectricStrength: number;
+    32	  defaultDt?: number;
+    33	  defaultT?: number;
+    34	  defaultNegX?: number;
+    35	  goldmanScaleDefault?: number;
+    36	  eyebrow?: string;
+    37	  equationGroupLabel?: string;
+    38	  equationDescription?: string;
+    39	  canvasTitle?: string;
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+index 3a789899ddaff30f910d9d9669b071b6370c3b5f..203799174bd1d954be26e46de3987ef9bfe3d88d
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+@@ -6,9 +6,8 @@
+   title: 'Resting Potential from a Charge Wall',
+   subtitle: 'Two-ion resting potential teaching model.',
+   subtitlePoints: [
+-    'Convention: left = inside, right = outside.',
+     'Resting voltage reflects diffusion, field effects, and selective permeability together.',
+-    'Changing Na+ and K+ permeability shifts ion influence and total membrane voltage.'
++    'Resing potential is closer to the Nernst potential of the ion with higher permeability'
+   ],
+   fieldMode: 'wall',
+   withGoldman: true,
+@@ -19,10 +18,12 @@
+   eyebrow: 'Selective Membranes and the Emergence of Resting Potential',
+   equationGroupLabel: 'Teaching Note',
+   equationDescription: 'Na+ and K+ contribute separate electrical effects in a shared charge-wall field, with active transport controlled by Na+/K+ pump strength.',
+-  canvasTitle: 'Resting Potential from a Charge Wall',
+-  particleHint: 'Both ions start on the right and respond to the same membrane-scale electrical bias',
+-  tracePanelTitle: 'Resting-Potential Traces',
+-  traceHint: 'Track Na+, K+, and total resting-potential proxy traces over time',
++  canvasTitle: '',
++  canvasModeLabel: '',
++  particlePanelTitle: '',
++  particleHint: '',
++  tracePanelTitle: '',
++  traceHint: '',
+   traceTitle: 'Resting Potential Traces',
+   defaultNumParticles: DEFAULT_NUM_PARTICLES,
+   defaultElectricStrength: -0.1,
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index 826632f6916297eadf52aa324133454f2f7ddd23..3f443a573b1a0beb5181195471f5d3858e235bd3
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -37,6 +37,8 @@
+   equationGroupLabel?: string;
+   equationDescription?: string;
+   canvasTitle?: string;
++  canvasModeLabel?: string;
++  particlePanelTitle?: string;
+   particleHint?: string;
+   tracePanelTitle?: string;
+   traceHint?: string;
+@@ -593,9 +595,9 @@
+           </div>
+         </aside>
+         <section class="panel canvas-panel">
+-          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">Live two-ion membrane model</span></div>
++          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">${variant.canvasModeLabel ?? 'Live two-ion membrane model'}</span></div>
+           <div class="canvas-grid-2">
+-            <div class="canvas-subpanel"><div class="subhead"><h3>Particle Dynamics</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
++            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.particlePanelTitle ?? 'Particle Dynamics'}</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
+             <div class="canvas-subpanel"><div class="subhead"><h3>${variant.tracePanelTitle ?? 'Membrane Potential Proxy Traces'}</h3><span class="tiny">${variant.traceHint ?? `V_Na / V_K / V_total${variant.withGoldman ? ' / Goldman' : ''}`}</span></div><canvas id="trace-canvas"></canvas></div>
+           </div>
+           <div class="legend">
+
+codex
+Implemented only the **“Resting Potential from a Charge Wall”** section requests.
+
+Changed files:
+- [src/pages/inspect_resting_potential_charge_wall.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts:8)
+  - Removed `Convention: left = inside, right = outside.` from `subtitlePoints`.
+  - Replaced the sentence with: `Resing potential is closer to the Nernst potential of the ion with higher permeability`.
+  - Removed the requested visible text block by blanking this page’s panel labels/hints:
+    - `canvasTitle`, `canvasModeLabel`, `particlePanelTitle`, `particleHint`, `tracePanelTitle`, `traceHint`.
+
+- [src/pages/resting_two_ion_common.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts:39)
+  - Added page-level optional config fields `canvasModeLabel` and `particlePanelTitle`.
+  - Updated template rendering to use those overrides, enabling text removal for this section only.
+
+Validation run:
+- `npm run build` passed (`tsc && vite build`).
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+index 3a789899ddaff30f910d9d9669b071b6370c3b5f..203799174bd1d954be26e46de3987ef9bfe3d88d
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts
+@@ -6,9 +6,8 @@
+   title: 'Resting Potential from a Charge Wall',
+   subtitle: 'Two-ion resting potential teaching model.',
+   subtitlePoints: [
+-    'Convention: left = inside, right = outside.',
+     'Resting voltage reflects diffusion, field effects, and selective permeability together.',
+-    'Changing Na+ and K+ permeability shifts ion influence and total membrane voltage.'
++    'Resing potential is closer to the Nernst potential of the ion with higher permeability'
+   ],
+   fieldMode: 'wall',
+   withGoldman: true,
+@@ -19,10 +18,12 @@
+   eyebrow: 'Selective Membranes and the Emergence of Resting Potential',
+   equationGroupLabel: 'Teaching Note',
+   equationDescription: 'Na+ and K+ contribute separate electrical effects in a shared charge-wall field, with active transport controlled by Na+/K+ pump strength.',
+-  canvasTitle: 'Resting Potential from a Charge Wall',
+-  particleHint: 'Both ions start on the right and respond to the same membrane-scale electrical bias',
+-  tracePanelTitle: 'Resting-Potential Traces',
+-  traceHint: 'Track Na+, K+, and total resting-potential proxy traces over time',
++  canvasTitle: '',
++  canvasModeLabel: '',
++  particlePanelTitle: '',
++  particleHint: '',
++  tracePanelTitle: '',
++  traceHint: '',
+   traceTitle: 'Resting Potential Traces',
+   defaultNumParticles: DEFAULT_NUM_PARTICLES,
+   defaultElectricStrength: -0.1,
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index 826632f6916297eadf52aa324133454f2f7ddd23..3f443a573b1a0beb5181195471f5d3858e235bd3
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -37,6 +37,8 @@
+   equationGroupLabel?: string;
+   equationDescription?: string;
+   canvasTitle?: string;
++  canvasModeLabel?: string;
++  particlePanelTitle?: string;
+   particleHint?: string;
+   tracePanelTitle?: string;
+   traceHint?: string;
+@@ -593,9 +595,9 @@
+           </div>
+         </aside>
+         <section class="panel canvas-panel">
+-          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">Live two-ion membrane model</span></div>
++          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">${variant.canvasModeLabel ?? 'Live two-ion membrane model'}</span></div>
+           <div class="canvas-grid-2">
+-            <div class="canvas-subpanel"><div class="subhead"><h3>Particle Dynamics</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
++            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.particlePanelTitle ?? 'Particle Dynamics'}</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
+             <div class="canvas-subpanel"><div class="subhead"><h3>${variant.tracePanelTitle ?? 'Membrane Potential Proxy Traces'}</h3><span class="tiny">${variant.traceHint ?? `V_Na / V_K / V_total${variant.withGoldman ? ' / Goldman' : ''}`}</span></div><canvas id="trace-canvas"></canvas></div>
+           </div>
+           <div class="legend">
+
+tokens used
+40,594
+Implemented only the **“Resting Potential from a Charge Wall”** section requests.
+
+Changed files:
+- [src/pages/inspect_resting_potential_charge_wall.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_resting_potential_charge_wall.ts:8)
+  - Removed `Convention: left = inside, right = outside.` from `subtitlePoints`.
+  - Replaced the sentence with: `Resing potential is closer to the Nernst potential of the ion with higher permeability`.
+  - Removed the requested visible text block by blanking this page’s panel labels/hints:
+    - `canvasTitle`, `canvasModeLabel`, `particlePanelTitle`, `particleHint`, `tracePanelTitle`, `traceHint`.
+
+- [src/pages/resting_two_ion_common.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts:39)
+  - Added page-level optional config fields `canvasModeLabel` and `particlePanelTitle`.
+  - Updated template rendering to use those overrides, enabling text removal for this section only.
+
+Validation run:
+- `npm run build` passed (`tsc && vite build`).

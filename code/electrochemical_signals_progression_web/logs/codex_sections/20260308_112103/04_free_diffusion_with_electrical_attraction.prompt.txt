@@ -1,0 +1,16 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Free Diffusion with Electrical Attraction
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Free Diffusion with Electrical Attraction
+
+- Add 3 more eelctrial source (attractor / repulser) one for
+  each major eaxis in the plot. Initial particles still at
+  the center.

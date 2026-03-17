@@ -1,0 +1,26 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Resting Potential from a Charge Wall
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Resting Potential from a Charge Wall
+
+- Remove the Prediction Prompt and asociation text.
+
+- Use NA+ and K+ instead of type 0 and type 1 or A and B
+  throughout this sim and UI interface. UI controls arranged
+  in same order as Na/K pump sim (see below).
+
+- UI controls should be in the following order:
+  - Particles
+  - Diffusion SD
+  - Electric strength
+  - NA+ permeability
+  - K+ permeability
+  - NA+/K+ pump strength (as a numeric entry not as a slider)

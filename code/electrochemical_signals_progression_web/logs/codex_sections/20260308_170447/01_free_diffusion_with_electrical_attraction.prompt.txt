@@ -1,0 +1,18 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Free Diffusion with Electrical Attraction
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Free Diffusion with Electrical Attraction
+
+- Replace the separate magnitude and direction controls with
+  a single control that allows users to specify both the
+  magnitude and direction of the electrical attraction by
+  entiering a numeric value. Positive values will indicate
+  attraction, while negative values will indicate repulsion.

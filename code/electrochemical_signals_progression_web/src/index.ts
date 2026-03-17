@@ -24,7 +24,7 @@ const arcLabels: Record<LessonArc, string> = {
 };
 
 function lessonCard(lesson: (typeof lessons)[number]): string {
-  const isLive = lesson.status === 'active' || lesson.status === 'rebuild';
+  const isLive = lesson.status === 'active';
   if (isLive) {
     return `
       <a class="link-card ready" href="./${lesson.htmlPath}">
@@ -32,7 +32,7 @@ function lessonCard(lesson: (typeof lessons)[number]): string {
         <span>${lesson.description}</span>
       </a>`;
   }
-  if (lesson.status === 'draft') {
+  if (lesson.status === 'draft' || lesson.status === 'rebuild') {
     return `
       <div class="link-card draft">
         <strong>${lesson.title} <em class="badge">Coming soon</em></strong>

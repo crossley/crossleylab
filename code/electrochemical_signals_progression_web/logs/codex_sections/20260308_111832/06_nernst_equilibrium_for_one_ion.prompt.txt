@@ -1,0 +1,22 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Nernst Equilibrium for One Ion
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Nernst Equilibrium for One Ion
+
+- Use prettier math for V = S ln(C_out / C_in). ---
+  something like latex / mathjax
+
+- The charge walll in the middle of the cell wall in this
+  simulation makes no sense. Remove it. We want it just like
+  the preivou sims with one ion and one pore. The inside of
+  the "cell" is the left side of the plot, the outside is
+  the right side. The inside has a far wal that is charged
+  to attract or reply ions of different charges.

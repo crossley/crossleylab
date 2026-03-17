@@ -12,6 +12,24 @@
   --gridline: rgba(130, 178, 255, 0.12);
 }
 
+html.light {
+  --bg0: #eef2fa;
+  --bg1: #e4eaf6;
+  --ink: #18243a;
+  --muted: #4a607e;
+  --panel: rgba(255, 255, 255, 0.84);
+  --panel-border: rgba(50, 80, 160, 0.18);
+  --accent: #0078b0;
+  --accent-2: #3a8a00;
+  --danger: #b00038;
+  --canvas-bg: #e8eef8;
+  --gridline: rgba(50, 90, 180, 0.12);
+}
+
+html.light body {
+  background: linear-gradient(180deg, var(--bg0), var(--bg1));
+}
+
 * {
   box-sizing: border-box;
 }
@@ -71,6 +89,34 @@ body {
 
 .key-points li::marker {
   color: var(--accent);
+}
+
+.guided-questions {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 4px;
+  max-width: 76ch;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.guided-questions li::marker {
+  color: var(--accent-2);
+}
+
+.teaching-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 4px 0 0 0;
+}
+
+.teaching-label.questions {
+  color: var(--accent-2);
 }
 
 h1 {
@@ -438,6 +484,26 @@ canvas {
 
 .nav-line a:hover {
   text-decoration: underline;
+}
+
+.nav-line .spacer {
+  flex: 1;
+}
+
+.theme-btn {
+  background: none;
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 2px 8px;
+  line-height: 1.6;
+  transition: color 0.15s;
+}
+
+.theme-btn:hover {
+  color: var(--ink);
 }
 
 code {

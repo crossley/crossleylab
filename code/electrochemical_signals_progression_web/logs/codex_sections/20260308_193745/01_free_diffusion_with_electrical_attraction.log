@@ -1,0 +1,592 @@
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccc98-678e-7152-8b42-a9b7254e4d7e
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Free Diffusion with Electrical Attraction
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Free Diffusion with Electrical Attraction
+
+- Use UI control names conssitent with the rest of the project.
+
+mcp startup: no servers
+codex
+I’ll locate the “Free Diffusion with Electrical Attraction” section in `change_requests.md`, map it to the relevant UI code, and implement only that requested bullet. Then I’ll run the project checks/build to verify nothing else regressed.
+exec
+/bin/zsh -lc 'rg --files' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'git status --short' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'rg --line-number "''^# |Free Diffusion with Electrical Attraction|conssitent|consistent|UI control" change_requests.md' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+src/pages/resting_two_ion_common.ts
+src/pages/inspect_nernst_one_ion.ts
+src/pages/sim_shared.ts
+src/pages/inspect_ap_threshold_all_or_none.ts
+src/pages/inspect_resting_potential_charge_wall.ts
+src/pages/action_potential_common.ts
+src/pages/inspect_field_attraction.ts
+src/pages/inspect_diffusion_selective_permeability_rate.ts
+src/pages/inspect_diffusion_permeability.ts
+src/pages/inspect_two_ion_selective_channels.ts
+src/pages/inspect_diffusion_pore.ts
+src/pages/inspect_ap_phases.ts
+src/pages/inspect_diffusion_selective.ts
+src/pages/inspect_membrane_potential_intro.ts
+src/pages/inspect_diffusion_free.ts
+src/pages/inspect_ap_subthreshold.ts
+src/pages/inspect_nak_pump_gradients.ts
+src/lessons.ts
+src/index.ts
+src/style.css
+ succeeded in 50ms:
+ M README.md
+ D inspect_diffusion_1.html
+ D inspect_diffusion_2.html
+ D inspect_diffusion_3.html
+ D inspect_diffusion_4.html
+ D inspect_electrochemical_1.html
+ D inspect_electrochemical_2.html
+ D inspect_electrochemical_3.html
+ D inspect_resting_potential_1.html
+ D inspect_resting_potential_2.html
+ D inspect_resting_potential_3.html
+ D inspect_resting_potential_4.html
+ M package.json
+ M src/index.ts
+ D src/pages/inspect_diffusion_1.ts
+ D src/pages/inspect_diffusion_2.ts
+ D src/pages/inspect_diffusion_3.ts
+ D src/pages/inspect_diffusion_4.ts
+ D src/pages/inspect_electrochemical_1.ts
+ D src/pages/inspect_electrochemical_2.ts
+ succeeded in 51ms:
+1:# Free Diffusion with Electrical Attraction
+3:- Use UI control names conssitent with the rest of the project.
+5:# Nernst Equilibrium for One Ion
+15:- Change UI control Electric strength (inside charge wall) to Electric strength
+17:# Two-Ion Selective Channels with Electrical Attraction
+19:- remove Ion A fraction from UI controls and fix to 0.5
+21:- reorder the remaining UI controls to be in the following
+32:- Remove the upper limit on the Electric strength UI control
+37:# Na/K Pump
+49:# Resting Potential from a Charge Wall
+codex
+I found the exact request, and there are many unrelated workspace changes already present, so I’ll limit edits to the page that corresponds to this section (`inspect_field_attraction`) and leave everything else untouched. I’m now checking current control labels against neighboring pages to match naming conventions.
+exec
+/bin/zsh -lc "sed -n '1,240p' src/pages/inspect_diffusion_free.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '1,260p' src/pages/inspect_diffusion_selective_permeability_rate.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '1,240p' src/pages/inspect_field_attraction.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 50ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_NUM_PARTICLES,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  drawMembraneWall,
+  evenlySpacedChannelBounds
+} from './sim_shared';
+
+type IonType = 0 | 1;
+
+interface SimParams {
+  T: number;
+  dt: number;
+  numParticles: number;
+  type0Fraction: number;
+  boxWidth: number;
+  boxHeight: number;
+  wallThickness: number;
+ succeeded in 51ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_NUM_PARTICLES,
+  MAX_PARTICLES,
+  SIM_COLORS
+} from './sim_shared';
+
+interface SimParams {
+  T: number;
+  dt: number;
+  numParticles: number;
+  diffusionSd: number;
+  initClusterSd: number;
+}
+
+interface DisplayParams {
+  axisLimit: number;
+  pointSize: number;
+  playbackSpeed: number;
+ succeeded in 51ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_NUM_PARTICLES,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  fieldColor,
+  pointFieldDrift
+} from './sim_shared';
+
+interface SimParams {
+  T: number;
+  dt: number;
+  numParticles: number;
+  diffusionSd: number;
+  initClusterSd: number;
+  source0Attraction: number;
+  source1Attraction: number;
+  source2Attraction: number;
+  source3Attraction: number;
+exec
+/bin/zsh -lc 'rg --line-number "label|control|source|Attraction|Electric|ui|createControl|appendControl|form" src/pages/inspect_field_attraction.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+17:  source0Attraction: number;
+18:  source1Attraction: number;
+19:  source2Attraction: number;
+20:  source3Attraction: number;
+95:  source0Attraction: 0.15,
+96:  source1Attraction: 0.15,
+97:  source2Attraction: 0.15,
+98:  source3Attraction: 0.15,
+194:    { x: state.negX, y: state.negY, strength: -simParams.source0Attraction },
+195:    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: -simParams.source1Attraction },
+196:    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: -simParams.source2Attraction },
+197:    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: -simParams.source3Attraction }
+203:  const fieldSources = getFieldSources(state).map((source) => ({ ...source, strength: clamp(source.strength, -10, 10) }));
+207:    for (const source of fieldSources) {
+208:      const dx = source.x - state.x[i];
+209:      const dy = source.y - state.y[i];
+210:      const [sourceDriftX, sourceDriftY] = pointFieldDrift(dx, dy, source.strength, 1);
+211:      driftX += sourceDriftX;
+212:      driftY += sourceDriftY;
+306:  for (const source of getFieldSources(state)) {
+exec
+/bin/zsh -lc "sed -n '300,440p' src/pages/inspect_two_ion_selective_channels.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '320,430p' src/pages/inspect_nernst_one_ion.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '320,410p' src/pages/inspect_resting_potential_charge_wall.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+    if (s.dashed) ctx.setLineDash([5 * dpr, 4 * dpr]);
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < trace.times.length; i += 1) {
+      if (trace.times[i] < startTime) continue;
+      const px = xMap(trace.times[i]);
+      const py = yMap(s.data[i]);
+      if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+    }
+    if (started) ctx.stroke();
+    ctx.restore();
+  }
+  ctx.fillStyle = 'rgba(232,243,255,0.92)';
+  ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+  ctx.fillStyle = 'rgba(232,243,255,0.78)';
+  ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+  ctx.save();
+  ctx.translate(12 * dpr, padT + plotH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+ succeeded in 51ms:
+      const idx = type0Idx.splice(pick, 1)[0];
+      state.types[idx] = 1;
+    }
+  }
+  state.type0Total = targetType0;
+  state.type1Total = state.numParticles - targetType0;
+  count(state);
+  return state;
+}
+
+function resizeState(state: LiveState, targetCount: number, rngRef: Rng): LiveState {
+  if (targetCount === state.numParticles) return state;
+  const nextX = new Float32Array(targetCount);
+  const nextY = new Float32Array(targetCount);
+  const nextTypes = new Uint8Array(targetCount);
+  const nextCharges = new Float32Array(targetCount);
+  const keep = Math.min(state.numParticles, targetCount);
+  nextX.set(state.x.subarray(0, keep));
+  nextY.set(state.y.subarray(0, keep));
+  nextTypes.set(state.types.subarray(0, keep));
+ succeeded in 51ms:
+
+codex
+I found likely inconsistency: this page uses “Generator X attraction (+ attract, - repel)”, which doesn’t match the “Electric strength” naming used in related electrochemical pages. I’ll verify by scanning for electric-control labels across pages, then apply a minimal label-only change.
+exec
+/bin/zsh -lc "sed -n '320,390p' src/pages/inspect_field_attraction.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "rg --line-number \"Electric strength|attraction \\(|Field source|Generator [0-9]\" src/pages/*.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '390,700p' src/pages/inspect_field_attraction.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 50ms:
+src/pages/inspect_nernst_one_ion.ts:435:              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+src/pages/inspect_nernst_one_ion.ts:606:    `Electric strength (inside charge wall) = ${simParams.electricStrength.toFixed(3)}`,
+src/pages/inspect_two_ion_selective_channels.ts:638:              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+src/pages/inspect_two_ion_selective_channels.ts:849:    `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
+src/pages/resting_two_ion_common.ts:564:                <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+src/pages/resting_two_ion_common.ts:578:              <div class="field"><label for="neg-x">${variant.fieldMode === 'point' ? 'Field source x' : 'Charge wall x (fixed)'}</label><input id="neg-x" type="number" step="1"${variant.fieldMode === 'wall' ? ' readonly' : ''} /></div>
+src/pages/resting_two_ion_common.ts:579:              <div class="field"><label for="neg-y">Field source y (point mode)</label><input id="neg-y" type="number" step="1" /></div>
+src/pages/resting_two_ion_common.ts:857:      `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
+src/pages/inspect_field_attraction.ts:353:              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+src/pages/inspect_field_attraction.ts:354:              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+src/pages/inspect_field_attraction.ts:355:              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+src/pages/inspect_field_attraction.ts:356:              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+src/pages/inspect_field_attraction.ts:369:                <div class="field"><label for="neg-x">Field source x</label><input id="neg-x" type="number" step="1" /></div>
+src/pages/inspect_field_attraction.ts:370:                <div class="field"><label for="neg-y">Field source y</label><input id="neg-y" type="number" step="1" /></div>
+src/pages/inspect_nak_pump_gradients.ts:630:              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+ succeeded in 51ms:
+      <a href="./index.html">Back to index</a>
+      <span>•</span>
+      <span>Page: <code>inspect_field_attraction</code></span>
+    </div>
+
+    <header class="page-head">
+      <p class="eyebrow">Point-Source Electrical Drift</p>
+      <h1>Free Diffusion with Electrical Attraction</h1>
+      <ul class="key-points">
+        <li>Diffusion spreads particles; electrical drift attracts or repels them.</li>
+        <li>Stronger field or weaker diffusion produces tighter clustering.</li>
+        <li>Weaker field or stronger diffusion produces broader spread.</li>
+        <li>At equilibrium, diffusion and electrical forces balance, producing a stable distribution.</li>
+      </ul>
+    </header>
+
+    <div class="sim-layout">
+      <aside class="controls">
+        <div class="panel">
+          <div class="group">
+ succeeded in 52ms:
+
+          <div class="group">
+            <p class="group-label">Equation (Euler Update)</p>
+            <div class="equation-card">
+              <pre class="equation" id="equation-block"></pre>
+              <p>
+                <code>diffusionSd</code> controls the sampled Brownian rate terms.
+                The particles are treated as positive, so negative field strengths
+                attract them toward the source and positive field strengths repel them.
+              </p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="panel canvas-panel">
+        <canvas id="sim-canvas" aria-label="2D diffusion particle simulation"></canvas>
+      </section>
+    </div>
+  </div>
+exec
+/bin/zsh -lc "rg --line-number \"Status window T \\(ms\\)|Total time T \\(ms\\)|Playback speed|Particles|Diffusion SD\" src/pages/inspect_*.ts src/pages/resting_two_ion_common.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+src/pages/inspect_diffusion_selective.ts:16:  numParticles: number;
+src/pages/inspect_diffusion_selective.ts:36:  numParticles: number;
+src/pages/inspect_diffusion_selective.ts:106:  numParticles: DEFAULT_NUM_PARTICLES,
+src/pages/inspect_diffusion_selective.ts:158:    numParticles: clamp(Math.round(params.numParticles), 1, MAX_PARTICLES),
+src/pages/inspect_diffusion_selective.ts:174:  for (let i = 0; i < state.numParticles; i += 1) {
+src/pages/inspect_diffusion_selective.ts:200:  const x = new Float32Array(normalized.numParticles);
+src/pages/inspect_diffusion_selective.ts:201:  const y = new Float32Array(normalized.numParticles);
+src/pages/inspect_diffusion_selective.ts:202:  const types = new Uint8Array(normalized.numParticles);
+src/pages/inspect_diffusion_selective.ts:206:  for (let i = 0; i < normalized.numParticles; i += 1) {
+src/pages/inspect_diffusion_selective.ts:219:    numParticles: normalized.numParticles,
+src/pages/inspect_diffusion_selective.ts:243:  const targetType0 = Math.round(state.numParticles * type0Fraction);
+src/pages/inspect_diffusion_selective.ts:247:  for (let i = 0; i < state.numParticles; i += 1) {
+src/pages/inspect_diffusion_selective.ts:267:  state.type1Total = state.numParticles - targetType0;
+src/pages/inspect_diffusion_selective.ts:271:  if (nextCount === state.numParticles) return state;
+src/pages/inspect_diffusion_selective.ts:275:  const keep = Math.min(state.numParticles, nextCount);
+src/pages/inspect_diffusion_selective.ts:284:  state = { ...state, x, y, types, numParticles: nextCount };
+src/pages/inspect_diffusion_selective.ts:292:  for (let i = 0; i < state.numParticles; i += 1) {
+src/pages/inspect_diffusion_selective.ts:307:  for (let i = 0; i < state.numParticles; i += 1) {
+src/pages/inspect_diffusion_selective.ts:433:  for (let i = 0; i < state.numParticles; i += 1) {
+src/pages/inspect_diffusion_selective.ts:556:              <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+exec
+/bin/zsh -lc "rg --line-number \"function wallFieldDrift|function pointFieldDrift\" src/pages/sim_shared.ts && sed -n '1,220p' src/pages/sim_shared.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+65:export function pointFieldDrift(dx: number, dy: number, sourceStrength: number, particleCharge = 1): [number, number] {
+73:export function wallFieldDrift(dx: number, sourceStrength: number, particleCharge = 1): number {
+export const MAX_PARTICLES = 5000;
+export const DEFAULT_NUM_PARTICLES = 3000;
+export const DEFAULT_DIFFUSION_SD = 0.25;
+export const DEFAULT_POTENTIAL_SCALE = 26;
+export const DEFAULT_CHARGE_WALL_INSET = 2;
+
+export const SIM_COLORS = {
+  particle: 'rgba(245, 178, 72, 0.92)',
+  ionA: 'rgba(245, 178, 72, 0.92)',
+  ionB: 'rgba(66, 200, 255, 0.92)',
+  ionC: 'rgba(114, 255, 178, 0.92)',
+  outsideTrace: '#42c8ff',
+  insideTrace: '#72ffb2',
+  ionATrace: '#f5b248',
+  ionBTrace: '#42c8ff',
+  ionCTrace: '#72ffb2',
+  totalTrace: '#c68dff',
+  predictionTrace: '#f2f5fb',
+exec
+/bin/zsh -lc "sed -n '1,220p' logs/codex_sections/20260308_193745/01_free_diffusion_with_electrical_attraction.log" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccc98-678e-7152-8b42-a9b7254e4d7e
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Free Diffusion with Electrical Attraction
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+codex
+I’ve confirmed the inconsistency is localized to the four attraction control labels on `inspect_field_attraction`. I’m making a minimal UI text update there only, without changing simulation behavior or other sections.
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -352,6 +352,6 @@
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source0-attraction">Electric strength 1 (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Electric strength 2 (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Electric strength 3 (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Electric strength 4 (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+apply_patch(auto_approved=true) exited 0 in 73ms:
+Success. Updated the following files:
+M src/pages/inspect_field_attraction.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+index e027dd20e83b24b92a25116896f3900b79860eba..dec6fc6d917edbdf28b982731e0094e36fa54bc1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -350,10 +350,10 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source0-attraction">Electric strength 1 (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Electric strength 2 (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Electric strength 3 (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Electric strength 4 (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+             </div>
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+index e027dd20e83b24b92a25116896f3900b79860eba..dec6fc6d917edbdf28b982731e0094e36fa54bc1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -350,10 +350,10 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source0-attraction">Electric strength 1 (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Electric strength 2 (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Electric strength 3 (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Electric strength 4 (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+             </div>
+
+codex
+The label change is in place. Next I’ll run the project’s build/check script to validate the update compiles cleanly.
+exec
+/bin/zsh -lc 'cat package.json' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'git diff -- src/pages/inspect_field_attraction.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+{
+  "name": "electrochemical-signals-progression-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "lint": "tsc --noEmit",
+    "check-pages": "node scripts/check-pages.mjs",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.4.1"
+  }
+}
+ succeeded in 52ms:
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+index e027dd20e83b24b92a25116896f3900b79860eba..dec6fc6d917edbdf28b982731e0094e36fa54bc1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -350,10 +350,10 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source0-attraction">Electric strength 1 (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Electric strength 2 (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Electric strength 3 (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Electric strength 4 (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+             </div>
+
+exec
+/bin/zsh -lc "git diff -- src/pages/inspect_field_attraction.ts | sed -n '1,160p'" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+index e027dd20e83b24b92a25116896f3900b79860eba..dec6fc6d917edbdf28b982731e0094e36fa54bc1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -350,10 +350,10 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source0-attraction">Electric strength 1 (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Electric strength 2 (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Electric strength 3 (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Electric strength 4 (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+             </div>
+
+exec
+/bin/zsh -lc 'git status --short src/pages/inspect_field_attraction.ts && rg --line-number "Electric strength [1-4]" src/pages/inspect_field_attraction.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+?? src/pages/inspect_field_attraction.ts
+353:              <div class="field"><label for="source0-attraction">Electric strength 1 (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+354:              <div class="field"><label for="source1-attraction">Electric strength 2 (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+355:              <div class="field"><label for="source2-attraction">Electric strength 3 (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+356:              <div class="field"><label for="source3-attraction">Electric strength 4 (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+index e027dd20e83b24b92a25116896f3900b79860eba..dec6fc6d917edbdf28b982731e0094e36fa54bc1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -350,10 +350,10 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source0-attraction">Electric strength 1 (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Electric strength 2 (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Electric strength 3 (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Electric strength 4 (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+             </div>
+
+exec
+/bin/zsh -lc 'npm run build' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 1.14s:
+
+> electrochemical-signals-progression-web@0.1.0 build
+> tsc && vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 37 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                         0.50 kB │ gzip: 0.31 kB
+dist/inspect_diffusion_free.html                                        0.58 kB │ gzip: 0.32 kB
+dist/inspect_diffusion_selective.html                                   0.59 kB │ gzip: 0.33 kB
+dist/inspect_nernst_one_ion.html                                        0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_pore.html                                        0.60 kB │ gzip: 0.34 kB
+dist/inspect_nak_pump_gradients.html                                    0.60 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_permeability.html                                0.60 kB │ gzip: 0.34 kB
+dist/inspect_membrane_potential_intro.html                              0.60 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_charge_wall.html                         0.60 kB │ gzip: 0.34 kB
+dist/inspect_field_attraction.html                                      0.61 kB │ gzip: 0.34 kB
+dist/inspect_two_ion_selective_channels.html                            0.63 kB │ gzip: 0.35 kB
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+index e027dd20e83b24b92a25116896f3900b79860eba..dec6fc6d917edbdf28b982731e0094e36fa54bc1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -350,10 +350,10 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source0-attraction">Electric strength 1 (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Electric strength 2 (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Electric strength 3 (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Electric strength 4 (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+             </div>
+
+codex
+Implemented only the requested section change for **Free Diffusion with Electrical Attraction**.
+
+**Changed file**
+- [src/pages/inspect_field_attraction.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts):353  
+  Updated the four UI control labels from `Generator X attraction ...` to `Electric strength X (+ attract, - repel)` so naming matches the rest of the project’s UI terminology.
+
+**Verification**
+- Ran `npm run build` successfully (`tsc && vite build` passed).
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+index e027dd20e83b24b92a25116896f3900b79860eba..dec6fc6d917edbdf28b982731e0094e36fa54bc1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -350,10 +350,10 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source0-attraction">Electric strength 1 (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Electric strength 2 (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Electric strength 3 (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Electric strength 4 (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+             </div>
+
+tokens used
+41,252
+Implemented only the requested section change for **Free Diffusion with Electrical Attraction**.
+
+**Changed file**
+- [src/pages/inspect_field_attraction.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts):353  
+  Updated the four UI control labels from `Generator X attraction ...` to `Electric strength X (+ attract, - repel)` so naming matches the rest of the project’s UI terminology.
+
+**Verification**
+- Ran `npm run build` successfully (`tsc && vite build` passed).

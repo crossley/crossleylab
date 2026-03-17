@@ -1,0 +1,15 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Diffusion Through a Membrane Pore
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Diffusion Through a Membrane Pore
+
+- Change to two column layout with particle sims on the left
+  and trace on the right

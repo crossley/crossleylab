@@ -1,0 +1,22 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Na/K Pump
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Na/K Pump
+
+- Label the y-axis of the trace plot. Or move the one that
+  is there to be seen more easily. I just see a very small
+  "inside raction"
+
+
+- Remove: Convention: left = inside, right = outside.
+- Remove: Higher channel open probability means higher permeability for that ion.
+- Change "Pump mode applies 3 Na+ out / 2 K+ in transport bias." to "Pump moves 3 Na+ out for 2 K+ in"
+- Add bullet: The NA/K pump establishes a concentration gradient for Na and K across the membrane

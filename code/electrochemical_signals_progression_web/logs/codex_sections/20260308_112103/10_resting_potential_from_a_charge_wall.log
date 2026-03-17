@@ -1,0 +1,426 @@
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccad1-a841-7133-a246-187d44adef46
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Resting Potential from a Charge Wall
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Resting Potential from a Charge Wall
+
+- The main issue here is that the Goldman prediction does
+  not match or come close to the membrane poential being
+  plotted.
+
+mcp startup: no servers
+codex
+I’m going to locate the “Resting Potential from a Charge Wall” implementation and find where the Goldman prediction and plotted membrane potential are computed, then I’ll patch only that section’s behavior.
+exec
+/bin/zsh -lc 'rg --files' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'rg -n "Resting Potential from a Charge Wall|Goldman|membrane potential|charge wall|resting potential|GHK|Goldman-Hodgkin|Nernst" -S .' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+src/pages/resting_two_ion_common.ts
+src/pages/inspect_resting_potential_nernst.ts
+src/pages/inspect_electrochemical_3.ts
+src/pages/sim_shared.ts
+src/pages/inspect_diffusion_1.ts
+src/pages/inspect_resting_potential_4.ts
+src/pages/inspect_electrochemical_2.ts
+src/pages/inspect_diffusion_4.ts
+src/pages/inspect_action_potential_1.ts
+src/pages/inspect_resting_potential_1.ts
+src/pages/inspect_nak_pump.ts
+src/pages/inspect_diffusion_3.ts
+src/pages/action_potential_common.ts
+src/pages/inspect_electrochemical_1.ts
+src/pages/inspect_action_potential_2.ts
+src/pages/inspect_resting_potential_2.ts
+src/pages/inspect_action_potential_3.ts
+src/pages/inspect_resting_potential_3.ts
+src/pages/inspect_electrochemical_4.ts
+src/pages/inspect_diffusion_2.ts
+ succeeded in 51ms:
+./src/pages/resting_two_ion_common.ts:25:  withGoldman: boolean;
+./src/pages/resting_two_ion_common.ts:99:  VGoldman: number;
+./src/pages/resting_two_ion_common.ts:107:  vGoldman: number[];
+./src/pages/resting_two_ion_common.ts:182:  if (variant.withGoldman) {
+./src/pages/resting_two_ion_common.ts:189:    state.VGoldman = Math.log((pA * aOut + pB * bOut + 1e-3) / (pA * aIn + pB * bIn + 1e-3)) * goldmanScale;
+./src/pages/resting_two_ion_common.ts:191:    state.VGoldman = 0;
+./src/pages/resting_two_ion_common.ts:237:    negX, negY, type0YMin, type0YMax, type1YMin, type1YMax, VA: 0, VB: 0, VTotal: 0, VGoldman: 0
+./src/pages/resting_two_ion_common.ts:283:  const trace: TraceHistory = { times: [], va: [], vb: [], vTotal: [], vGoldman: [] };
+./src/pages/resting_two_ion_common.ts:293:  trace.vGoldman.push(state.VGoldman);
+./src/pages/resting_two_ion_common.ts:296:    trace.times.shift(); trace.va.shift(); trace.vb.shift(); trace.vTotal.shift(); trace.vGoldman.shift();
+./src/pages/resting_two_ion_common.ts:299:    trace.times.shift(); trace.va.shift(); trace.vb.shift(); trace.vTotal.shift(); trace.vGoldman.shift();
+./src/pages/resting_two_ion_common.ts:302:function computeDynamicTraceLimit(trace: TraceHistory, startTime: number, minLimit: number, includeGoldman: boolean): number {
+./src/pages/resting_two_ion_common.ts:307:    if (includeGoldman) maxAbs = Math.max(maxAbs, Math.abs(trace.vGoldman[i]));
+./src/pages/resting_two_ion_common.ts:335:  const effectiveYLimit = computeDynamicTraceLimit(trace, startTime, yLimit, variant.withGoldman);
+./src/pages/resting_two_ion_common.ts:346:    { data: trace.vGoldman, color: SIM_COLORS.predictionTrace, dashed: true }
+./src/pages/resting_two_ion_common.ts:349:    if (s.dashed && !variant.withGoldman) continue;
+./src/pages/resting_two_ion_common.ts:375:  ctx.fillText('membrane potential proxy (mV-scaled)', 0, 0);
+./src/pages/resting_two_ion_common.ts:504:              ${variant.withGoldman ? '<div class="field"><label for="goldman-scale">Voltage scale</label><input id="goldman-scale" type="number" min="1" max="200" step="1" /></div>' : ''}
+./src/pages/resting_two_ion_common.ts:512:            <div class="group"><p class="group-label">${variant.equationGroupLabel ?? 'Equation + Trace Readout'}</p><div class="equation-card"><pre class="equation" id="equation-block"></pre><p>${variant.equationDescription ?? (variant.withGoldman ? 'Per-ion and total compartment imbalances are qualitative charge-separation proxies. The dashed white line is a permeability-weighted Goldman-style prediction scaled for comparison.' : 'Per-ion and total compartment imbalances are qualitative charge-separation proxies built from the charge-wall resting-potential model.')}</p></div></div>
+./src/pages/resting_two_ion_common.ts:524:            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.tracePanelTitle ?? 'Membrane Potential Proxy Traces'}</h3><span class="tiny">${variant.traceHint ?? `V_A / V_B / V_total${variant.withGoldman ? ' / Goldman' : ''}`}</span></div><canvas id="trace-canvas"></canvas></div>
+codex
+I found the shared two-ion resting-potential code path. Next I’ll inspect the current Goldman formula and the trace/proxy calculation to align the prediction with the plotted membrane potential for this section only.
+exec
+/bin/zsh -lc "sed -n '1,260p' src/pages/resting_two_ion_common.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'git status --short' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '1,220p' src/pages/inspect_resting_potential_4.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '520,860p' src/pages/resting_two_ion_common.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '1,220p' src/pages/inspect_resting_potential_2.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '260,520p' src/pages/resting_two_ion_common.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '1,140p' change_requests.md" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_POTENTIAL_SCALE,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  drawMembraneWall,
+  evenlySpacedChannelBounds,
+  fieldColor,
+  leftEdgeChargeWallX,
+  pointFieldDrift,
+  wallFieldDrift
+} from './sim_shared';
+
+type IonType = 0 | 1;
+type FieldMode = 'point' | 'wall';
+type TeachingFocus = 'resting' | 'permeability' | 'goldman';
+
+interface VariantConfig {
+  pageId: string;
+ succeeded in 51ms:
+ M README.md
+ M inspect_diffusion_1.html
+ M inspect_diffusion_2.html
+ M inspect_diffusion_3.html
+ M inspect_diffusion_4.html
+ M inspect_electrochemical_1.html
+ M inspect_electrochemical_2.html
+ M inspect_electrochemical_3.html
+ M inspect_resting_potential_1.html
+ M inspect_resting_potential_2.html
+ M inspect_resting_potential_3.html
+ M inspect_resting_potential_4.html
+ M src/index.ts
+ M src/pages/inspect_diffusion_1.ts
+ M src/pages/inspect_diffusion_2.ts
+ M src/pages/inspect_diffusion_3.ts
+ M src/pages/inspect_diffusion_4.ts
+ M src/pages/inspect_electrochemical_1.ts
+ M src/pages/inspect_electrochemical_2.ts
+ M src/pages/inspect_electrochemical_3.ts
+ succeeded in 51ms:
+import { mountTwoIonRestingPage } from './resting_two_ion_common';
+import { DEFAULT_NUM_PARTICLES, DEFAULT_POTENTIAL_SCALE, SIM_COLORS } from './sim_shared';
+
+mountTwoIonRestingPage({
+  pageId: 'inspect_resting_potential_4',
+  title: 'Goldman Equation and Resting Potential',
+  subtitle: 'Final capstone: compare the simulated two-ion charge-wall resting potential against a Goldman-style permeability-weighted prediction built from the same compartment counts and relative permeabilities.',
+  fieldMode: 'wall',
+  withGoldman: true,
+  focusMode: 'goldman',
+  type1Color: SIM_COLORS.ionB,
+  type1Label: 'Ion B (-)',
+  negMarkerLabel: 'Charge wall',
+  eyebrow: 'Goldman-Style Capstone for Resting Potential',
+  equationGroupLabel: 'Equation + Goldman Comparison',
+  equationDescription: 'The colored traces come from the simulation. The dashed white trace is a Goldman-style prediction that weights the two ions by their relative permeabilities so you can compare the live simulation to the capstone equation.',
+  canvasTitle: 'Goldman Equation and Resting Potential',
+  particleHint: 'Two-ion transport under the same charge-wall field and selective permeabilities',
+  tracePanelTitle: 'Resting Potential and Goldman Prediction',
+  traceHint: 'Compare V_total with the permeability-weighted Goldman-style line',
+ succeeded in 52ms:
+        <section class="panel canvas-panel">
+          <div class="canvas-head"><h2>${variant.canvasTitle ?? variant.title}</h2><span class="tiny">Live two-ion membrane model</span></div>
+          <div class="canvas-grid-2">
+            <div class="canvas-subpanel"><div class="subhead"><h3>Particle Dynamics</h3><span class="tiny">${variant.particleHint ?? variant.negMarkerLabel}</span></div><canvas id="particle-canvas"></canvas></div>
+            <div class="canvas-subpanel"><div class="subhead"><h3>${variant.tracePanelTitle ?? 'Membrane Potential Proxy Traces'}</h3><span class="tiny">${variant.traceHint ?? `V_A / V_B / V_total${variant.withGoldman ? ' / Goldman' : ''}`}</span></div><canvas id="trace-canvas"></canvas></div>
+          </div>
+          <div class="legend">
+            <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>Ion A</span>
+            <span><span class="swatch" style="background:${variant.type1Color}"></span>${variant.type1Label}</span>
+            <span><span class="swatch" style="background:${SIM_COLORS.totalTrace}"></span>V_total trace</span>
+            ${variant.withGoldman ? `<span><span class="swatch" style="background:${SIM_COLORS.predictionTrace}"></span>Goldman prediction trace</span>` : ''}
+          </div>
+        </section>
+      </div>
+    </div>
+  `;
+
+  const particleCanvas = getEl<HTMLCanvasElement>('#particle-canvas');
+  const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
+  const equationBlock = getEl<HTMLElement>('#equation-block');
+ succeeded in 51ms:
+import { mountTwoIonRestingPage } from './resting_two_ion_common';
+import { DEFAULT_NUM_PARTICLES, DEFAULT_POTENTIAL_SCALE, SIM_COLORS } from './sim_shared';
+
+mountTwoIonRestingPage({
+  pageId: 'inspect_resting_potential_2',
+  title: 'Resting Potential from a Charge Wall',
+  subtitle: 'Two-ion resting potential teaching model.',
+  subtitlePoints: [
+    'Convention: left = inside, right = outside.',
+    'Resting voltage reflects diffusion, field effects, and selective permeability together.',
+    'Changing pore widths changes ion influence and shifts total membrane voltage.'
+  ],
+  fieldMode: 'wall',
+  withGoldman: true,
+  focusMode: 'goldman',
+  type1Color: SIM_COLORS.ionB,
+  type1Label: 'Ion B',
+  negMarkerLabel: 'Charge wall',
+  eyebrow: 'Selective Membranes and the Emergence of Resting Potential',
+  equationGroupLabel: 'Teaching Note',
+ succeeded in 51ms:
+    const xTrial = reflectIntoBounds(xPrev + (rng.normal(0, params.diffusionSd) + attractX) * state.dt, minX, halfW);
+    const yNew = reflectIntoBounds(yPrev + (rng.normal(0, params.diffusionSd) + attractY) * state.dt, -halfH, halfH);
+    let xNew = xTrial;
+    const tryingToCrossLeft = xPrev > state.rightWall && xTrial <= state.rightWall;
+    const tryingToCrossRight = xPrev < state.leftWall && xTrial >= state.leftWall;
+    const type = state.types[i] as IonType;
+    const cMin = type === 0 ? state.type0YMin : state.type1YMin;
+    const cMax = type === 0 ? state.type0YMax : state.type1YMax;
+    const inChannel = yNew >= cMin && yNew <= cMax;
+    if ((tryingToCrossLeft || tryingToCrossRight) && !inChannel) {
+      xNew = tryingToCrossLeft ? reflectIntoBounds(2 * state.rightWall - xTrial, minX, halfW) : reflectIntoBounds(2 * state.leftWall - xTrial, minX, halfW);
+    } else if (!inChannel && xTrial > state.leftWall && xTrial < state.rightWall) {
+      xNew = xPrev < 0 ? state.leftWall : state.rightWall;
+    }
+    state.x[i] = xNew;
+    state.y[i] = yNew;
+  }
+  state.stepCount += 1;
+  state.simTime = state.stepCount * state.dt;
+  countVoltages(state, variant, params.goldmanScale, params.type0Charge, params.type1Charge);
+ succeeded in 51ms:
+# Diffusion Through a Membrane Pore
+
+- Change to two column layout with particle sims on the left
+  and trace on the right
+
+# Narrow vs Wide Pore Diffusion
+
+- Change to two column layout with particle sims on the left
+  and trace on the right. Stack wide vs narrow on top of
+  each other.
+
+# Selective Permeability
+
+- Change to two column layout with particle sims on the left
+  and trace on the right
+
+# Free Diffusion with Electrical Attraction
+
+- Add 3 more eelctrial source (attractor / repulser) one for
+  each major eaxis in the plot. Initial particles still at
+codex
+I found a concrete sign-convention mismatch: `V_total` is inside-minus-outside, while the Goldman trace is currently computed as outside-over-inside. I’m now patching the Goldman calculation (and matching equation text) so both use the same inside/outside voltage convention.
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -188,3 +188,4 @@
+     const bIn = type1Charge > 0 ? bLeft : bRight;
+-    state.VGoldman = Math.log((pA * aOut + pB * bOut + 1e-3) / (pA * aIn + pB * bIn + 1e-3)) * goldmanScale;
++    // Match the plotted V_total convention (inside minus outside).
++    state.VGoldman = Math.log((pA * aIn + pB * bIn + 1e-3) / (pA * aOut + pB * bOut + 1e-3)) * goldmanScale;
+   } else {
+@@ -757,3 +758,3 @@
+             'Approximate permeability by channel width: P_A ≈ type0_channel_width, P_B ≈ type1_channel_width',
+-            `Goldman proxy = ln((P_A·A_out + P_B·B_in)/(P_A·A_in + P_B·B_out)) × ${simParams.goldmanScale.toFixed(0)}`,
++            `Goldman proxy = ln((P_A·A_inside + P_B·B_inside)/(P_A·A_outside + P_B·B_outside)) × ${simParams.goldmanScale.toFixed(0)}`,
+             'The dashed white line compares the simulation with a permeability-weighted Goldman-style prediction'
+apply_patch(auto_approved=true) exited 0 in 50ms:
+Success. Updated the following files:
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index ed5073479cadecba9b37c7620c3874b6749221ef..9b87ea68783acd4e82f9055a7ac16a2bc826266c
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -186,7 +186,8 @@
+     const aIn = type0Charge > 0 ? aLeft : aRight;
+     const bOut = type1Charge > 0 ? bRight : bLeft;
+     const bIn = type1Charge > 0 ? bLeft : bRight;
+-    state.VGoldman = Math.log((pA * aOut + pB * bOut + 1e-3) / (pA * aIn + pB * bIn + 1e-3)) * goldmanScale;
++    // Match the plotted V_total convention (inside minus outside).
++    state.VGoldman = Math.log((pA * aIn + pB * bIn + 1e-3) / (pA * aOut + pB * bOut + 1e-3)) * goldmanScale;
+   } else {
+     state.VGoldman = 0;
+   }
+@@ -755,7 +756,7 @@
+       : variant.focusMode === 'goldman'
+         ? [
+             'Approximate permeability by channel width: P_A ≈ type0_channel_width, P_B ≈ type1_channel_width',
+-            `Goldman proxy = ln((P_A·A_out + P_B·B_in)/(P_A·A_in + P_B·B_out)) × ${simParams.goldmanScale.toFixed(0)}`,
++            `Goldman proxy = ln((P_A·A_inside + P_B·B_inside)/(P_A·A_outside + P_B·B_outside)) × ${simParams.goldmanScale.toFixed(0)}`,
+             'The dashed white line compares the simulation with a permeability-weighted Goldman-style prediction'
+           ]
+         : [
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index ed5073479cadecba9b37c7620c3874b6749221ef..9b87ea68783acd4e82f9055a7ac16a2bc826266c
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -186,7 +186,8 @@
+     const aIn = type0Charge > 0 ? aLeft : aRight;
+     const bOut = type1Charge > 0 ? bRight : bLeft;
+     const bIn = type1Charge > 0 ? bLeft : bRight;
+-    state.VGoldman = Math.log((pA * aOut + pB * bOut + 1e-3) / (pA * aIn + pB * bIn + 1e-3)) * goldmanScale;
++    // Match the plotted V_total convention (inside minus outside).
++    state.VGoldman = Math.log((pA * aIn + pB * bIn + 1e-3) / (pA * aOut + pB * bOut + 1e-3)) * goldmanScale;
+   } else {
+     state.VGoldman = 0;
+   }
+@@ -755,7 +756,7 @@
+       : variant.focusMode === 'goldman'
+         ? [
+             'Approximate permeability by channel width: P_A ≈ type0_channel_width, P_B ≈ type1_channel_width',
+-            `Goldman proxy = ln((P_A·A_out + P_B·B_in)/(P_A·A_in + P_B·B_out)) × ${simParams.goldmanScale.toFixed(0)}`,
++            `Goldman proxy = ln((P_A·A_inside + P_B·B_inside)/(P_A·A_outside + P_B·B_outside)) × ${simParams.goldmanScale.toFixed(0)}`,
+             'The dashed white line compares the simulation with a permeability-weighted Goldman-style prediction'
+           ]
+         : [
+
+codex
+I’ve applied the sign-convention fix in the two-ion resting-potential engine. Next I’ll run the build to confirm this section’s code compiles cleanly.
+exec
+/bin/zsh -lc 'npm run build' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 1.17s:
+
+> electrochemical-signals-progression-web@0.1.0 build
+> tsc && vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 33 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                            0.50 kB │ gzip: 0.31 kB
+dist/inspect_diffusion_1.html                              0.58 kB │ gzip: 0.32 kB
+dist/inspect_diffusion_4.html                              0.58 kB │ gzip: 0.33 kB
+dist/inspect_nak_pump.html                                 0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_3.html                              0.59 kB │ gzip: 0.33 kB
+dist/inspect_diffusion_2.html                              0.59 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_2.html                      0.59 kB │ gzip: 0.33 kB
+dist/inspect_resting_potential_1.html                      0.60 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_nernst.html                 0.60 kB │ gzip: 0.34 kB
+dist/inspect_electrochemical_1.html                        0.61 kB │ gzip: 0.34 kB
+dist/inspect_electrochemical_3.html                        0.62 kB │ gzip: 0.35 kB
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index ed5073479cadecba9b37c7620c3874b6749221ef..9b87ea68783acd4e82f9055a7ac16a2bc826266c
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -186,7 +186,8 @@
+     const aIn = type0Charge > 0 ? aLeft : aRight;
+     const bOut = type1Charge > 0 ? bRight : bLeft;
+     const bIn = type1Charge > 0 ? bLeft : bRight;
+-    state.VGoldman = Math.log((pA * aOut + pB * bOut + 1e-3) / (pA * aIn + pB * bIn + 1e-3)) * goldmanScale;
++    // Match the plotted V_total convention (inside minus outside).
++    state.VGoldman = Math.log((pA * aIn + pB * bIn + 1e-3) / (pA * aOut + pB * bOut + 1e-3)) * goldmanScale;
+   } else {
+     state.VGoldman = 0;
+   }
+@@ -755,7 +756,7 @@
+       : variant.focusMode === 'goldman'
+         ? [
+             'Approximate permeability by channel width: P_A ≈ type0_channel_width, P_B ≈ type1_channel_width',
+-            `Goldman proxy = ln((P_A·A_out + P_B·B_in)/(P_A·A_in + P_B·B_out)) × ${simParams.goldmanScale.toFixed(0)}`,
++            `Goldman proxy = ln((P_A·A_inside + P_B·B_inside)/(P_A·A_outside + P_B·B_outside)) × ${simParams.goldmanScale.toFixed(0)}`,
+             'The dashed white line compares the simulation with a permeability-weighted Goldman-style prediction'
+           ]
+         : [
+
+exec
+/bin/zsh -lc "rg -n \"Match the plotted V_total convention|Goldman proxy = ln\\(\\(P_A·A_inside\" src/pages/resting_two_ion_common.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 54ms:
+189:    // Match the plotted V_total convention (inside minus outside).
+759:            `Goldman proxy = ln((P_A·A_inside + P_B·B_inside)/(P_A·A_outside + P_B·B_outside)) × ${simParams.goldmanScale.toFixed(0)}`,
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index ed5073479cadecba9b37c7620c3874b6749221ef..9b87ea68783acd4e82f9055a7ac16a2bc826266c
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -186,7 +186,8 @@
+     const aIn = type0Charge > 0 ? aLeft : aRight;
+     const bOut = type1Charge > 0 ? bRight : bLeft;
+     const bIn = type1Charge > 0 ? bLeft : bRight;
+-    state.VGoldman = Math.log((pA * aOut + pB * bOut + 1e-3) / (pA * aIn + pB * bIn + 1e-3)) * goldmanScale;
++    // Match the plotted V_total convention (inside minus outside).
++    state.VGoldman = Math.log((pA * aIn + pB * bIn + 1e-3) / (pA * aOut + pB * bOut + 1e-3)) * goldmanScale;
+   } else {
+     state.VGoldman = 0;
+   }
+@@ -755,7 +756,7 @@
+       : variant.focusMode === 'goldman'
+         ? [
+             'Approximate permeability by channel width: P_A ≈ type0_channel_width, P_B ≈ type1_channel_width',
+-            `Goldman proxy = ln((P_A·A_out + P_B·B_in)/(P_A·A_in + P_B·B_out)) × ${simParams.goldmanScale.toFixed(0)}`,
++            `Goldman proxy = ln((P_A·A_inside + P_B·B_inside)/(P_A·A_outside + P_B·B_outside)) × ${simParams.goldmanScale.toFixed(0)}`,
+             'The dashed white line compares the simulation with a permeability-weighted Goldman-style prediction'
+           ]
+         : [
+
+codex
+Implemented only the requested fix for **“Resting Potential from a Charge Wall”** by aligning Goldman prediction with the plotted membrane-potential convention.
+
+Changed file:
+- [src/pages/resting_two_ion_common.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts#L189)
+  - Flipped Goldman ratio to `inside/outside` so its sign/convention matches `V_total` (which is inside-minus-outside).
+- [src/pages/resting_two_ion_common.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts#L759)
+  - Updated displayed Goldman equation text to the same inside/outside convention for consistency.
+
+Checks run:
+- `npm run build` passed (`tsc && vite build`).
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+index ed5073479cadecba9b37c7620c3874b6749221ef..9b87ea68783acd4e82f9055a7ac16a2bc826266c
+--- a/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts
+@@ -186,7 +186,8 @@
+     const aIn = type0Charge > 0 ? aLeft : aRight;
+     const bOut = type1Charge > 0 ? bRight : bLeft;
+     const bIn = type1Charge > 0 ? bLeft : bRight;
+-    state.VGoldman = Math.log((pA * aOut + pB * bOut + 1e-3) / (pA * aIn + pB * bIn + 1e-3)) * goldmanScale;
++    // Match the plotted V_total convention (inside minus outside).
++    state.VGoldman = Math.log((pA * aIn + pB * bIn + 1e-3) / (pA * aOut + pB * bOut + 1e-3)) * goldmanScale;
+   } else {
+     state.VGoldman = 0;
+   }
+@@ -755,7 +756,7 @@
+       : variant.focusMode === 'goldman'
+         ? [
+             'Approximate permeability by channel width: P_A ≈ type0_channel_width, P_B ≈ type1_channel_width',
+-            `Goldman proxy = ln((P_A·A_out + P_B·B_in)/(P_A·A_in + P_B·B_out)) × ${simParams.goldmanScale.toFixed(0)}`,
++            `Goldman proxy = ln((P_A·A_inside + P_B·B_inside)/(P_A·A_outside + P_B·B_outside)) × ${simParams.goldmanScale.toFixed(0)}`,
+             'The dashed white line compares the simulation with a permeability-weighted Goldman-style prediction'
+           ]
+         : [
+
+tokens used
+45,331
+Implemented only the requested fix for **“Resting Potential from a Charge Wall”** by aligning Goldman prediction with the plotted membrane-potential convention.
+
+Changed file:
+- [src/pages/resting_two_ion_common.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts#L189)
+  - Flipped Goldman ratio to `inside/outside` so its sign/convention matches `V_total` (which is inside-minus-outside).
+- [src/pages/resting_two_ion_common.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/resting_two_ion_common.ts#L759)
+  - Updated displayed Goldman equation text to the same inside/outside convention for consistency.
+
+Checks run:
+- `npm run build` passed (`tsc && vite build`).

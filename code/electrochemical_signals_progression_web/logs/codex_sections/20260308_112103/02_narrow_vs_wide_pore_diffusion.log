@@ -1,0 +1,861 @@
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccad1-a839-7190-bd89-ddb2525518cd
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Narrow vs Wide Pore Diffusion
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Narrow vs Wide Pore Diffusion
+
+- Change to two column layout with particle sims on the left
+  and trace on the right. Stack wide vs narrow on top of
+  each other.
+
+mcp startup: no servers
+codex
+I’ll locate the “Narrow vs Wide Pore Diffusion” implementation in this repo, then update the layout to a two-column design with particle simulations on the left and traces on the right, stacking wide and narrow vertically. After edits, I’ll run the relevant build/check commands.
+exec
+/bin/zsh -lc 'rg -n "Narrow vs Wide Pore Diffusion|wide|narrow|pore|diffusion|trace|particle" -S' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'ls -la' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+Total output lines: 1166
+
+src/pages/resting_two_ion_common.ts:40:  particleHint?: string;
+src/pages/resting_two_ion_common.ts:41:  tracePanelTitle?: string;
+src/pages/resting_two_ion_common.ts:42:  traceHint?: string;
+src/pages/resting_two_ion_common.ts:43:  traceTitle?: string;
+src/pages/resting_two_ion_common.ts:58:  diffusionSd: number;
+src/pages/resting_two_ion_common.ts:74:  traceYLimit: number;
+src/pages/resting_two_ion_common.ts:260:    const xTrial = reflectIntoBounds(xPrev + (rng.normal(0, params.diffusionSd) + attractX) * state.dt, minX, halfW);
+src/pages/resting_two_ion_common.ts:261:    const yNew = reflectIntoBounds(yPrev + (rng.normal(0, params.diffusionSd) + attractY) * state.dt, -halfH, halfH);
+src/pages/resting_two_ion_common.ts:282:function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
+src/pages/resting_two_ion_common.ts:283:  const trace: TraceHistory = { times: [], va: [], vb: [], vTotal: [], vGoldman: [] };
+src/pages/resting_two_ion_common.ts:284:  pushTrace(trace, state, traceWindowMs);
+src/pages/resting_two_ion_common.ts:285:  return trace;
+src/pages/resting_two_ion_common.ts:288:function pushTrace(trace: TraceHistory, state: LiveState, traceWindowMs: number): void {
+src/pages/resting_two_ion_common.ts:289:  trace.times.push(state.simTime);
+src/pages/resting_two_ion_common.ts:290:  trace.va.push(state.VA);
+src/pages/resting_two_ion_common.ts:291:  trace.vb.push(state.VB);
+src/pages/resting_two_ion_common.ts:292:  trace.vTotal.push(state.VTotal);
+src/pages/resting_two_ion_common.ts:293:  trace.vGoldman.push(state.VGoldman);
+ succeeded in 50ms:
+total 272
+drwxr-xr-x@ 34 mq20185996  staff   1088 Mar  8 11:18 .
+drwxr-xr-x@ 16 mq20185996  staff    512 Mar  6 21:53 ..
+-rw-r--r--@  1 mq20185996  staff     37 Feb 20 19:46 .gitignore
+-rw-r--r--@  1 mq20185996  staff   1239 Mar  7 18:41 README.md
+-rw-r--r--@  1 mq20185996  staff   2315 Mar  8 11:16 change_requests.md
+drwxr-xr-x@ 18 mq20185996  staff    576 Mar  8 10:06 dist
+drwxr-xr-x@  3 mq20185996  staff     96 Mar  6 21:52 docs
+-rw-r--r--@  1 mq20185996  staff    327 Feb 24 00:31 index.html
+-rw-r--r--@  1 mq20185996  staff    352 Mar  7 22:32 inspect_action_potential_1.html
+-rw-r--r--@  1 mq20185996  staff    355 Mar  7 22:32 inspect_action_potential_2.html
+-rw-r--r--@  1 mq20185996  staff    353 Mar  7 22:32 inspect_action_potential_3.html
+-rw-r--r--@  1 mq20185996  staff    322 Mar  1 21:52 inspect_diffusion_1.html
+-rw-r--r--@  1 mq20185996  staff    339 Mar  1 21:52 inspect_diffusion_2.html
+-rw-r--r--@  1 mq20185996  staff    335 Mar  1 21:52 inspect_diffusion_3.html
+-rw-r--r--@  1 mq20185996  staff    328 Mar  1 21:52 inspect_diffusion_4.html
+-rw-r--r--@  1 mq20185996  staff    353 Mar  1 21:52 inspect_electrochemical_1.html
+-rw-r--r--@  1 mq20185996  staff    346 Mar  7 17:50 inspect_electrochemical_2.html
+-rw-r--r--@  1 mq20185996  staff    365 Mar  7 17:33 inspect_electrochemical_3.html
+-rw-r--r--@  1 mq20185996  staff    361 Mar  1 21:52 inspect_electrochemical_4.html
+codex
+I found the target page at `src/pages/inspect_diffusion_3.ts`; next I’m inspecting its current canvas/grid structure so I can apply only the requested layout change for this section.
+exec
+/bin/zsh -lc "sed -n '1,260p' src/pages/inspect_diffusion_3.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '260,620p' src/pages/inspect_diffusion_3.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_NUM_PARTICLES,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  centeredChannelBounds,
+  drawMembraneWall
+} from './sim_shared';
+
+interface SimParams {
+  T: number;
+  dt: number;
+  numParticles: number;
+  boxWidth: number;
+  boxHeight: number;
+  wallThickness: number;
+  diffusionSd: number;
+  narrowChannelWidth: number;
+  wideChannelWidth: number;
+ succeeded in 51ms:
+  state.simTime = state.stepCount * state.dt;
+  const counts = countSides(state);
+  state.leftCount = counts.left;
+  state.rightCount = counts.right;
+}
+
+function createTraceHistory(state: LiveState, traceWindowMs: number): TraceHistory {
+  const trace: TraceHistory = { times: [], leftFrac: [], rightFrac: [] };
+  pushTracePoint(trace, state, traceWindowMs);
+  return trace;
+}
+
+function pushTracePoint(trace: TraceHistory, state: LiveState, traceWindowMs: number): void {
+  trace.times.push(state.simTime);
+  trace.leftFrac.push(state.leftCount / state.numParticles);
+  trace.rightFrac.push(state.rightCount / state.numParticles);
+  const minTime = Math.max(0, state.simTime - traceWindowMs);
+  while (trace.times.length > 1 && trace.times[0] < minTime) {
+    trace.times.shift();
+    trace.leftFrac.shift();
+exec
+/bin/zsh -lc 'rg -n "canvas-grid-2|canvas-panel|trace-canvas|square-canvas|canvas-subpanel|sim-layout" src/style.css src/pages/inspect_diffusion_3.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+src/style.css:150:.sim-layout {
+src/style.css:158:  .sim-layout {
+src/style.css:283:.canvas-panel {
+src/style.css:288:.canvas-grid-2 {
+src/style.css:295:  .canvas-grid-2 {
+src/style.css:300:.canvas-subpanel {
+src/style.css:343:.trace-canvas {
+src/style.css:347:.square-canvas {
+src/pages/inspect_diffusion_3.ts:480:    <div class="sim-layout">
+src/pages/inspect_diffusion_3.ts:545:      <section class="panel canvas-panel">
+src/pages/inspect_diffusion_3.ts:546:        <div class="canvas-grid-2">
+src/pages/inspect_diffusion_3.ts:547:          <div class="canvas-subpanel">
+src/pages/inspect_diffusion_3.ts:549:            <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
+src/pages/inspect_diffusion_3.ts:551:          <div class="canvas-subpanel">
+src/pages/inspect_diffusion_3.ts:553:            <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
+src/pages/inspect_diffusion_3.ts:559:        <div class="canvas-grid-2">
+src/pages/inspect_diffusion_3.ts:560:          <div class="canvas-subpanel">
+src/pages/inspect_diffusion_3.ts:562:            <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
+src/pages/inspect_diffusion_3.ts:564:          <div class="canvas-subpanel">
+src/pages/inspect_diffusion_3.ts:566:            <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
+codex
+I confirmed the page currently uses two separate 2-up grids (sim row then trace row). I’m now updating this page to a single two-column grid where the left column stacks narrow/wide particle sims and the right column stacks narrow/wide traces, matching the requested section exactly.
+exec
+/bin/zsh -lc "sed -n '420,520p' src/style.css" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '240,420p' src/style.css" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.equation {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 0.84rem;
+  line-height: 1.35;
+  color: #dbe9ff;
+}
+
+.equation .accent {
+  color: var(--accent);
+}
+
+.equation .accent-2 {
+  color: var(--accent-2);
+}
+ succeeded in 52ms:
+
+button.warn {
+  border-color: rgba(255, 111, 143, 0.24);
+  background: rgba(255, 111, 143, 0.08);
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+details {
+  border: 1px solid rgba(160, 190, 255, 0.1);
+  border-radius: 10px;
+  padding: 8px;
+  background: rgba(8, 12, 19, 0.55);
+}
+
+details > summary {
+codex
+I have enough context and will now make a focused layout-only change: one `canvas-grid-2` with a left stacked particle column (narrow above wide) and a right stacked trace column (narrow above wide), plus a tiny CSS helper for stacked column spacing. Then I’ll run the build.
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+@@ -546,22 +546,21 @@
+         <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore</h3></div>
+-            <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
+-          </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore</h3></div>
+-            <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
+-          </div>
+-        </div>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore Trace</h3></div>
+-            <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Particle Simulation</h3></div>
++              <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Particle Simulation</h3></div>
++              <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
++            </div>
+           </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore Trace</h3></div>
+-            <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Trace</h3></div>
++              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Trace</h3></div>
++              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++            </div>
+           </div>
+apply_patch(auto_approved=true) exited 0 in 71ms:
+Success. Updated the following files:
+M src/pages/inspect_diffusion_3.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+index 4bba62ca6d8165aef3c2d6493ef49464b3451d3a..d26654f25e23ff790c8a761f95998a905bc455a1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+@@ -544,26 +544,25 @@
+ 
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore</h3></div>
+-            <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
+-          </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore</h3></div>
+-            <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
+-          </div>
+-        </div>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore Trace</h3></div>
+-            <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Particle Simulation</h3></div>
++              <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Particle Simulation</h3></div>
++              <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
++            </div>
+           </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore Trace</h3></div>
+-            <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Trace</h3></div>
++              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Trace</h3></div>
++              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++            </div>
+           </div>
+         </div>
+         <div class="legend">
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+index 4bba62ca6d8165aef3c2d6493ef49464b3451d3a..d26654f25e23ff790c8a761f95998a905bc455a1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+@@ -544,26 +544,25 @@
+ 
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore</h3></div>
+-            <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
+-          </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore</h3></div>
+-            <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
+-          </div>
+-        </div>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore Trace</h3></div>
+-            <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Particle Simulation</h3></div>
++              <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Particle Simulation</h3></div>
++              <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
++            </div>
+           </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore Trace</h3></div>
+-            <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Trace</h3></div>
++              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Trace</h3></div>
++              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++            </div>
+           </div>
+         </div>
+         <div class="legend">
+
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/style.css
+@@ -293,2 +293,8 @@
+ 
++.canvas-column {
++  display: grid;
++  gap: 10px;
++  align-content: start;
++}
++
+ @media (max-width: 900px) {
+apply_patch(auto_approved=true) exited 0 in 78ms:
+Success. Updated the following files:
+M src/style.css
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+index 4bba62ca6d8165aef3c2d6493ef49464b3451d3a..d26654f25e23ff790c8a761f95998a905bc455a1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+@@ -544,26 +544,25 @@
+ 
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore</h3></div>
+-            <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
+-          </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore</h3></div>
+-            <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
+-          </div>
+-        </div>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore Trace</h3></div>
+-            <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Particle Simulation</h3></div>
++              <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Particle Simulation</h3></div>
++              <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
++            </div>
+           </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore Trace</h3></div>
+-            <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Trace</h3></div>
++              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Trace</h3></div>
++              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++            </div>
+           </div>
+         </div>
+         <div class="legend">
+diff --git a/code/electrochemical_signals_progression_web/src/style.css b/code/electrochemical_signals_progression_web/src/style.css
+index 6a354d2200ee77c4c00890fe14f83ac3edba8302..ba3824db923ce0d3ef0bf0ab93e1cac5feb48dab
+--- a/code/electrochemical_signals_progression_web/src/style.css
++++ b/code/electrochemical_signals_progression_web/src/style.css
+@@ -291,6 +291,12 @@
+   gap: 10px;
+ }
+ 
++.canvas-column {
++  display: grid;
++  gap: 10px;
++  align-content: start;
++}
++
+ @media (max-width: 900px) {
+   .canvas-grid-2 {
+     grid-template-columns: 1fr;
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+index 4bba62ca6d8165aef3c2d6493ef49464b3451d3a..d26654f25e23ff790c8a761f95998a905bc455a1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+@@ -544,26 +544,25 @@
+ 
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore</h3></div>
+-            <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
+-          </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore</h3></div>
+-            <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
+-          </div>
+-        </div>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore Trace</h3></div>
+-            <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Particle Simulation</h3></div>
++              <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Particle Simulation</h3></div>
++              <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
++            </div>
+           </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore Trace</h3></div>
+-            <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Trace</h3></div>
++              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Trace</h3></div>
++              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++            </div>
+           </div>
+         </div>
+         <div class="legend">
+diff --git a/code/electrochemical_signals_progression_web/src/style.css b/code/electrochemical_signals_progression_web/src/style.css
+index 6a354d2200ee77c4c00890fe14f83ac3edba8302..ba3824db923ce0d3ef0bf0ab93e1cac5feb48dab
+--- a/code/electrochemical_signals_progression_web/src/style.css
++++ b/code/electrochemical_signals_progression_web/src/style.css
+@@ -291,6 +291,12 @@
+   gap: 10px;
+ }
+ 
++.canvas-column {
++  display: grid;
++  gap: 10px;
++  align-content: start;
++}
++
+ @media (max-width: 900px) {
+   .canvas-grid-2 {
+     grid-template-columns: 1fr;
+
+codex
+The layout edits are in place. I’m running a build now to verify the page compiles cleanly with these changes.
+exec
+/bin/zsh -lc 'npm run build' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 1.11s:
+
+> electrochemical-signals-progression-web@0.1.0 build
+> tsc && vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 33 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                            0.50 kB │ gzip: 0.31 kB
+dist/inspect_diffusion_1.html                              0.58 kB │ gzip: 0.32 kB
+dist/inspect_diffusion_4.html                              0.58 kB │ gzip: 0.33 kB
+dist/inspect_nak_pump.html                                 0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_3.html                              0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_2.html                              0.59 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_2.html                      0.59 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_1.html                      0.60 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_nernst.html                 0.60 kB │ gzip: 0.34 kB
+dist/inspect_electrochemical_1.html                        0.61 kB │ gzip: 0.35 kB
+dist/inspect_electrochemical_3.html                        0.62 kB │ gzip: 0.35 kB
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+index 4bba62ca6d8165aef3c2d6493ef49464b3451d3a..d26654f25e23ff790c8a761f95998a905bc455a1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+@@ -544,26 +544,25 @@
+ 
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore</h3></div>
+-            <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
+-          </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore</h3></div>
+-            <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
+-          </div>
+-        </div>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore Trace</h3></div>
+-            <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Particle Simulation</h3></div>
++              <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Particle Simulation</h3></div>
++              <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
++            </div>
+           </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore Trace</h3></div>
+-            <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Trace</h3></div>
++              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Trace</h3></div>
++              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++            </div>
+           </div>
+         </div>
+         <div class="legend">
+diff --git a/code/electrochemical_signals_progression_web/src/style.css b/code/electrochemical_signals_progression_web/src/style.css
+index 6a354d2200ee77c4c00890fe14f83ac3edba8302..ba3824db923ce0d3ef0bf0ab93e1cac5feb48dab
+--- a/code/electrochemical_signals_progression_web/src/style.css
++++ b/code/electrochemical_signals_progression_web/src/style.css
+@@ -291,6 +291,12 @@
+   gap: 10px;
+ }
+ 
++.canvas-column {
++  display: grid;
++  gap: 10px;
++  align-content: start;
++}
++
+ @media (max-width: 900px) {
+   .canvas-grid-2 {
+     grid-template-columns: 1fr;
+
+exec
+/bin/zsh -lc "nl -ba src/pages/inspect_diffusion_3.ts | sed -n '536,590p'" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "nl -ba src/style.css | sed -n '284,312p'" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+   536	              <p>
+   537	                Both panels use the same diffusion and the same random seed. The only difference is the centered pore width,
+   538	                so the comparison isolates permeability as a geometric property of the membrane.
+   539	              </p>
+   540	            </div>
+   541	          </div>
+   542	        </div>
+   543	      </aside>
+   544	
+   545	      <section class="panel canvas-panel">
+   546	        <div class="canvas-grid-2">
+   547	          <div class="canvas-column">
+   548	            <div class="canvas-subpanel">
+   549	              <div class="subhead"><h3>Narrow Pore Particle Simulation</h3></div>
+   550	              <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
+   551	            </div>
+   552	            <div class="canvas-subpanel">
+   553	              <div class="subhead"><h3>Wide Pore Particle Simulation</h3></div>
+   554	              <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
+   555	            </div>
+ succeeded in 50ms:
+   284	  display: grid;
+   285	  gap: 8px;
+   286	}
+   287	
+   288	.canvas-grid-2 {
+   289	  display: grid;
+   290	  grid-template-columns: 1fr 1fr;
+   291	  gap: 10px;
+   292	}
+   293	
+   294	.canvas-column {
+   295	  display: grid;
+   296	  gap: 10px;
+   297	  align-content: start;
+   298	}
+   299	
+   300	@media (max-width: 900px) {
+   301	  .canvas-grid-2 {
+   302	    grid-template-columns: 1fr;
+   303	  }
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+index 4bba62ca6d8165aef3c2d6493ef49464b3451d3a..d26654f25e23ff790c8a761f95998a905bc455a1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+@@ -544,26 +544,25 @@
+ 
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore</h3></div>
+-            <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
+-          </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore</h3></div>
+-            <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
+-          </div>
+-        </div>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore Trace</h3></div>
+-            <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Particle Simulation</h3></div>
++              <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Particle Simulation</h3></div>
++              <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
++            </div>
+           </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore Trace</h3></div>
+-            <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Trace</h3></div>
++              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Trace</h3></div>
++              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++            </div>
+           </div>
+         </div>
+         <div class="legend">
+diff --git a/code/electrochemical_signals_progression_web/src/style.css b/code/electrochemical_signals_progression_web/src/style.css
+index 6a354d2200ee77c4c00890fe14f83ac3edba8302..23f49d7d3aaa06e6b9f535bea236d50ede75c219
+--- a/code/electrochemical_signals_progression_web/src/style.css
++++ b/code/electrochemical_signals_progression_web/src/style.css
+@@ -291,6 +291,12 @@
+   gap: 10px;
+ }
+ 
++.canvas-column {
++  display: grid;
++  gap: 10px;
++  align-content: start;
++}
++
+ @media (max-width: 900px) {
+   .canvas-grid-2 {
+     grid-template-columns: 1fr;
+@@ -302,6 +308,19 @@
+   gap: 6px;
+ }
+ 
++.canvas-two-col {
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
++  gap: 10px;
++  align-items: start;
++}
++
++@media (max-width: 980px) {
++  .canvas-two-col {
++    grid-template-columns: 1fr;
++  }
++}
++
+ .subhead {
+   display: flex;
+   justify-content: space-between;
+@@ -344,6 +363,10 @@
+   height: min(26vh, 208px);
+ }
+ 
++.diffusion-pore-panel .pore-trace-canvas {
++  height: min(54vh, 512px);
++}
++
+ .square-canvas {
+   aspect-ratio: 1 / 1;
+   height: auto;
+
+codex
+Implemented only the **“Narrow vs Wide Pore Diffusion”** section request.
+
+### What changed
+- Updated layout in [src/pages/inspect_diffusion_3.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts:545):
+  - Replaced the previous “row of sims + row of traces” structure with a single two-column layout.
+  - Left column now stacks:
+    1. Narrow pore particle simulation
+    2. Wide pore particle simulation
+  - Right column now stacks:
+    1. Narrow pore trace
+    2. Wide pore trace
+
+- Added a small helper style in [src/style.css](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/style.css:294):
+  - New `.canvas-column` class to vertically stack each column’s two panels with consistent spacing.
+
+### Validation
+- Ran build successfully: `npm run build` (TypeScript + Vite passed).
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+index 4bba62ca6d8165aef3c2d6493ef49464b3451d3a..d26654f25e23ff790c8a761f95998a905bc455a1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts
+@@ -544,26 +544,25 @@
+ 
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore</h3></div>
+-            <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
+-          </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore</h3></div>
+-            <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
+-          </div>
+-        </div>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <div class="canvas-grid-2">
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Narrow Pore Trace</h3></div>
+-            <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Particle Simulation</h3></div>
++              <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Particle Simulation</h3></div>
++              <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
++            </div>
+           </div>
+-          <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Wide Pore Trace</h3></div>
+-            <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++          <div class="canvas-column">
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Narrow Pore Trace</h3></div>
++              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++            </div>
++            <div class="canvas-subpanel">
++              <div class="subhead"><h3>Wide Pore Trace</h3></div>
++              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++            </div>
+           </div>
+         </div>
+         <div class="legend">
+diff --git a/code/electrochemical_signals_progression_web/src/style.css b/code/electrochemical_signals_progression_web/src/style.css
+index 6a354d2200ee77c4c00890fe14f83ac3edba8302..23f49d7d3aaa06e6b9f535bea236d50ede75c219
+--- a/code/electrochemical_signals_progression_web/src/style.css
++++ b/code/electrochemical_signals_progression_web/src/style.css
+@@ -291,6 +291,12 @@
+   gap: 10px;
+ }
+ 
++.canvas-column {
++  display: grid;
++  gap: 10px;
++  align-content: start;
++}
++
+ @media (max-width: 900px) {
+   .canvas-grid-2 {
+     grid-template-columns: 1fr;
+@@ -302,6 +308,19 @@
+   gap: 6px;
+ }
+ 
++.canvas-two-col {
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
++  gap: 10px;
++  align-items: start;
++}
++
++@media (max-width: 980px) {
++  .canvas-two-col {
++    grid-template-columns: 1fr;
++  }
++}
++
+ .subhead {
+   display: flex;
+   justify-content: space-between;
+@@ -344,6 +363,10 @@
+   height: min(26vh, 208px);
+ }
+ 
++.diffusion-pore-panel .pore-trace-canvas {
++  height: min(54vh, 512px);
++}
++
+ .square-canvas {
+   aspect-ratio: 1 / 1;
+   height: auto;
+
+tokens used
+30,743
+Implemented only the **“Narrow vs Wide Pore Diffusion”** section request.
+
+### What changed
+- Updated layout in [src/pages/inspect_diffusion_3.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_3.ts:545):
+  - Replaced the previous “row of sims + row of traces” structure with a single two-column layout.
+  - Left column now stacks:
+    1. Narrow pore particle simulation
+    2. Wide pore particle simulation
+  - Right column now stacks:
+    1. Narrow pore trace
+    2. Wide pore trace
+
+- Added a small helper style in [src/style.css](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/style.css:294):
+  - New `.canvas-column` class to vertically stack each column’s two panels with consistent spacing.
+
+### Validation
+- Ran build successfully: `npm run build` (TypeScript + Vite passed).

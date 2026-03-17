@@ -1,0 +1,24 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Na/K Pump Particle Simulation
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Na/K Pump Particle Simulation
+
+- Remove "Particle Simulation" from title
+
+- THe pump UI controls "Pump cycles per step" and "Pump
+  capture radius" are not intuitive. Change to a single UI
+  control called "Pump strength" that adjusts both of these
+  parameters. 
+
+- Remove membrane potential from the trace. This sim is just
+  about showing that without a pump, equilibrium is always
+  equal NA and K on both side. With the pump, equilibrium is
+  3 NA out and 2 K in.

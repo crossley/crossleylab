@@ -165,14 +165,6 @@ function stepState(state: LiveState, params: SimParams, display: DisplayParams, 
   state.simTime = state.stepCount * state.dt;
 }
 
-function getExtent(state: LiveState): number {
-  let maxAbs = 1;
-  for (let i = 0; i < state.numParticles; i += 1) {
-    maxAbs = Math.max(maxAbs, Math.abs(state.x[i]), Math.abs(state.y[i]));
-  }
-  return maxAbs;
-}
-
 function syncCanvasSize(canvas: HTMLCanvasElement): void {
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
@@ -250,20 +242,24 @@ const app = getEl<HTMLDivElement>('#app');
 app.innerHTML = `
   <div class="site-shell">
     <div class="nav-line">
-      <a href="./index.html">Back to index</a>
-      <span>•</span>
-      <span>Page: <code>inspect_diffusion_free</code></span>
+      <a href="./index.html">← Back</a>
+      <div class="spacer"></div>
+      <button id="theme-toggle" class="theme-btn">☀</button>
     </div>
 
     <header class="page-head">
       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
       <h1>Free Diffusion</h1>
+      <p class="teaching-label">Key concepts</p>
       <ul class="key-points">
-        <li>Diffusion is random thermal motion from frequent molecular collisions.</li>
-        <li>Particles move randomly at each step (Brownian motion).</li>
-        <li>Distribution of particles becomes uniform over time.</li>
-        <li>Diffusion SD sets the standard deviation of random motion at each time step.</li>
-        <li>Try several Diffusion SD values to build intuition for its effect.</li>
+        <li>Particles undergo continuous random motion from thermal collisions — this is Brownian motion.</li>
+        <li>Individual particle paths are unpredictable; the overall distribution is not.</li>
+        <li>Over time, the distribution becomes uniform — this is diffusion.</li>
+      </ul>
+      <p class="teaching-label questions">Questions to explore</p>
+      <ul class="guided-questions">
+        <li>What happens to the spreading rate when you increase Diffusion SD?</li>
+        <li>Does increasing the number of particles change the final distribution?</li>
       </ul>
     </header>
 
@@ -271,62 +267,18 @@ app.innerHTML = `
       <aside class="controls">
         <div class="panel">
           <div class="group">
-            <p class="group-label">Basic Controls</p>
             <div class="button-row">
               <button id="toggle-play" class="primary">Pause</button>
               <button id="rerun">Rerun</button>
               <button id="reset-defaults" class="warn">Reset Defaults</button>
             </div>
-            <div class="button-row">
-              <button id="rewind">Rewind</button>
-              <button id="random-seed">Randomize Seed</button>
-            </div>
             <div class="control-grid">
               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
-              <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
             </div>
           </div>
 
-          <details>
-            <summary>Advanced Controls</summary>
-            <div class="group" style="margin-top: 8px;">
-              <div class="control-grid">
-                <div class="field"><label for="total-time">Status window T (ms)</label><input id="total-time" type="number" min="100" max="20000" step="10" /></div>
-                <div class="field"><label for="dt">dt (ms)</label><input id="dt" type="number" min="0.05" max="20" step="0.05" /></div>
-                <div class="field"><label for="init-cluster-sd">Initial cluster SD</label><input id="init-cluster-sd" type="number" min="0" max="20" step="0.05" /></div>
-                <div class="field"><label for="axis-limit">Axis limit (+/-)</label><input id="axis-limit" type="number" min="5" max="500" step="1" /></div>
-                <div class="field"><label for="point-size">Point size</label><input id="point-size" type="number" min="0.5" max="8" step="0.25" /></div>
-                <div class="field"><label for="target-fps">Playback FPS</label><input id="target-fps" type="number" min="1" max="120" step="1" /></div>
-              </div>
-            </div>
-          </details>
-
-          <div class="group">
-            <p class="group-label">Status</p>
-            <dl class="status-list">
-              <dt>Step</dt><dd id="status-frame">0</dd>
-              <dt>Time (ms)</dt><dd id="status-time">0.0</dd>
-              <dt>Particles</dt><dd id="status-particles">0</dd>
-              <dt>dt</dt><dd id="status-dt">0</dd>
-              <dt>Step SD (x/y)</dt><dd id="status-step-sd">0</dd>
-              <dt>Cloud Extent</dt><dd id="status-extent">0</dd>
-              <dt>Seed</dt><dd id="status-seed">0</dd>
-            </dl>
-          </div>
-
-          <div class="group">
-            <p class="group-label">Equation (Euler Update)</p>
-            <div class="equation-card">
-              <pre class="equation" id="equation-block"></pre>
-              <p>
-                <code>diffusionSd</code> controls the standard deviation of the sampled random
-                rate terms <code>dxdt</code> and <code>dydt</code>. In this implementation, the
-                resulting per-step displacement spread is <code>diffusionSd × dt</code>.
-              </p>
-            </div>
-          </div>
         </div>
       </aside>
 
@@ -342,33 +294,13 @@ const canvas = getEl<HTMLCanvasElement>('#sim-canvas');
 const inputs = {
   numParticles: getEl<HTMLInputElement>('#num-particles'),
   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
-  playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
-  seed: getEl<HTMLInputElement>('#seed'),
-  totalTime: getEl<HTMLInputElement>('#total-time'),
-  dt: getEl<HTMLInputElement>('#dt'),
-  initClusterSd: getEl<HTMLInputElement>('#init-cluster-sd'),
-  axisLimit: getEl<HTMLInputElement>('#axis-limit'),
-  pointSize: getEl<HTMLInputElement>('#point-size'),
-  targetFps: getEl<HTMLInputElement>('#target-fps')
+  playbackSpeed: getEl<HTMLInputElement>('#playback-speed')
 };
-
-const statusEls = {
-  frame: getEl<HTMLElement>('#status-frame'),
-  time: getEl<HTMLElement>('#status-time'),
-  particles: getEl<HTMLElement>('#status-particles'),
-  dt: getEl<HTMLElement>('#status-dt'),
-  stepSd: getEl<HTMLElement>('#status-step-sd'),
-  extent: getEl<HTMLElement>('#status-extent'),
-  seed: getEl<HTMLElement>('#status-seed')
-};
-const equationBlock = getEl<HTMLElement>('#equation-block');
 
 const buttons = {
   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
   rerun: getEl<HTMLButtonElement>('#rerun'),
-  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults'),
-  rewind: getEl<HTMLButtonElement>('#rewind'),
-  randomSeed: getEl<HTMLButtonElement>('#random-seed')
+  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults')
 };
 
 let simParams: SimParams = { ...defaultSim };
@@ -384,91 +316,41 @@ function writeInputs(): void {
   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
   setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
-  setNumberInput(inputs.seed, currentSeed, 0);
-  setNumberInput(inputs.totalTime, simParams.T, 0);
-  setNumberInput(inputs.dt, simParams.dt, 3);
-  setNumberInput(inputs.initClusterSd, simParams.initClusterSd, 3);
-  setNumberInput(inputs.axisLimit, displayParams.axisLimit, 0);
-  setNumberInput(inputs.pointSize, displayParams.pointSize, 2);
-  setNumberInput(inputs.targetFps, displayParams.targetFps, 0);
 }
 
 function readInputsForSimulation(): SimParams {
   return {
-    T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
-    dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+    T: defaultSim.T,
+    dt: defaultSim.dt,
     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
     diffusionSd: clamp(Number(inputs.diffusionSd.value) || 0, 0, 20),
-    initClusterSd: clamp(Number(inputs.initClusterSd.value) || 0, 0, 20)
+    initClusterSd: defaultSim.initClusterSd
   };
 }
 
 function readInputsForDisplay(): DisplayParams {
   return {
-    axisLimit: clamp(Number(inputs.axisLimit.value) || defaultDisplay.axisLimit, 5, 500),
-    pointSize: clamp(Number(inputs.pointSize.value) || defaultDisplay.pointSize, 0.5, 8),
+    axisLimit: defaultDisplay.axisLimit,
+    pointSize: defaultDisplay.pointSize,
     playbackSpeed: clamp(Number(inputs.playbackSpeed.value) || defaultDisplay.playbackSpeed, 0.1, 8),
-    targetFps: clamp(Math.round(Number(inputs.targetFps.value) || defaultDisplay.targetFps), 1, 120)
+    targetFps: defaultDisplay.targetFps
   };
-}
-
-function updateStatus(): void {
-  statusEls.frame.textContent = `${state.stepCount}`;
-  statusEls.time.textContent = state.simTime.toFixed(1);
-  statusEls.particles.textContent = `${state.numParticles}`;
-  statusEls.dt.textContent = state.dt.toFixed(2);
-  statusEls.stepSd.textContent = (simParams.diffusionSd * simParams.dt).toFixed(3);
-  statusEls.extent.textContent = getExtent(state).toFixed(1);
-  statusEls.seed.textContent = `${currentSeed >>> 0}`;
-}
-
-function updateEquationText(): void {
-  const sigma = simParams.diffusionSd;
-  const dt = simParams.dt;
-  const stepSd = sigma * dt;
-  equationBlock.innerHTML = [
-    '<span class="accent">Pedagogical stochastic-rate form</span>',
-    'dx/dt = ξ_x(t),   dy/dt = ξ_y(t)',
-    'ξ_x, ξ_y ~ Normal(0, σ²),  where σ = diffusionSd',
-    '',
-    '<span class="accent-2">Euler step used in this simulation</span>',
-    'x_trial = x_old + dxdt · dt',
-    'y_trial = y_old + dydt · dt',
-    'x_new = reflect(x_trial, -L, L)',
-    'y_new = reflect(y_trial, -L, L)',
-    'dxdt, dydt ~ Normal(0, diffusionSd²)',
-    '',
-    '<span class="accent-2">Reflective chamber rule</span>',
-    'Particles bounce off the chamber walls instead of leaving the visible box.',
-    '',
-    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}`,
-    `Per-step displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`
-  ].join('\n');
 }
 
 function rebuildFromInputs(): void {
   simParams = readInputsForSimulation();
   displayParams = readInputsForDisplay();
-  currentSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
   rng = new Rng(currentSeed);
   state = createState(simParams, currentSeed);
   stepAccumulator = 0;
   writeInputs();
-  updateEquationText();
 }
 
 function applyLiveSimParams(): void {
-  const next = readInputsForSimulation();
-  const nextSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
-  if (nextSeed !== currentSeed) {
-    currentSeed = nextSeed;
-    rng = new Rng(currentSeed);
-  }
-  simParams = next;
+  simParams = readInputsForSimulation();
   state = resizeState(state, simParams.numParticles, rng, simParams.initClusterSd);
   state.dt = simParams.dt;
   writeInputs();
-  updateEquationText();
 }
 
 function refreshDisplayFromInputs(): void {
@@ -483,22 +365,17 @@ function setPlaying(next: boolean): void {
 }
 
 function render(): void {
-  updateStatus();
   drawFrame(canvas, state, displayParams);
 }
 
 writeInputs();
-updateEquationText();
 render();
 
 buttons.togglePlay.addEventListener('click', () => setPlaying(!isPlaying));
 buttons.rerun.addEventListener('click', () => {
+  currentSeed = randomSeed();
   rebuildFromInputs();
   setPlaying(true);
-  render();
-});
-buttons.rewind.addEventListener('click', () => {
-  rebuildFromInputs();
   render();
 });
 buttons.resetDefaults.addEventListener('click', () => {
@@ -510,29 +387,25 @@ buttons.resetDefaults.addEventListener('click', () => {
   setPlaying(true);
   render();
 });
-buttons.randomSeed.addEventListener('click', () => {
-  currentSeed = randomSeed();
-  setNumberInput(inputs.seed, currentSeed, 0);
-  rebuildFromInputs();
-  setPlaying(true);
-  render();
-});
 
-for (const key of ['numParticles', 'diffusionSd', 'seed', 'totalTime', 'dt', 'initClusterSd'] as const) {
+for (const key of ['numParticles', 'diffusionSd'] as const) {
   inputs[key].addEventListener('change', () => {
     applyLiveSimParams();
     render();
   });
 }
 
-for (const key of ['playbackSpeed', 'axisLimit', 'pointSize', 'targetFps'] as const) {
-  inputs[key].addEventListener('change', () => {
-    refreshDisplayFromInputs();
-    render();
-  });
-}
+inputs.playbackSpeed.addEventListener('change', () => {
+  refreshDisplayFromInputs();
+  render();
+});
 
 window.addEventListener('resize', () => render());
+
+getEl<HTMLButtonElement>('#theme-toggle').addEventListener('click', () => {
+  const isLight = document.documentElement.classList.toggle('light');
+  getEl<HTMLButtonElement>('#theme-toggle').textContent = isLight ? '☽' : '☀';
+});
 
 function animate(now: number): void {
   const dtSec = Math.max(0, (now - lastAnimationTs) / 1000);

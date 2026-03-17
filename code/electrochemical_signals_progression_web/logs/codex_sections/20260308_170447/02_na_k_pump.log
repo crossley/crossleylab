@@ -1,0 +1,780 @@
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccc0c-6059-7410-976f-aacfa5b21a6b
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Na/K Pump
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Na/K Pump
+
+- UI controls should be in the following order:
+  - Particles
+  - Diffusion SD
+  - Electric strength
+  - NA+ permeability
+  - K+ permeability
+  - NA+/K+ pump strength (as a numeric entry not as a slider)
+
+- remove NA+ fraction and K+ fraction UI controls. Both
+  should be initalised to 0.5.
+
+mcp startup: no servers
+codex
+I’m applying only the `Na/K Pump` section from `change_requests.md`. First I’ll locate the relevant UI/control code and current defaults for Na/K fraction/permeability/pump, then patch just those items and run checks.
+exec
+/bin/zsh -lc 'rg --files' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "rg -n \"Na\\+|K\\+|pump|permeability|fraction|Diffusion|Electric|Particles|controls\" -S ." in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+src/pages/resting_two_ion_common.ts
+src/pages/inspect_nernst_one_ion.ts
+src/pages/sim_shared.ts
+src/pages/inspect_ap_threshold_all_or_none.ts
+src/pages/inspect_resting_potential_charge_wall.ts
+src/pages/action_potential_common.ts
+src/pages/inspect_field_attraction.ts
+src/pages/inspect_diffusion_selective_permeability_rate.ts
+src/pages/inspect_diffusion_permeability.ts
+src/pages/inspect_two_ion_selective_channels.ts
+src/pages/inspect_diffusion_pore.ts
+src/pages/inspect_ap_phases.ts
+src/pages/inspect_diffusion_selective.ts
+src/pages/inspect_membrane_potential_intro.ts
+src/pages/inspect_diffusion_free.ts
+src/pages/inspect_ap_subthreshold.ts
+src/pages/inspect_nak_pump_gradients.ts
+src/lessons.ts
+src/index.ts
+src/style.css
+ succeeded in 51ms:
+Total output lines: 1956
+
+./src/pages/resting_two_ion_common.ts:17:type TeachingFocus = 'resting' | 'permeability' | 'goldman';
+./src/pages/resting_two_ion_common.ts:30:  defaultNumParticles: number;
+./src/pages/resting_two_ion_common.ts:31:  defaultElectricStrength: number;
+./src/pages/resting_two_ion_common.ts:55:  numParticles: number;
+./src/pages/resting_two_ion_common.ts:86:  numParticles: number;
+./src/pages/resting_two_ion_common.ts:175:  for (let i = 0; i < state.numParticles; i += 1) {
+./src/pages/resting_two_ion_common.ts:184:  const denom = Math.max(1, state.numParticles);
+./src/pages/resting_two_ion_common.ts:204:  const numParticles = clamp(Math.round(params.numParticles), 10, MAX_PARTICLES);
+./src/pages/resting_two_ion_common.ts:218:  const x = new Float32Array(numParticles);
+./src/pages/resting_two_ion_common.ts:219:  const y = new Float32Array(numParticles);
+./src/pages/resting_two_ion_common.ts:220:  const types = new Uint8Array(numParticles);
+./src/pages/resting_two_ion_common.ts:221:  const charges = new Int8Array(numParticles);
+./src/pages/resting_two_ion_common.ts:224:  for (let i = 0; i < numParticles; i += 1) {
+./src/pages/resting_two_ion_common.ts:243:    x, y, types, charges, numParticles, dt, simTime: 0, stepCount: 0, boxWidth, boxHeight, leftWall, rightWall,
+./src/pages/resting_two_ion_common.ts:257:  for (let i = 0; i < state.numParticles; i += 1) {
+./src/pages/resting_two_ion_common.ts:279:    const permeability = type === 0 ? state.type0Permeability : state.type1Permeability;
+./src/pages/resting_two_ion_common.ts:282:    } else if ((tryingToCrossLeft || tryingToCrossRight) && inChannel && rng.next() > permeability) {
+./src/pages/resting_two_ion_common.ts:428:  const drawPermeabilityBand = (top: number, bottom: number, color: string, permeability: number): void => {
+codex
+I found the Na/K page entry point and now I’m inspecting `inspect_nak_pump_gradients.ts` to update only its control order/types and Na/K fraction handling.
+exec
+/bin/zsh -lc "sed -n '1,260p' src/pages/inspect_nak_pump_gradients.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '260,620p' src/pages/inspect_nak_pump_gradients.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_NUM_PARTICLES,
+  drawMembraneWall,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  evenlySpacedChannelBounds,
+  fieldColor,
+  leftEdgeChargeWallX,
+  wallFieldDrift
+} from './sim_shared';
+
+type IonType = 0 | 1; // 0 = Na+, 1 = K+
+
+interface SimParams {
+  T: number;
+  dt: number;
+  numParticles: number;
+  naFraction: number;
+ succeeded in 52ms:
+    y,
+    types,
+    charges,
+    numParticles: p.numParticles,
+    dt: p.dt,
+    simTime: 0,
+    stepCount: 0,
+    boxWidth: p.boxWidth,
+    boxHeight: p.boxHeight,
+    leftWall,
+    rightWall,
+    chargeWallX: p.chargeWallX,
+    naYMin,
+    naYMax,
+    kYMin,
+    kYMax,
+    naLeft: 0,
+    naRight: 0,
+    kLeft: 0,
+    kRight: 0,
+codex
+I’ve confirmed the target file and I’m now reading the UI template/input wiring sections to make precise edits for control order, removing Na/K fraction controls, and changing pump strength to numeric input.
+exec
+/bin/zsh -lc "sed -n '620,980p' src/pages/inspect_nak_pump_gradients.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '980,1280p' src/pages/inspect_nak_pump_gradients.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+              <button id="toggle-play" class="primary">Pause</button>
+              <button id="rerun">Rerun</button>
+              <button id="reset-defaults" class="warn">Reset Defaults</button>
+            </div>
+            <div class="button-row">
+              <button id="pump-toggle" class="primary">Pump ON</button>
+            </div>
+            <div class="control-grid">
+              <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="20" max="5000" step="1" /></div>
+              <div class="field"><label for="na-fraction">Na+ fraction</label><input id="na-fraction" type="number" min="0.05" max="0.95" step="0.01" /></div>
+              <div class="field"><label for="na-inside-init-frac">Na+ inside initial fraction</label><input id="na-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+              <div class="field"><label for="k-inside-init-frac">K+ inside initial fraction</label><input id="k-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+              <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+              <div class="field"><label for="na-permeability">Na+ channel permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
+              <div class="field"><label for="k-permeability">K+ channel permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
+              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
+            </div>
+          </div>
+        </div>
+ succeeded in 50ms:
+
+codex
+I’m about to patch `inspect_nak_pump_gradients.ts`: remove the fraction controls from UI/input wiring, lock Na/K fractions to 0.5 defaults in state reads, reorder controls to the requested sequence, and switch pump strength to a numeric input.
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
+@@ -115,4 +115,4 @@
+   naFraction: 0.5,
+-  naInsideInitFrac: 0.1,
+-  kInsideInitFrac: 0.9,
++  naInsideInitFrac: 0.5,
++  kInsideInitFrac: 0.5,
+   boxWidth: 100,
+@@ -628,10 +628,7 @@
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="20" max="5000" step="1" /></div>
+-              <div class="field"><label for="na-fraction">Na+ fraction</label><input id="na-fraction" type="number" min="0.05" max="0.95" step="0.01" /></div>
+-              <div class="field"><label for="na-inside-init-frac">Na+ inside initial fraction</label><input id="na-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="k-inside-init-frac">K+ inside initial fraction</label><input id="k-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="na-permeability">Na+ channel permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="k-permeability">K+ channel permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
++              <div class="field"><label for="na-permeability">NA+ permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="k-permeability">K+ permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="pump-strength">NA+/K+ pump strength</label><input id="pump-strength" type="number" min="0" max="2" step="0.05" /></div>
+             </div>
+@@ -658,5 +655,2 @@
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  naFraction: getEl<HTMLInputElement>('#na-fraction'),
+-  naInsideInitFrac: getEl<HTMLInputElement>('#na-inside-init-frac'),
+-  kInsideInitFrac: getEl<HTMLInputElement>('#k-inside-init-frac'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+@@ -687,5 +681,2 @@
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.naFraction, simParams.naFraction, 2);
+-  setNumberInput(inputs.naInsideInitFrac, simParams.naInsideInitFrac, 2);
+-  setNumberInput(inputs.kInsideInitFrac, simParams.kInsideInitFrac, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+@@ -694,3 +685,3 @@
+   setNumberInput(inputs.kPermeability, simParams.kPermeability, 2);
+-  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
++  setNumberInput(inputs.pumpStrength, simParams.pumpStrength, 2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+@@ -705,5 +696,5 @@
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 20, MAX_PARTICLES),
+-    naFraction: clamp(Number(inputs.naFraction.value) || defaultSim.naFraction, 0.05, 0.95),
+-    naInsideInitFrac: clamp(Number(inputs.naInsideInitFrac.value) || defaultSim.naInsideInitFrac, 0, 1),
+-    kInsideInitFrac: clamp(Number(inputs.kInsideInitFrac.value) || defaultSim.kInsideInitFrac, 0, 1),
++    naFraction: 0.5,
++    naInsideInitFrac: 0.5,
++    kInsideInitFrac: 0.5,
+     boxWidth,
+apply_patch(auto_approved=true) exited 0 in 92ms:
+Success. Updated the following files:
+M src/pages/inspect_nak_pump_gradients.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
+index 40b0a50b6828257ba86d69946a3bc1e739a93fb6..6dbf59d8e24206ed2d3d9a9665c1b4f7b09e2590
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
+@@ -113,8 +113,8 @@
+   dt: 1,
+   numParticles: DEFAULT_NUM_PARTICLES,
+   naFraction: 0.5,
+-  naInsideInitFrac: 0.1,
+-  kInsideInitFrac: 0.9,
++  naInsideInitFrac: 0.5,
++  kInsideInitFrac: 0.5,
+   boxWidth: 100,
+   boxHeight: 90,
+   wallThickness: 4,
+@@ -626,14 +626,11 @@
+             </div>
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="20" max="5000" step="1" /></div>
+-              <div class="field"><label for="na-fraction">Na+ fraction</label><input id="na-fraction" type="number" min="0.05" max="0.95" step="0.01" /></div>
+-              <div class="field"><label for="na-inside-init-frac">Na+ inside initial fraction</label><input id="na-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="k-inside-init-frac">K+ inside initial fraction</label><input id="k-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="na-permeability">Na+ channel permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="k-permeability">K+ channel permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
++              <div class="field"><label for="na-permeability">NA+ permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="k-permeability">K+ permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="pump-strength">NA+/K+ pump strength</label><input id="pump-strength" type="number" min="0" max="2" step="0.05" /></div>
+             </div>
+           </div>
+         </div>
+@@ -656,9 +653,6 @@
+ const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  naFraction: getEl<HTMLInputElement>('#na-fraction'),
+-  naInsideInitFrac: getEl<HTMLInputElement>('#na-inside-init-frac'),
+-  kInsideInitFrac: getEl<HTMLInputElement>('#k-inside-init-frac'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+   naPermeability: getEl<HTMLInputElement>('#na-permeability'),
+@@ -685,14 +679,11 @@
+ 
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.naFraction, simParams.naFraction, 2);
+-  setNumberInput(inputs.naInsideInitFrac, simParams.naInsideInitFrac, 2);
+-  setNumberInput(inputs.kInsideInitFrac, simParams.kInsideInitFrac, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
+   setNumberInput(inputs.naPermeability, simParams.naPermeability, 2);
+   setNumberInput(inputs.kPermeability, simParams.kPermeability, 2);
+-  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
++  setNumberInput(inputs.pumpStrength, simParams.pumpStrength, 2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+ }
+ 
+@@ -703,9 +694,9 @@
+     T: clamp(defaultSim.T, 200, 20000),
+     dt: defaultSim.dt,
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 20, MAX_PARTICLES),
+-    naFraction: clamp(Number(inputs.naFraction.value) || defaultSim.naFraction, 0.05, 0.95),
+-    naInsideInitFrac: clamp(Number(inputs.naInsideInitFrac.value) || defaultSim.naInsideInitFrac, 0, 1),
+-    kInsideInitFrac: clamp(Number(inputs.kInsideInitFrac.value) || defaultSim.kInsideInitFrac, 0, 1),
++    naFraction: 0.5,
++    naInsideInitFrac: 0.5,
++    kInsideInitFrac: 0.5,
+     boxWidth,
+     boxHeight,
+     wallThickness: defaultSim.wallThickness,
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
+index 40b0a50b6828257ba86d69946a3bc1e739a93fb6..6dbf59d8e24206ed2d3d9a9665c1b4f7b09e2590
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
+@@ -113,8 +113,8 @@
+   dt: 1,
+   numParticles: DEFAULT_NUM_PARTICLES,
+   naFraction: 0.5,
+-  naInsideInitFrac: 0.1,
+-  kInsideInitFrac: 0.9,
++  naInsideInitFrac: 0.5,
++  kInsideInitFrac: 0.5,
+   boxWidth: 100,
+   boxHeight: 90,
+   wallThickness: 4,
+@@ -626,14 +626,11 @@
+             </div>
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="20" max="5000" step="1" /></div>
+-              <div class="field"><label for="na-fraction">Na+ fraction</label><input id="na-fraction" type="number" min="0.05" max="0.95" step="0.01" /></div>
+-              <div class="field"><label for="na-inside-init-frac">Na+ inside initial fraction</label><input id="na-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="k-inside-init-frac">K+ inside initial fraction</label><input id="k-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="na-permeability">Na+ channel permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="k-permeability">K+ channel permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
++              <div class="field"><label for="na-permeability">NA+ permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="k-permeability">K+ permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="pump-strength">NA+/K+ pump strength</label><input id="pump-strength" type="number" min="0" max="2" step="0.05" /></div>
+             </div>
+           </div>
+         </div>
+@@ -656,9 +653,6 @@
+ const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  naFraction: getEl<HTMLInputElement>('#na-fraction'),
+-  naInsideInitFrac: getEl<HTMLInputElement>('#na-inside-init-frac'),
+-  kInsideInitFrac: getEl<HTMLInputElement>('#k-inside-init-frac'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+   naPermeability: getEl<HTMLInputElement>('#na-permeability'),
+@@ -685,14 +679,11 @@
+ 
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.naFraction, simParams.naFraction, 2);
+-  setNumberInput(inputs.naInsideInitFrac, simParams.naInsideInitFrac, 2);
+-  setNumberInput(inputs.kInsideInitFrac, simParams.kInsideInitFrac, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
+   setNumberInput(inputs.naPermeability, simParams.naPermeability, 2);
+   setNumberInput(inputs.kPermeability, simParams.kPermeability, 2);
+-  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
++  setNumberInput(inputs.pumpStrength, simParams.pumpStrength, 2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+ }
+ 
+@@ -703,9 +694,9 @@
+     T: clamp(defaultSim.T, 200, 20000),
+     dt: defaultSim.dt,
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 20, MAX_PARTICLES),
+-    naFraction: clamp(Number(inputs.naFraction.value) || defaultSim.naFraction, 0.05, 0.95),
+-    naInsideInitFrac: clamp(Number(inputs.naInsideInitFrac.value) || defaultSim.naInsideInitFrac, 0, 1),
+-    kInsideInitFrac: clamp(Number(inputs.kInsideInitFrac.value) || defaultSim.kInsideInitFrac, 0, 1),
++    naFraction: 0.5,
++    naInsideInitFrac: 0.5,
++    kInsideInitFrac: 0.5,
+     boxWidth,
+     boxHeight,
+     wallThickness: defaultSim.wallThickness,
+
+exec
+/bin/zsh -lc 'rg -n "naFraction|naInsideInitFrac|kInsideInitFrac|na-fraction|na-inside-init-frac|k-inside-init-frac" src/pages/inspect_nak_pump_gradients.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+20:  naFraction: number;
+21:  naInsideInitFrac: number;
+22:  kInsideInitFrac: number;
+115:  naFraction: 0.5,
+116:  naInsideInitFrac: 0.5,
+117:  kInsideInitFrac: 0.5,
+173:    naFraction: clamp(params.naFraction, 0.05, 0.95),
+174:    naInsideInitFrac: clamp(params.naInsideInitFrac, 0, 1),
+175:    kInsideInitFrac: clamp(params.kInsideInitFrac, 0, 1),
+237:    const type: IonType = rng.next() < p.naFraction ? 0 : 1;
+255:  placeType(naIndices, p.naInsideInitFrac);
+256:  placeType(kIndices, p.kInsideInitFrac);
+299:    const type: IonType = rng.next() < params.naFraction ? 0 : 1;
+302:    const inside = rng.next() < (type === 0 ? params.naInsideInitFrac : params.kInsideInitFrac);
+317:function retargetTypes(state: LiveState, naFraction: number, rng: Rng): LiveState {
+318:  const targetNa = Math.round(state.numParticles * naFraction);
+697:    naFraction: 0.5,
+698:    naInsideInitFrac: 0.5,
+699:    kInsideInitFrac: 0.5,
+728:  state = retargetTypes(state, simParams.naFraction, rng);
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
+index 40b0a50b6828257ba86d69946a3bc1e739a93fb6..6dbf59d8e24206ed2d3d9a9665c1b4f7b09e2590
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
+@@ -113,8 +113,8 @@
+   dt: 1,
+   numParticles: DEFAULT_NUM_PARTICLES,
+   naFraction: 0.5,
+-  naInsideInitFrac: 0.1,
+-  kInsideInitFrac: 0.9,
++  naInsideInitFrac: 0.5,
++  kInsideInitFrac: 0.5,
+   boxWidth: 100,
+   boxHeight: 90,
+   wallThickness: 4,
+@@ -626,14 +626,11 @@
+             </div>
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="20" max="5000" step="1" /></div>
+-              <div class="field"><label for="na-fraction">Na+ fraction</label><input id="na-fraction" type="number" min="0.05" max="0.95" step="0.01" /></div>
+-              <div class="field"><label for="na-inside-init-frac">Na+ inside initial fraction</label><input id="na-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="k-inside-init-frac">K+ inside initial fraction</label><input id="k-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="na-permeability">Na+ channel permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="k-permeability">K+ channel permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
++              <div class="field"><label for="na-permeability">NA+ permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="k-permeability">K+ permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="pump-strength">NA+/K+ pump strength</label><input id="pump-strength" type="number" min="0" max="2" step="0.05" /></div>
+             </div>
+           </div>
+         </div>
+@@ -656,9 +653,6 @@
+ const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  naFraction: getEl<HTMLInputElement>('#na-fraction'),
+-  naInsideInitFrac: getEl<HTMLInputElement>('#na-inside-init-frac'),
+-  kInsideInitFrac: getEl<HTMLInputElement>('#k-inside-init-frac'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+   naPermeability: getEl<HTMLInputElement>('#na-permeability'),
+@@ -685,14 +679,11 @@
+ 
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.naFraction, simParams.naFraction, 2);
+-  setNumberInput(inputs.naInsideInitFrac, simParams.naInsideInitFrac, 2);
+-  setNumberInput(inputs.kInsideInitFrac, simParams.kInsideInitFrac, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
+   setNumberInput(inputs.naPermeability, simParams.naPermeability, 2);
+   setNumberInput(inputs.kPermeability, simParams.kPermeability, 2);
+-  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
++  setNumberInput(inputs.pumpStrength, simParams.pumpStrength, 2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+ }
+ 
+@@ -703,9 +694,9 @@
+     T: clamp(defaultSim.T, 200, 20000),
+     dt: defaultSim.dt,
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 20, MAX_PARTICLES),
+-    naFraction: clamp(Number(inputs.naFraction.value) || defaultSim.naFraction, 0.05, 0.95),
+-    naInsideInitFrac: clamp(Number(inputs.naInsideInitFrac.value) || defaultSim.naInsideInitFrac, 0, 1),
+-    kInsideInitFrac: clamp(Number(inputs.kInsideInitFrac.value) || defaultSim.kInsideInitFrac, 0, 1),
++    naFraction: 0.5,
++    naInsideInitFrac: 0.5,
++    kInsideInitFrac: 0.5,
+     boxWidth,
+     boxHeight,
+     wallThickness: defaultSim.wallThickness,
+
+codex
+The code edit is in place; next I’ll run the project checks/build to verify there are no regressions from the UI/input changes.
+exec
+/bin/zsh -lc 'cat package.json' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+{
+  "name": "electrochemical-signals-progression-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "lint": "tsc --noEmit",
+    "check-pages": "node scripts/check-pages.mjs",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.4.1"
+  }
+}
+exec
+/bin/zsh -lc 'npm run -s build' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 1.13s:
+vite v6.4.1 building for production...
+transforming...
+✓ 37 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                         0.50 kB │ gzip: 0.31 kB
+dist/inspect_diffusion_free.html                                        0.58 kB │ gzip: 0.32 kB
+dist/inspect_diffusion_selective.html                                   0.59 kB │ gzip: 0.33 kB
+dist/inspect_nernst_one_ion.html                                        0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_pore.html                                        0.60 kB │ gzip: 0.34 kB
+dist/inspect_nak_pump_gradients.html                                    0.60 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_permeability.html                                0.60 kB │ gzip: 0.34 kB
+dist/inspect_membrane_potential_intro.html                              0.60 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_charge_wall.html                         0.60 kB │ gzip: 0.34 kB
+dist/inspect_field_attraction.html                                      0.61 kB │ gzip: 0.34 kB
+dist/inspect_two_ion_selective_channels.html                            0.63 kB │ gzip: 0.35 kB
+dist/inspect_diffusion_selective_permeability_rate.html                 0.63 kB │ gzip: 0.35 kB
+dist/inspect_ap_phases.html                                             0.69 kB │ gzip: 0.36 kB
+dist/inspect_ap_subthreshold.html                                       0.70 kB │ gzip: 0.37 kB
+dist/inspect_ap_threshold_all_or_none.html                              0.71 kB │ gzip: 0.37 kB
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
+index 40b0a50b6828257ba86d69946a3bc1e739a93fb6..6dbf59d8e24206ed2d3d9a9665c1b4f7b09e2590
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
+@@ -113,8 +113,8 @@
+   dt: 1,
+   numParticles: DEFAULT_NUM_PARTICLES,
+   naFraction: 0.5,
+-  naInsideInitFrac: 0.1,
+-  kInsideInitFrac: 0.9,
++  naInsideInitFrac: 0.5,
++  kInsideInitFrac: 0.5,
+   boxWidth: 100,
+   boxHeight: 90,
+   wallThickness: 4,
+@@ -626,14 +626,11 @@
+             </div>
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="20" max="5000" step="1" /></div>
+-              <div class="field"><label for="na-fraction">Na+ fraction</label><input id="na-fraction" type="number" min="0.05" max="0.95" step="0.01" /></div>
+-              <div class="field"><label for="na-inside-init-frac">Na+ inside initial fraction</label><input id="na-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="k-inside-init-frac">K+ inside initial fraction</label><input id="k-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="na-permeability">Na+ channel permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="k-permeability">K+ channel permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
++              <div class="field"><label for="na-permeability">NA+ permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="k-permeability">K+ permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="pump-strength">NA+/K+ pump strength</label><input id="pump-strength" type="number" min="0" max="2" step="0.05" /></div>
+             </div>
+           </div>
+         </div>
+@@ -656,9 +653,6 @@
+ const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  naFraction: getEl<HTMLInputElement>('#na-fraction'),
+-  naInsideInitFrac: getEl<HTMLInputElement>('#na-inside-init-frac'),
+-  kInsideInitFrac: getEl<HTMLInputElement>('#k-inside-init-frac'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+   naPermeability: getEl<HTMLInputElement>('#na-permeability'),
+@@ -685,14 +679,11 @@
+ 
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.naFraction, simParams.naFraction, 2);
+-  setNumberInput(inputs.naInsideInitFrac, simParams.naInsideInitFrac, 2);
+-  setNumberInput(inputs.kInsideInitFrac, simParams.kInsideInitFrac, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
+   setNumberInput(inputs.naPermeability, simParams.naPermeability, 2);
+   setNumberInput(inputs.kPermeability, simParams.kPermeability, 2);
+-  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
++  setNumberInput(inputs.pumpStrength, simParams.pumpStrength, 2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+ }
+ 
+@@ -703,9 +694,9 @@
+     T: clamp(defaultSim.T, 200, 20000),
+     dt: defaultSim.dt,
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 20, MAX_PARTICLES),
+-    naFraction: clamp(Number(inputs.naFraction.value) || defaultSim.naFraction, 0.05, 0.95),
+-    naInsideInitFrac: clamp(Number(inputs.naInsideInitFrac.value) || defaultSim.naInsideInitFrac, 0, 1),
+-    kInsideInitFrac: clamp(Number(inputs.kInsideInitFrac.value) || defaultSim.kInsideInitFrac, 0, 1),
++    naFraction: 0.5,
++    naInsideInitFrac: 0.5,
++    kInsideInitFrac: 0.5,
+     boxWidth,
+     boxHeight,
+     wallThickness: defaultSim.wallThickness,
+
+exec
+/bin/zsh -lc 'git status --short && git diff -- src/pages/inspect_nak_pump_gradients.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+ M README.md
+ D inspect_diffusion_1.html
+ D inspect_diffusion_2.html
+ D inspect_diffusion_3.html
+ D inspect_diffusion_4.html
+ D inspect_electrochemical_1.html
+ D inspect_electrochemical_2.html
+ D inspect_electrochemical_3.html
+ D inspect_resting_potential_1.html
+ D inspect_resting_potential_2.html
+ D inspect_resting_potential_3.html
+ D inspect_resting_potential_4.html
+ M package.json
+ M src/index.ts
+ D src/pages/inspect_diffusion_1.ts
+ D src/pages/inspect_diffusion_2.ts
+ D src/pages/inspect_diffusion_3.ts
+ D src/pages/inspect_diffusion_4.ts
+ D src/pages/inspect_electrochemical_1.ts
+ D src/pages/inspect_electrochemical_2.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
+index 40b0a50b6828257ba86d69946a3bc1e739a93fb6..6dbf59d8e24206ed2d3d9a9665c1b4f7b09e2590
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
+@@ -113,8 +113,8 @@
+   dt: 1,
+   numParticles: DEFAULT_NUM_PARTICLES,
+   naFraction: 0.5,
+-  naInsideInitFrac: 0.1,
+-  kInsideInitFrac: 0.9,
++  naInsideInitFrac: 0.5,
++  kInsideInitFrac: 0.5,
+   boxWidth: 100,
+   boxHeight: 90,
+   wallThickness: 4,
+@@ -626,14 +626,11 @@
+             </div>
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="20" max="5000" step="1" /></div>
+-              <div class="field"><label for="na-fraction">Na+ fraction</label><input id="na-fraction" type="number" min="0.05" max="0.95" step="0.01" /></div>
+-              <div class="field"><label for="na-inside-init-frac">Na+ inside initial fraction</label><input id="na-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="k-inside-init-frac">K+ inside initial fraction</label><input id="k-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="na-permeability">Na+ channel permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="k-permeability">K+ channel permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
++              <div class="field"><label for="na-permeability">NA+ permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="k-permeability">K+ permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="pump-strength">NA+/K+ pump strength</label><input id="pump-strength" type="number" min="0" max="2" step="0.05" /></div>
+             </div>
+           </div>
+         </div>
+@@ -656,9 +653,6 @@
+ const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  naFraction: getEl<HTMLInputElement>('#na-fraction'),
+-  naInsideInitFrac: getEl<HTMLInputElement>('#na-inside-init-frac'),
+-  kInsideInitFrac: getEl<HTMLInputElement>('#k-inside-init-frac'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+   naPermeability: getEl<HTMLInputElement>('#na-permeability'),
+@@ -685,14 +679,11 @@
+ 
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.naFraction, simParams.naFraction, 2);
+-  setNumberInput(inputs.naInsideInitFrac, simParams.naInsideInitFrac, 2);
+-  setNumberInput(inputs.kInsideInitFrac, simParams.kInsideInitFrac, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
+   setNumberInput(inputs.naPermeability, simParams.naPermeability, 2);
+   setNumberInput(inputs.kPermeability, simParams.kPermeability, 2);
+-  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
++  setNumberInput(inputs.pumpStrength, simParams.pumpStrength, 2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+ }
+ 
+@@ -703,9 +694,9 @@
+     T: clamp(defaultSim.T, 200, 20000),
+     dt: defaultSim.dt,
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 20, MAX_PARTICLES),
+-    naFraction: clamp(Number(inputs.naFraction.value) || defaultSim.naFraction, 0.05, 0.95),
+-    naInsideInitFrac: clamp(Number(inputs.naInsideInitFrac.value) || defaultSim.naInsideInitFrac, 0, 1),
+-    kInsideInitFrac: clamp(Number(inputs.kInsideInitFrac.value) || defaultSim.kInsideInitFrac, 0, 1),
++    naFraction: 0.5,
++    naInsideInitFrac: 0.5,
++    kInsideInitFrac: 0.5,
+     boxWidth,
+     boxHeight,
+     wallThickness: defaultSim.wallThickness,
+
+codex
+Implemented only the `Na/K Pump` section changes in:
+
+- [src/pages/inspect_nak_pump_gradients.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts)
+
+What changed:
+- Reordered classroom controls to exactly:
+  - `Particles`
+  - `Diffusion SD`
+  - `Electric strength`
+  - `NA+ permeability`
+  - `K+ permeability`
+  - `NA+/K+ pump strength`
+- Changed `pump-strength` control from `type="range"` to `type="number"` (numeric entry).
+- Removed UI controls for Na/K fractions from this page.
+- Set the removed Na/K fraction-related values to initialize at `0.5` in defaults and input-read path (`naFraction`, `naInsideInitFrac`, `kInsideInitFrac` now fixed to `0.5` via code).
+
+Validation run:
+- `npm run -s build` passed successfully (includes TypeScript compile + Vite build).
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
+index 40b0a50b6828257ba86d69946a3bc1e739a93fb6..6dbf59d8e24206ed2d3d9a9665c1b4f7b09e2590
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts
+@@ -113,8 +113,8 @@
+   dt: 1,
+   numParticles: DEFAULT_NUM_PARTICLES,
+   naFraction: 0.5,
+-  naInsideInitFrac: 0.1,
+-  kInsideInitFrac: 0.9,
++  naInsideInitFrac: 0.5,
++  kInsideInitFrac: 0.5,
+   boxWidth: 100,
+   boxHeight: 90,
+   wallThickness: 4,
+@@ -626,14 +626,11 @@
+             </div>
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="20" max="5000" step="1" /></div>
+-              <div class="field"><label for="na-fraction">Na+ fraction</label><input id="na-fraction" type="number" min="0.05" max="0.95" step="0.01" /></div>
+-              <div class="field"><label for="na-inside-init-frac">Na+ inside initial fraction</label><input id="na-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="k-inside-init-frac">K+ inside initial fraction</label><input id="k-inside-init-frac" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+-              <div class="field"><label for="na-permeability">Na+ channel permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="k-permeability">K+ channel permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
+-              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
++              <div class="field"><label for="na-permeability">NA+ permeability</label><input id="na-permeability" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="k-permeability">K+ permeability</label><input id="k-permeability" type="number" min="0" max="1" step="0.01" /></div>
++              <div class="field"><label for="pump-strength">NA+/K+ pump strength</label><input id="pump-strength" type="number" min="0" max="2" step="0.05" /></div>
+             </div>
+           </div>
+         </div>
+@@ -656,9 +653,6 @@
+ const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+-  naFraction: getEl<HTMLInputElement>('#na-fraction'),
+-  naInsideInitFrac: getEl<HTMLInputElement>('#na-inside-init-frac'),
+-  kInsideInitFrac: getEl<HTMLInputElement>('#k-inside-init-frac'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+   naPermeability: getEl<HTMLInputElement>('#na-permeability'),
+@@ -685,14 +679,11 @@
+ 
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+-  setNumberInput(inputs.naFraction, simParams.naFraction, 2);
+-  setNumberInput(inputs.naInsideInitFrac, simParams.naInsideInitFrac, 2);
+-  setNumberInput(inputs.kInsideInitFrac, simParams.kInsideInitFrac, 2);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
+   setNumberInput(inputs.naPermeability, simParams.naPermeability, 2);
+   setNumberInput(inputs.kPermeability, simParams.kPermeability, 2);
+-  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
++  setNumberInput(inputs.pumpStrength, simParams.pumpStrength, 2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+ }
+ 
+@@ -703,9 +694,9 @@
+     T: clamp(defaultSim.T, 200, 20000),
+     dt: defaultSim.dt,
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 20, MAX_PARTICLES),
+-    naFraction: clamp(Number(inputs.naFraction.value) || defaultSim.naFraction, 0.05, 0.95),
+-    naInsideInitFrac: clamp(Number(inputs.naInsideInitFrac.value) || defaultSim.naInsideInitFrac, 0, 1),
+-    kInsideInitFrac: clamp(Number(inputs.kInsideInitFrac.value) || defaultSim.kInsideInitFrac, 0, 1),
++    naFraction: 0.5,
++    naInsideInitFrac: 0.5,
++    kInsideInitFrac: 0.5,
+     boxWidth,
+     boxHeight,
+     wallThickness: defaultSim.wallThickness,
+
+tokens used
+32,446
+Implemented only the `Na/K Pump` section changes in:
+
+- [src/pages/inspect_nak_pump_gradients.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump_gradients.ts)
+
+What changed:
+- Reordered classroom controls to exactly:
+  - `Particles`
+  - `Diffusion SD`
+  - `Electric strength`
+  - `NA+ permeability`
+  - `K+ permeability`
+  - `NA+/K+ pump strength`
+- Changed `pump-strength` control from `type="range"` to `type="number"` (numeric entry).
+- Removed UI controls for Na/K fractions from this page.
+- Set the removed Na/K fraction-related values to initialize at `0.5` in defaults and input-read path (`naFraction`, `naInsideInitFrac`, `kInsideInitFrac` now fixed to `0.5` via code).
+
+Validation run:
+- `npm run -s build` passed successfully (includes TypeScript compile + Vite build).

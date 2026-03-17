@@ -1,0 +1,25 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Resting Potential from a Charge Wall
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Resting Potential from a Charge Wall
+
+- Remove text: Resting Potential from a Charge Wall Live
+  two-ion membrane model Particle Dynamics Both ions start
+  on the right and respond to the same membrane-scale
+  electrical bias Resting-Potential Traces Track Na+, K+,
+  and total resting-potential proxy traces over time
+
+- Remove: Convention: left = inside, right = outside.
+
+- Change "Changing Na+ and K+ permeability shifts ion
+  influence and total membrane voltage." to "Resing
+  potential is closer to the Nernst potential of the ion
+  with higher permeability"

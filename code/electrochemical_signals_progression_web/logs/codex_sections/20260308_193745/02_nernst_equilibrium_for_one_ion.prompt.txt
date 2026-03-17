@@ -1,0 +1,22 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Nernst Equilibrium for One Ion
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Nernst Equilibrium for One Ion
+
+- Remove: Channel permeability is modeled as the probability that an in-channel crossing is accepted.
+
+- Remove all existing bullets and replace with the following:
+  - Electric force creates a concentration gradient (like charges repel and opposite charges attract).
+  - Diffusion tends to reduce concetration gradients (ions move from high to low concentration).
+  - The Nernst potential is the exact membrane voltage where those two forces cancel for that ion.
+  - At the Nernst potential, net movement of that ion is zero.
+
+- Change UI control Electric strength (inside charge wall) to Electric strength

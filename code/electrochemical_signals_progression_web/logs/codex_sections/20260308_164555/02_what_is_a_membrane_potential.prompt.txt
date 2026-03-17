@@ -1,0 +1,15 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: What Is a Membrane Potential?
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# What Is a Membrane Potential?
+
+- Change defaults so that there are 1000 ions of each type
+  on each side.

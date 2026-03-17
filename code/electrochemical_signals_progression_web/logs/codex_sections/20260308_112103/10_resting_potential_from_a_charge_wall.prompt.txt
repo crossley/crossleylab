@@ -1,0 +1,16 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Resting Potential from a Charge Wall
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Resting Potential from a Charge Wall
+
+- The main issue here is that the Goldman prediction does
+  not match or come close to the membrane poential being
+  plotted.

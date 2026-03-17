@@ -1,0 +1,16 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Narrow vs Wide Pore Diffusion
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Narrow vs Wide Pore Diffusion
+
+- Change to two column layout with particle sims on the left
+  and trace on the right. Stack wide vs narrow on top of
+  each other.

@@ -480,20 +480,24 @@ const app = getEl<HTMLDivElement>('#app');
 app.innerHTML = `
   <div class="site-shell">
     <div class="nav-line">
-      <a href="./index.html">Back to index</a>
-      <span>•</span>
-      <span>Page: <code>inspect_diffusion_pore</code></span>
+      <a href="./index.html">← Back</a>
+      <div class="spacer"></div>
+      <button id="theme-toggle" class="theme-btn">☀</button>
     </div>
 
     <header class="page-head">
       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
       <h1>Diffusion Through a Membrane Pore</h1>
+      <p class="teaching-label">Key concepts</p>
       <ul class="key-points">
-        <li>A concentration gradient is a difference in particle distribution, not a force.</li>
-        <li>Diffusion causes net movement from high to low concentration.</li>
-        <li>The membrane blocks crossing except at the pore.</li>
-        <li>Try different Diffusion SD values and observe how quickly equilibrium is approached.</li>
-        <li>Change channel width and compare how it alters the time to equilibrium.</li>
+        <li>A membrane restricts particle movement — particles can only cross through the pore.</li>
+        <li>Diffusion still drives equilibration: equal concentrations on both sides.</li>
+        <li>Pore height controls how easily particles can cross — smaller pore, slower equilibration.</li>
+      </ul>
+      <p class="teaching-label questions">Questions to explore</p>
+      <ul class="guided-questions">
+        <li>How does pore height affect the time to reach equilibrium?</li>
+        <li>Does the <em>final</em> equilibrium depend on pore height?</li>
       </ul>
     </header>
 
@@ -501,64 +505,19 @@ app.innerHTML = `
       <aside class="controls">
         <div class="panel">
           <div class="group">
-            <p class="group-label">Basic Controls</p>
             <div class="button-row">
               <button id="toggle-play" class="primary">Pause</button>
               <button id="rerun">Rerun</button>
               <button id="reset-defaults" class="warn">Reset Defaults</button>
             </div>
-            <div class="button-row">
-              <button id="rewind">Rewind</button>
-              <button id="random-seed">Randomize Seed</button>
-            </div>
             <div class="control-grid">
               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
-              <div class="field"><label for="channel-width">Channel width</label><input id="channel-width" type="number" min="0.5" step="0.5" /></div>
+              <div class="field"><label for="channel-width">Pore height</label><input id="channel-width" type="number" min="0.5" step="0.5" /></div>
               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
-              <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
             </div>
           </div>
 
-          <details>
-            <summary>Advanced Controls</summary>
-            <div class="group" style="margin-top: 8px;">
-              <div class="control-grid">
-                <div class="field"><label for="total-time">Trace window T (ms)</label><input id="total-time" type="number" min="100" max="20000" step="10" /></div>
-                <div class="field"><label for="dt">dt (ms)</label><input id="dt" type="number" min="0.05" max="20" step="0.05" /></div>
-                <div class="field"><label for="box-width">Box width</label><input id="box-width" type="number" min="20" max="500" step="1" /></div>
-                <div class="field"><label for="box-height">Box height</label><input id="box-height" type="number" min="20" max="500" step="1" /></div>
-                <div class="field"><label for="wall-thickness">Wall thickness</label><input id="wall-thickness" type="number" min="0.5" max="50" step="0.5" /></div>
-                <div class="field"><label for="point-size">Point size</label><input id="point-size" type="number" min="0.5" max="8" step="0.25" /></div>
-                <div class="field"><label for="target-fps">Playback FPS</label><input id="target-fps" type="number" min="1" max="120" step="1" /></div>
-              </div>
-            </div>
-          </details>
-
-          <div class="group">
-            <p class="group-label">Status</p>
-            <dl class="status-list">
-              <dt>Step</dt><dd id="status-frame">0</dd>
-              <dt>Time (ms)</dt><dd id="status-time">0.0</dd>
-              <dt>Particles Left</dt><dd id="status-left">0</dd>
-              <dt>Particles Right</dt><dd id="status-right">0</dd>
-              <dt>dt</dt><dd id="status-dt">0</dd>
-              <dt>Step SD (x/y)</dt><dd id="status-step-sd">0</dd>
-              <dt>Seed</dt><dd id="status-seed">0</dd>
-              <dt>Trace Samples</dt><dd id="status-frames">0</dd>
-            </dl>
-          </div>
-
-          <div class="group">
-            <p class="group-label">Equation + Rule</p>
-            <div class="equation-card">
-              <pre class="equation" id="equation-block"></pre>
-              <p>
-                <code>diffusionSd</code> sets the SD of the sampled rate terms
-                <code>dxdt</code>, <code>dydt</code>. The membrane/channel affects only whether the x-step is accepted.
-              </p>
-            </div>
-          </div>
         </div>
       </aside>
 
@@ -583,36 +542,13 @@ const inputs = {
   numParticles: getEl<HTMLInputElement>('#num-particles'),
   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
   channelWidth: getEl<HTMLInputElement>('#channel-width'),
-  playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
-  seed: getEl<HTMLInputElement>('#seed'),
-  totalTime: getEl<HTMLInputElement>('#total-time'),
-  dt: getEl<HTMLInputElement>('#dt'),
-  boxWidth: getEl<HTMLInputElement>('#box-width'),
-  boxHeight: getEl<HTMLInputElement>('#box-height'),
-  wallThickness: getEl<HTMLInputElement>('#wall-thickness'),
-  pointSize: getEl<HTMLInputElement>('#point-size'),
-  targetFps: getEl<HTMLInputElement>('#target-fps')
+  playbackSpeed: getEl<HTMLInputElement>('#playback-speed')
 };
-
-const statusEls = {
-  frame: getEl<HTMLElement>('#status-frame'),
-  time: getEl<HTMLElement>('#status-time'),
-  left: getEl<HTMLElement>('#status-left'),
-  right: getEl<HTMLElement>('#status-right'),
-  dt: getEl<HTMLElement>('#status-dt'),
-  stepSd: getEl<HTMLElement>('#status-step-sd'),
-  seed: getEl<HTMLElement>('#status-seed'),
-  frames: getEl<HTMLElement>('#status-frames')
-};
-
-const equationBlock = getEl<HTMLElement>('#equation-block');
 
 const buttons = {
   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
   rerun: getEl<HTMLButtonElement>('#rerun'),
-  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults'),
-  rewind: getEl<HTMLButtonElement>('#rewind'),
-  randomSeed: getEl<HTMLButtonElement>('#random-seed')
+  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults')
 };
 
 let simParams: SimParams = { ...defaultSim };
@@ -630,89 +566,41 @@ function writeInputs(): void {
   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
   setNumberInput(inputs.channelWidth, simParams.channelWidth, 2);
   setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
-  setNumberInput(inputs.seed, currentSeed, 0);
-  setNumberInput(inputs.totalTime, simParams.T, 0);
-  setNumberInput(inputs.dt, simParams.dt, 3);
-  setNumberInput(inputs.boxWidth, simParams.boxWidth, 1);
-  setNumberInput(inputs.boxHeight, simParams.boxHeight, 1);
-  setNumberInput(inputs.wallThickness, simParams.wallThickness, 2);
-  setNumberInput(inputs.pointSize, displayParams.pointSize, 2);
-  setNumberInput(inputs.targetFps, displayParams.targetFps, 0);
 }
 
 function readSimInputs(): SimParams {
-  const boxHeight = clamp(Number(inputs.boxHeight.value) || defaultSim.boxHeight, 20, 500);
   return normalizeSimParams({
-    T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
-    dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+    T: defaultSim.T,
+    dt: defaultSim.dt,
     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
-    boxWidth: clamp(Number(inputs.boxWidth.value) || defaultSim.boxWidth, 20, 500),
-    boxHeight,
-    wallThickness: clamp(Number(inputs.wallThickness.value) || defaultSim.wallThickness, 0.5, 50),
-    channelWidth: clamp(Number(inputs.channelWidth.value) || defaultSim.channelWidth, 0.5, boxHeight - 2),
+    boxWidth: defaultSim.boxWidth,
+    boxHeight: defaultSim.boxHeight,
+    wallThickness: defaultSim.wallThickness,
+    channelWidth: clamp(Number(inputs.channelWidth.value) || defaultSim.channelWidth, 0.5, defaultSim.boxHeight - 2),
     diffusionSd: clamp(Number(inputs.diffusionSd.value) || 0, 0, 20)
   });
 }
 
 function readDisplayInputs(): DisplayParams {
   return {
-    pointSize: clamp(Number(inputs.pointSize.value) || defaultDisplay.pointSize, 0.5, 8),
+    pointSize: defaultDisplay.pointSize,
     playbackSpeed: clamp(Number(inputs.playbackSpeed.value) || defaultDisplay.playbackSpeed, 0.1, 8),
-    targetFps: clamp(Math.round(Number(inputs.targetFps.value) || defaultDisplay.targetFps), 1, 120)
+    targetFps: defaultDisplay.targetFps
   };
-}
-
-function updateEquationText(): void {
-  const sigma = simParams.diffusionSd;
-  const dt = simParams.dt;
-  const stepSd = sigma * dt;
-  equationBlock.innerHTML = [
-    '<span class="accent">Live diffusion update</span>',
-    'x_new = reflect(x_old + dxdt · dt, -W/2, W/2)',
-    'y_new = reflect(y_old + dydt · dt, -H/2, H/2)',
-    'dxdt, dydt ~ Normal(0, diffusionSd²)',
-    '',
-    '<span class="accent-2">Membrane / channel crossing rule</span>',
-    'Wall crossing is allowed only through the centered pore with width = channel_width.',
-    'Outside that width, x reflects at the membrane boundary.',
-    '',
-    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}`,
-    `Per-step displacement SD (before wall rule) = diffusionSd × dt = ${stepSd.toFixed(3)}`,
-    `Trace window T = ${simParams.T.toFixed(0)} ms`
-  ].join('\n');
-}
-
-function updateStatus(): void {
-  statusEls.frame.textContent = `${state.stepCount}`;
-  statusEls.time.textContent = state.simTime.toFixed(1);
-  statusEls.left.textContent = `${state.leftCount}`;
-  statusEls.right.textContent = `${state.rightCount}`;
-  statusEls.dt.textContent = state.dt.toFixed(2);
-  statusEls.stepSd.textContent = (simParams.diffusionSd * simParams.dt).toFixed(3);
-  statusEls.seed.textContent = `${currentSeed >>> 0}`;
-  statusEls.frames.textContent = `${trace.times.length}`;
 }
 
 function rebuildFromInputs(): void {
   simParams = readSimInputs();
   displayParams = readDisplayInputs();
-  currentSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
   rng = new Rng(currentSeed);
   state = createState(simParams, currentSeed);
   trace = createTraceHistory(state, simParams.T);
   stepAccumulator = 0;
   writeInputs();
-  updateEquationText();
 }
 
 function applyLiveSimParams(): void {
-  const next = readSimInputs();
-  const nextSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
-  if (nextSeed !== currentSeed) {
-    currentSeed = nextSeed;
-    rng = new Rng(currentSeed);
-  }
-  simParams = next;
+  simParams = readSimInputs();
   state = resizeState(state, simParams.numParticles, rng);
   state.dt = simParams.dt;
   state.boxWidth = simParams.boxWidth;
@@ -723,7 +611,6 @@ function applyLiveSimParams(): void {
   enforceGeometry(state);
   trimTrace(trace, state.simTime, simParams.T);
   writeInputs();
-  updateEquationText();
 }
 
 function refreshDisplayFromInputs(): void {
@@ -737,28 +624,16 @@ function setPlaying(next: boolean): void {
 }
 
 function render(): void {
-  updateStatus();
   drawFrame(canvas, state, displayParams);
   drawSideTrace(traceCanvas, trace, state.simTime, simParams.T, '');
 }
 
 writeInputs();
-updateEquationText();
 render();
 
 buttons.togglePlay.addEventListener('click', () => setPlaying(!isPlaying));
 buttons.rerun.addEventListener('click', () => {
-  rebuildFromInputs();
-  setPlaying(true);
-  render();
-});
-buttons.rewind.addEventListener('click', () => {
-  rebuildFromInputs();
-  render();
-});
-buttons.randomSeed.addEventListener('click', () => {
   currentSeed = randomSeed();
-  setNumberInput(inputs.seed, currentSeed, 0);
   rebuildFromInputs();
   setPlaying(true);
   render();
@@ -773,32 +648,24 @@ buttons.resetDefaults.addEventListener('click', () => {
   render();
 });
 
-const simKeys: Array<keyof typeof inputs> = [
-  'numParticles',
-  'diffusionSd',
-  'channelWidth',
-  'seed',
-  'totalTime',
-  'dt',
-  'boxWidth',
-  'boxHeight',
-  'wallThickness'
-];
-for (const key of simKeys) {
+for (const key of ['numParticles', 'diffusionSd', 'channelWidth'] as const) {
   inputs[key].addEventListener('change', () => {
     applyLiveSimParams();
     render();
   });
 }
 
-for (const key of ['playbackSpeed', 'pointSize', 'targetFps'] as const) {
-  inputs[key].addEventListener('change', () => {
-    refreshDisplayFromInputs();
-    render();
-  });
-}
+inputs.playbackSpeed.addEventListener('change', () => {
+  refreshDisplayFromInputs();
+  render();
+});
 
 window.addEventListener('resize', () => render());
+
+getEl<HTMLButtonElement>('#theme-toggle').addEventListener('click', () => {
+  const isLight = document.documentElement.classList.toggle('light');
+  getEl<HTMLButtonElement>('#theme-toggle').textContent = isLight ? '☽' : '☀';
+});
 
 function animate(ts: number): void {
   const dtSec = Math.max(0, (ts - lastTs) / 1000);

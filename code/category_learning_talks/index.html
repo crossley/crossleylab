@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Introduction to Category Learning</title>
+    <meta
+      name="description"
+      content="A self-paced introduction to category learning with slide-style navigation and interactive sine-wave grating tasks."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <button class="slide-nav slide-nav-left" id="prev-slide" aria-label="Previous slide">
+      <span aria-hidden="true">←</span>
+    </button>
+    <button class="slide-nav slide-nav-right" id="next-slide" aria-label="Next slide">
+      <span aria-hidden="true">→</span>
+    </button>
+    <div class="slide-indicator" id="slide-indicator" aria-live="polite">1 / 7</div>
+
+    <div class="page-shell">
+      <main id="main" class="scrolly-deck">
+        <section class="panel hero-panel" id="intro" data-slide-label="Introduction">
+          <div class="panel-copy hero-copy">
+            <h1>Introduction to Category Learning</h1>
+            <p class="lede">
+              In this module, you will sort visual stimuli into category F or J, see how those stimuli are arranged in a two-dimensional space,
+              and compare three classic category structures: a one-dimensional x rule, a one-dimensional y rule,
+              and a diagonal information-integration task.
+            </p>
+          </div>
+          <div class="hero-visual" aria-hidden="true">
+            <canvas id="hero-grating" width="560" height="560"></canvas>
+            <div class="hero-orbit orbit-a"></div>
+            <div class="hero-orbit orbit-b"></div>
+          </div>
+        </section>
+
+        <section class="panel primer-panel" id="example-trial" data-slide-label="Example trial">
+          <div class="primer-stage">
+            <p class="feedback-text primer-status primer-lead" id="primer-status">Press F or J.</p>
+            <div class="stimulus-frame primer-frame" id="primer-frame">
+              <div class="fixation-cross" id="primer-fixation" aria-hidden="true">+</div>
+              <canvas id="primer-grating" width="280" height="280" aria-label="Example stimulus"></canvas>
+            </div>
+            <div class="response-buttons centered-buttons">
+              <button class="button button-primary primer-response key-button key-f" data-response="A">F</button>
+              <button class="button button-secondary primer-response key-button key-j" data-response="B">J</button>
+            </div>
+            <button class="button button-ghost" id="primer-restart" hidden>Restart example</button>
+          </div>
+        </section>
+
+        <section class="panel task-panel" id="demo-task" data-slide-label="Demo task">
+          <div class="panel-header narrow center-copy demo-copy">
+            <h2>Now you try</h2>
+          </div>
+          <div class="solo-task" data-task-root data-task="demo">
+            <div class="task-status-row compact-status centered-meter">
+              <div class="meter-block" aria-live="polite">
+                <p class="meter-text">0 correct in a row</p>
+                <div class="meter-track"><div class="meter-fill"></div></div>
+              </div>
+            </div>
+            <div class="task-stage solo-stage">
+              <div class="stimulus-stack">
+                <p class="feedback-text task-feedback task-instruction"></p>
+                <div class="stimulus-frame task-frame">
+                  <div class="fixation-cross task-fixation">+</div>
+                  <canvas class="task-grating" width="280" height="280" aria-label="Current stimulus"></canvas>
+                </div>
+                <div class="response-buttons centered-buttons">
+                  <button class="button button-primary response-button key-button key-f" data-response="A">F</button>
+                  <button class="button button-secondary response-button key-button key-j" data-response="B">J</button>
+                </div>
+              </div>
+            </div>
+            <div class="task-meta centered-meta">
+              <p class="trial-count">Trial 1 of 20</p>
+              <button class="button button-ghost reset-task">Restart</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="space-origin" data-slide-label="Stimulus space">
+          <div class="panel-header narrow">
+            <h2 class="wide-title">Each grating comes from a point in a two-dimensional stimulus space.</h2>
+            <p>Hover over a point to see an example stimulus.</p>
+          </div>
+          <div class="space-layout generic-space-layout">
+            <div class="space-card large">
+              <canvas id="space-generic" width="560" height="560" aria-label="Stimulus space"></canvas>
+            </div>
+            <div class="space-card inspector">
+              <canvas id="space-inspector" width="260" height="260" aria-label="Inspected stimulus"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel linked-task-panel" id="rbx-space" data-slide-label="Uni-x">
+          <div class="panel-header narrow">
+            <h2 class="boundary-title">Category boundaries divide stimulus space into response regions.</h2>
+            <p>This boundary corresponds to thick bars as F and thin bars as J.</p>
+          </div>
+          <div class="linked-layout aligned-row" data-task-root data-task="rbx" data-boundary="vertical">
+            <div class="plot-card space-panel-card">
+              <canvas class="task-space" width="560" height="560" aria-label="Stimulus space with vertical boundary"></canvas>
+            </div>
+            <div class="task-console linked-console">
+              <div class="task-status-row compact-status centered-meter">
+                <div>
+                  <p class="eyebrow">Current run</p>
+                  <h3>Uni-x task</h3>
+                </div>
+                <div class="meter-block" aria-live="polite">
+                  <p class="meter-text">0 correct in a row</p>
+                  <div class="meter-track"><div class="meter-fill"></div></div>
+                </div>
+              </div>
+              <div class="stimulus-stack">
+                <div class="stimulus-frame task-frame">
+                  <div class="fixation-cross task-fixation">+</div>
+                  <canvas class="task-grating" width="260" height="260" aria-label="Current stimulus"></canvas>
+                </div>
+                <div class="response-buttons centered-buttons">
+                  <button class="button button-primary response-button key-button key-f" data-response="A">F</button>
+                  <button class="button button-secondary response-button key-button key-j" data-response="B">J</button>
+                </div>
+              </div>
+              <div class="task-meta centered-meta">
+                <p class="trial-count">Trial 1 of 20</p>
+                <button class="button button-ghost reset-task">Restart</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel linked-task-panel" id="rby-space" data-slide-label="Uni-y">
+          <div class="panel-header narrow">
+            <h2 class="boundary-title">Category boundaries divide stimulus space into response regions.</h2>
+            <p>This boundary corresponds to lower-orientation gratings as F and higher-orientation gratings as J.</p>
+          </div>
+          <div class="linked-layout aligned-row" data-task-root data-task="rby" data-boundary="horizontal">
+            <div class="plot-card space-panel-card">
+              <canvas class="task-space" width="560" height="560" aria-label="Stimulus space with horizontal boundary"></canvas>
+            </div>
+            <div class="task-console linked-console">
+              <div class="task-status-row compact-status centered-meter">
+                <div>
+                  <p class="eyebrow">Current run</p>
+                  <h3>Uni-y task</h3>
+                </div>
+                <div class="meter-block" aria-live="polite">
+                  <p class="meter-text">0 correct in a row</p>
+                  <div class="meter-track"><div class="meter-fill"></div></div>
+                </div>
+              </div>
+              <div class="stimulus-stack">
+                <div class="stimulus-frame task-frame">
+                  <div class="fixation-cross task-fixation">+</div>
+                  <canvas class="task-grating" width="260" height="260" aria-label="Current stimulus"></canvas>
+                </div>
+                <div class="response-buttons centered-buttons">
+                  <button class="button button-primary response-button key-button key-f" data-response="A">F</button>
+                  <button class="button button-secondary response-button key-button key-j" data-response="B">J</button>
+                </div>
+              </div>
+              <div class="task-meta centered-meta">
+                <p class="trial-count">Trial 1 of 20</p>
+                <button class="button button-ghost reset-task">Restart</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel linked-task-panel" id="ii-space" data-slide-label="II">
+          <div class="panel-header narrow">
+            <h2 class="boundary-title">Category boundaries divide stimulus space into response regions.</h2>
+            <p>Here both dimensions work together, so neither thickness nor orientation alone is enough.</p>
+          </div>
+          <div class="linked-layout aligned-row" data-task-root data-task="ii" data-boundary="diagonal">
+            <div class="plot-card space-panel-card">
+              <canvas class="task-space" width="560" height="560" aria-label="Stimulus space with diagonal boundary"></canvas>
+            </div>
+            <div class="task-console linked-console">
+              <div class="task-status-row compact-status centered-meter">
+                <div>
+                  <p class="eyebrow">Current run</p>
+                  <h3>II task</h3>
+                </div>
+                <div class="meter-block" aria-live="polite">
+                  <p class="meter-text">0 correct in a row</p>
+                  <div class="meter-track"><div class="meter-fill"></div></div>
+                </div>
+              </div>
+              <div class="stimulus-stack">
+                <div class="stimulus-frame task-frame">
+                  <div class="fixation-cross task-fixation">+</div>
+                  <canvas class="task-grating" width="260" height="260" aria-label="Current stimulus"></canvas>
+                </div>
+                <div class="response-buttons centered-buttons">
+                  <button class="button button-primary response-button key-button key-f" data-response="A">F</button>
+                  <button class="button button-secondary response-button key-button key-j" data-response="B">J</button>
+                </div>
+              </div>
+              <div class="task-meta centered-meta">
+                <p class="trial-count">Trial 1 of 20</p>
+                <button class="button button-ghost reset-task">Restart</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

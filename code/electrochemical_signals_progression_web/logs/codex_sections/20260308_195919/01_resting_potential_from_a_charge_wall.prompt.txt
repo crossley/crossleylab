@@ -1,0 +1,29 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Resting Potential from a Charge Wall
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Resting Potential from a Charge Wall
+
+- Change title to "Goldman Equation from a Charge Wall (2 ions)"
+
+- The Goldman prediction and the membrane potential trace
+  don't line up. Please review how these are defined and try
+  to fix them so they are accurate with ohw Goldman is
+  supposed to work and so that they are consistent.
+
+- Initalise NA and K concentration to be equal inside and
+  outside the cell.
+
+- Reestructure the visual so that we have three plots in a
+  single row. It's okay for them to be small, but they
+  should be the same size. The first plot should be the
+  particle sim. THe middle plot should be NA and K
+  concetrations. The third plot should be the membrane
+  potential trace along with the Goldman prediction.

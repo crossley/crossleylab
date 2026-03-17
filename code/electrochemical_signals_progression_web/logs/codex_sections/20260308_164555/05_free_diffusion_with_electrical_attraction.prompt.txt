@@ -1,0 +1,14 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Free Diffusion with Electrical Attraction
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Free Diffusion with Electrical Attraction
+
+- Add UI controls to adjust the magnitude and direction of each electric field generater.

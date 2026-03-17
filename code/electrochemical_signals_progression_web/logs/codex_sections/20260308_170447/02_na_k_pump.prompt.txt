@@ -1,0 +1,23 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Na/K Pump
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Na/K Pump
+
+- UI controls should be in the following order:
+  - Particles
+  - Diffusion SD
+  - Electric strength
+  - NA+ permeability
+  - K+ permeability
+  - NA+/K+ pump strength (as a numeric entry not as a slider)
+
+- remove NA+ fraction and K+ fraction UI controls. Both
+  should be initalised to 0.5.

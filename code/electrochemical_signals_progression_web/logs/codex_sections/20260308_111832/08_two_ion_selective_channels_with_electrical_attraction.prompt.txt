@@ -1,0 +1,24 @@
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Two-Ion Selective Channels with Electrical Attraction
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Two-Ion Selective Channels with Electrical Attraction
+
+- replace the subtitle text with simple summary bullets
+
+- Remove from the legend Negative charge wall Positive
+  charge wall Ion A pore Ion B pore Ion A solid = left,
+  dashed = right Ion B solid = left, dashed = right
+
+- Adjust size of trace plot so that it's square.
+
+- Remove the text: Particle Simulation Two selective
+  channels with one shared electric field Compartment
+  Fraction Traces Per-ion left/right fractions over time

@@ -1,0 +1,685 @@
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccad1-a858-74c2-855e-525003e4e754
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Two-Ion Selective Channels with Electrical Attraction
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Two-Ion Selective Channels with Electrical Attraction
+
+- replace the subtitle text with simple summary bullets
+
+- Remove from the legend Negative charge wall Positive
+  charge wall Ion A pore Ion B pore Ion A solid = left,
+  dashed = right Ion B solid = left, dashed = right
+
+- Adjust size of trace plot so that it's square.
+
+- Remove the text: Particle Simulation Two selective
+  channels with one shared electric field Compartment
+  Fraction Traces Per-ion left/right fractions over time
+
+mcp startup: no servers
+codex
+I’ll implement only the “Two-Ion Selective Channels with Electrical Attraction” section from `change_requests.md` and then run the project checks. First I’m locating where this section maps to the UI code and text elements.
+exec
+/bin/zsh -lc 'rg --files' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'rg -n "Two-Ion Selective Channels with Electrical Attraction|Particle Simulation|Fraction Traces|Negative charge wall|Ion A pore|Ion B pore|subtitle|legend|trace" change_requests.md src .' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+src/pages/resting_two_ion_common.ts
+src/pages/inspect_resting_potential_nernst.ts
+src/pages/inspect_electrochemical_3.ts
+src/pages/sim_shared.ts
+src/pages/inspect_diffusion_1.ts
+src/pages/inspect_resting_potential_4.ts
+src/pages/inspect_electrochemical_2.ts
+src/pages/inspect_diffusion_4.ts
+src/pages/inspect_action_potential_1.ts
+src/pages/inspect_resting_potential_1.ts
+src/pages/inspect_nak_pump.ts
+src/pages/inspect_diffusion_3.ts
+src/pages/action_potential_common.ts
+src/pages/inspect_electrochemical_1.ts
+src/pages/inspect_action_potential_2.ts
+src/pages/inspect_resting_potential_2.ts
+src/pages/inspect_action_potential_3.ts
+src/pages/inspect_resting_potential_3.ts
+src/pages/inspect_electrochemical_4.ts
+src/pages/inspect_diffusion_2.ts
+ succeeded in 51ms:
+Total output lines: 1381
+
+change_requests.md:4:  and trace on the right
+change_requests.md:9:  and trace on the right. Stack wide vs narrow on top of
+change_requests.md:15:  and trace on the right
+change_requests.md:42:# Two-Ion Selective Channels with Electrical Attraction
+change_requests.md:44:- replace the subtitle text with simple summary bullets
+change_requests.md:46:- Remove from the legend Negative charge wall Positive
+change_requests.md:47:  charge wall Ion A pore Ion B pore Ion A solid = left,
+change_requests.md:50:- Adjust size of trace plot so that it's square.
+change_requests.md:52:- Remove the text: Particle Simulation Two selective
+change_requests.md:54:  Fraction Traces Per-ion left/right fractions over time
+change_requests.md:56:# Na/K Pump Particle Simulation
+change_requests.md:57:- Remove "Particle Simulation" from title
+change_requests.md:64:- Remove membrane potential from the trace. This sim is just
+src/pages/resting_two_ion_common.ts:22:  subtitle: string;
+src/pages/resting_two_ion_common.ts:23:  subtitlePoints?: string[];
+src/pages/resting_two_ion_common.ts:41:  tracePanelTitle?: string;
+src/pages/resting_two_ion_common.ts:42:  traceHint?: string;
+src/pages/resting_two_ion_common.ts:43:  traceTitle?: string;
+codex
+I found the shared two-ion page component and now I’m pinpointing the exact page variant for this section so edits stay isolated to that page only.
+exec
+/bin/zsh -lc "sed -n '35,80p' change_requests.md" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'rg -n "Two-Ion Selective Channels|shared electric field|Per-ion left/right fractions|inspect_electrochemical_4|resting_two_ion_common|subtitlePoints|Ion A pore|Ion B pore" src/pages inspect_electrochemical_4.html src/index.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+  the right side. The inside has a far wal that is charged
+  to attract or reply ions of different charges.
+
+# One-Ion Membrane Transport Balance
+
+- Remove this entire simulation.
+
+# Two-Ion Selective Channels with Electrical Attraction
+
+- replace the subtitle text with simple summary bullets
+
+- Remove from the legend Negative charge wall Positive
+  charge wall Ion A pore Ion B pore Ion A solid = left,
+  dashed = right Ion B solid = left, dashed = right
+
+- Adjust size of trace plot so that it's square.
+
+- Remove the text: Particle Simulation Two selective
+  channels with one shared electric field Compartment
+  Fraction Traces Per-ion left/right fractions over time
+ succeeded in 52ms:
+inspect_electrochemical_4.html:10:    <script type="module" src="/src/pages/inspect_electrochemical_4.ts"></script>
+src/index.ts:50:          <strong>Two-Ion Selective Channels</strong>
+src/pages/resting_two_ion_common.ts:23:  subtitlePoints?: string[];
+src/pages/resting_two_ion_common.ts:459:  const subtitlePoints = variant.subtitlePoints ?? [variant.subtitle];
+src/pages/resting_two_ion_common.ts:469:          ${subtitlePoints.map((point) => `<li>${point}</li>`).join('')}
+src/pages/inspect_resting_potential_4.ts:1:import { mountTwoIonRestingPage } from './resting_two_ion_common';
+src/pages/inspect_diffusion_4.ts:561:              <div class="field"><label for="type0-channel-width">Ion A pore width</label><input id="type0-channel-width" type="number" min="0.5" step="0.5" /></div>
+src/pages/inspect_diffusion_4.ts:562:              <div class="field"><label for="type1-channel-width">Ion B pore width</label><input id="type1-channel-width" type="number" min="0.5" step="0.5" /></div>
+src/pages/inspect_diffusion_4.ts:734:    'Ion A can cross only through the Ion A pore window',
+src/pages/inspect_diffusion_4.ts:735:    'Ion B can cross only through the Ion B pore window',
+src/pages/inspect_action_potential_1.ts:7:  subtitlePoints: [
+src/pages/action_potential_common.ts:21:  subtitlePoints: string[];
+src/pages/action_potential_common.ts:842:          ${config.subtitlePoints.map((line) => `<li>${line}</li>`).join('')}
+src/pages/inspect_action_potential_2.ts:7:  subtitlePoints: [
+src/pages/inspect_action_potential_3.ts:7:  subtitlePoints: [
+src/pages/inspect_electrochemical_4.ts:497:  ctx.fillText('Two-Ion Selective Channels with Electrical Attraction', 12 * dpr, 20 * dpr);
+src/pages/inspect_electrochemical_4.ts:582:      <h1>Two-Ion Selective Channels with Electrical Attraction</h1>
+src/pages/inspect_electrochemical_4.ts:609:              <div class="field"><label for="type0-channel-width">Ion A pore width</label><input id="type0-channel-width" type="number" min="0.5" step="0.5" /></div>
+src/pages/inspect_electrochemical_4.ts:610:              <div class="field"><label for="type1-channel-width">Ion B pore width</label><input id="type1-channel-width" type="number" min="0.5" step="0.5" /></div>
+src/pages/inspect_electrochemical_4.ts:663:            <div class="subhead"><h3>Particle Simulation</h3><span class="tiny">Two selective channels with one shared electric field</span></div>
+codex
+I’ve identified the exact page file: `src/pages/inspect_electrochemical_4.ts`. Next I’m editing subtitle bullets, legend entries, and the trace canvas sizing/text labels only in this file.
+exec
+/bin/zsh -lc "sed -n '1,220p' src/pages/inspect_electrochemical_4.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'rg -n "subtitle|summary|subhead|legend|trace|draw.*Trace|canvas" src/pages/inspect_electrochemical_4.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '540,760p' src/pages/inspect_electrochemical_4.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_NUM_PARTICLES,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  drawMembraneWall,
+  evenlySpacedChannelBounds,
+  fieldColor,
+  leftEdgeChargeWallX,
+  wallFieldDrift
+} from './sim_shared';
+
+type IonType = 0 | 1;
+
+interface SimParams {
+  T: number;
+  dt: number;
+  numParticles: number;
+  type0Fraction: number;
+ succeeded in 50ms:
+385:function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
+386:  const trace: TraceHistory = { times: [], type0LeftFrac: [], type0RightFrac: [], type1LeftFrac: [], type1RightFrac: [] };
+387:  pushTrace(trace, state, traceWindowMs);
+388:  return trace;
+391:function pushTrace(trace: TraceHistory, state: LiveState, traceWindowMs: number): void {
+392:  trace.times.push(state.simTime);
+393:  trace.type0LeftFrac.push(state.type0Total > 0 ? state.type0Left / state.type0Total : 0);
+394:  trace.type0RightFrac.push(state.type0Total > 0 ? state.type0Right / state.type0Total : 0);
+395:  trace.type1LeftFrac.push(state.type1Total > 0 ? state.type1Left / state.type1Total : 0);
+396:  trace.type1RightFrac.push(state.type1Total > 0 ? state.type1Right / state.type1Total : 0);
+397:  const minTime = Math.max(0, state.simTime - traceWindowMs);
+398:  while (trace.times.length > 1 && trace.times[0] < minTime) {
+399:    trace.times.shift();
+400:    trace.type0LeftFrac.shift();
+401:    trace.type0RightFrac.shift();
+402:    trace.type1LeftFrac.shift();
+403:    trace.type1RightFrac.shift();
+405:  while (trace.times.length > TRACE_HISTORY_MAX_POINTS) {
+406:    trace.times.shift();
+407:    trace.type0LeftFrac.shift();
+ succeeded in 51ms:
+  const series = [
+    { data: trace.type0LeftFrac, color: SIM_COLORS.ionATrace, dashed: false },
+    { data: trace.type0RightFrac, color: SIM_COLORS.ionATrace, dashed: true },
+    { data: trace.type1LeftFrac, color: SIM_COLORS.ionBTrace, dashed: false },
+    { data: trace.type1RightFrac, color: SIM_COLORS.ionBTrace, dashed: true }
+  ];
+  for (const seriesEntry of series) {
+    ctx.save();
+    ctx.strokeStyle = seriesEntry.color;
+    ctx.lineWidth = 1.8 * dpr;
+    if (seriesEntry.dashed) ctx.setLineDash([5 * dpr, 4 * dpr]);
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < trace.times.length; i += 1) {
+      if (trace.times[i] < startTime) continue;
+      const px = xMap(trace.times[i]);
+      const py = yMap(seriesEntry.data[i]);
+      if (!started) {
+        ctx.moveTo(px, py);
+        started = true;
+exec
+/bin/zsh -lc 'rg -n "canvas-grid-2|canvas-subpanel|trace-canvas|canvas-panel|subhead|legend" src/style.css src/pages/inspect_electrochemical_4.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '1,260p' src/style.css" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+src/pages/inspect_electrochemical_4.ts:660:      <section class="panel canvas-panel">
+src/pages/inspect_electrochemical_4.ts:661:        <div class="canvas-grid-2">
+src/pages/inspect_electrochemical_4.ts:662:          <div class="canvas-subpanel">
+src/pages/inspect_electrochemical_4.ts:663:            <div class="subhead"><h3>Particle Simulation</h3><span class="tiny">Two selective channels with one shared electric field</span></div>
+src/pages/inspect_electrochemical_4.ts:666:          <div class="canvas-subpanel">
+src/pages/inspect_electrochemical_4.ts:667:            <div class="subhead"><h3>Compartment Fraction Traces</h3><span class="tiny">Per-ion left/right fractions over time</span></div>
+src/pages/inspect_electrochemical_4.ts:668:            <canvas id="trace-canvas" class="trace-canvas"></canvas>
+src/pages/inspect_electrochemical_4.ts:671:        <div class="legend">
+src/pages/inspect_electrochemical_4.ts:687:const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
+src/style.css:283:.canvas-panel {
+src/style.css:288:.canvas-grid-2 {
+src/style.css:295:  .canvas-grid-2 {
+src/style.css:300:.canvas-subpanel {
+src/style.css:305:.subhead {
+src/style.css:312:.subhead h3 {
+src/style.css:343:.trace-canvas {
+src/style.css:353:.legend {
+ succeeded in 51ms:
+:root {
+  --bg0: #05070b;
+  --bg1: #020307;
+  --ink: #eaf2ff;
+  --muted: #9eafc7;
+  --panel: rgba(12, 16, 24, 0.86);
+  --panel-border: rgba(160, 190, 255, 0.12);
+  --accent: #42c8ff;
+  --accent-2: #9fff6a;
+  --danger: #ff6f8f;
+  --canvas-bg: #03060b;
+  --gridline: rgba(130, 178, 255, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+exec
+/bin/zsh -lc "sed -n '260,390p' src/style.css" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.status-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  font-size: 0.84rem;
+}
+
+.status-list dt {
+  margin: 0;
+  color: var(--muted);
+}
+
+.status-list dd {
+  margin: 0;
+  text-align: right;
+codex
+I’m now applying targeted edits in `inspect_electrochemical_4.ts`: converting the subtitle paragraph to bullet points, removing only the specified legend items/text blocks, and making the trace canvas square via class usage.
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
+@@ -582,5 +582,7 @@
+       <h1>Two-Ion Selective Channels with Electrical Attraction</h1>
+-      <p class="subtitle">
+-        Both ion species are set to the same charge sign by default, so diffusion and electrical forces drive them toward the same equilibrium concentration ratio across the membrane. Different pore widths change how quickly each species approaches that equilibrium, not the equilibrium ratio itself.
+-      </p>
++      <ul class="key-points">
++        <li>Ion A and Ion B each cross through their own selective pore.</li>
++        <li>Both ions feel the same electric field.</li>
++        <li>Pore width changes the rate of movement, not the final balance point.</li>
++      </ul>
+     </header>
+@@ -662,3 +664,2 @@
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Particle Simulation</h3><span class="tiny">Two selective channels with one shared electric field</span></div>
+             <canvas id="sim-canvas"></canvas>
+@@ -666,4 +667,3 @@
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Compartment Fraction Traces</h3><span class="tiny">Per-ion left/right fractions over time</span></div>
+-            <canvas id="trace-canvas" class="trace-canvas"></canvas>
++            <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+           </div>
+@@ -673,8 +673,2 @@
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Ion B</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.fieldNegative}"></span>Negative charge wall</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.fieldPositive}"></span>Positive charge wall</span>
+-          <span><span class="swatch" style="background:rgba(245,178,72,0.8)"></span>Ion A pore</span>
+-          <span><span class="swatch" style="background:rgba(66,200,255,0.8)"></span>Ion B pore</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
+         </div>
+apply_patch(auto_approved=true) exited 0 in 85ms:
+Success. Updated the following files:
+M src/pages/inspect_electrochemical_4.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
+index aebb3fe19252a7bbc1192b4a57f0134b47104c5f..6a9f9df30bff51ff6515abed4ebac9e1b11d8124
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
+@@ -580,9 +580,11 @@
+     <header class="page-head">
+       <p class="eyebrow">Two-Ion Transport with Selective Pores</p>
+       <h1>Two-Ion Selective Channels with Electrical Attraction</h1>
+-      <p class="subtitle">
+-        Both ion species are set to the same charge sign by default, so diffusion and electrical forces drive them toward the same equilibrium concentration ratio across the membrane. Different pore widths change how quickly each species approaches that equilibrium, not the equilibrium ratio itself.
+-      </p>
++      <ul class="key-points">
++        <li>Ion A and Ion B each cross through their own selective pore.</li>
++        <li>Both ions feel the same electric field.</li>
++        <li>Pore width changes the rate of movement, not the final balance point.</li>
++      </ul>
+     </header>
+ 
+     <div class="sim-layout">
+@@ -660,23 +662,15 @@
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Particle Simulation</h3><span class="tiny">Two selective channels with one shared electric field</span></div>
+             <canvas id="sim-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Compartment Fraction Traces</h3><span class="tiny">Per-ion left/right fractions over time</span></div>
+-            <canvas id="trace-canvas" class="trace-canvas"></canvas>
++            <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+           </div>
+         </div>
+         <div class="legend">
+           <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>Ion A</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Ion B</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.fieldNegative}"></span>Negative charge wall</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.fieldPositive}"></span>Positive charge wall</span>
+-          <span><span class="swatch" style="background:rgba(245,178,72,0.8)"></span>Ion A pore</span>
+-          <span><span class="swatch" style="background:rgba(66,200,255,0.8)"></span>Ion B pore</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
+         </div>
+       </section>
+     </div>
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
+index aebb3fe19252a7bbc1192b4a57f0134b47104c5f..6a9f9df30bff51ff6515abed4ebac9e1b11d8124
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
+@@ -580,9 +580,11 @@
+     <header class="page-head">
+       <p class="eyebrow">Two-Ion Transport with Selective Pores</p>
+       <h1>Two-Ion Selective Channels with Electrical Attraction</h1>
+-      <p class="subtitle">
+-        Both ion species are set to the same charge sign by default, so diffusion and electrical forces drive them toward the same equilibrium concentration ratio across the membrane. Different pore widths change how quickly each species approaches that equilibrium, not the equilibrium ratio itself.
+-      </p>
++      <ul class="key-points">
++        <li>Ion A and Ion B each cross through their own selective pore.</li>
++        <li>Both ions feel the same electric field.</li>
++        <li>Pore width changes the rate of movement, not the final balance point.</li>
++      </ul>
+     </header>
+ 
+     <div class="sim-layout">
+@@ -660,23 +662,15 @@
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Particle Simulation</h3><span class="tiny">Two selective channels with one shared electric field</span></div>
+             <canvas id="sim-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Compartment Fraction Traces</h3><span class="tiny">Per-ion left/right fractions over time</span></div>
+-            <canvas id="trace-canvas" class="trace-canvas"></canvas>
++            <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+           </div>
+         </div>
+         <div class="legend">
+           <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>Ion A</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Ion B</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.fieldNegative}"></span>Negative charge wall</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.fieldPositive}"></span>Positive charge wall</span>
+-          <span><span class="swatch" style="background:rgba(245,178,72,0.8)"></span>Ion A pore</span>
+-          <span><span class="swatch" style="background:rgba(66,200,255,0.8)"></span>Ion B pore</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
+         </div>
+       </section>
+     </div>
+
+codex
+Edits are in place for that section only. I’m running the repository build/check scripts now to confirm the changes compile cleanly.
+exec
+/bin/zsh -lc 'cat package.json' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+{
+  "name": "electrochemical-signals-progression-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.4.1"
+  }
+}
+exec
+/bin/zsh -lc 'npm run build' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 1.17s:
+
+> electrochemical-signals-progression-web@0.1.0 build
+> tsc && vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 33 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                            0.50 kB │ gzip: 0.31 kB
+dist/inspect_diffusion_1.html                              0.58 kB │ gzip: 0.32 kB
+dist/inspect_diffusion_4.html                              0.58 kB │ gzip: 0.33 kB
+dist/inspect_nak_pump.html                                 0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_3.html                              0.59 kB │ gzip: 0.33 kB
+dist/inspect_diffusion_2.html                              0.59 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_2.html                      0.59 kB │ gzip: 0.33 kB
+dist/inspect_resting_potential_1.html                      0.60 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_nernst.html                 0.60 kB │ gzip: 0.34 kB
+dist/inspect_electrochemical_1.html                        0.61 kB │ gzip: 0.34 kB
+dist/inspect_electrochemical_3.html                        0.62 kB │ gzip: 0.35 kB
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
+index aebb3fe19252a7bbc1192b4a57f0134b47104c5f..6a9f9df30bff51ff6515abed4ebac9e1b11d8124
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
+@@ -580,9 +580,11 @@
+     <header class="page-head">
+       <p class="eyebrow">Two-Ion Transport with Selective Pores</p>
+       <h1>Two-Ion Selective Channels with Electrical Attraction</h1>
+-      <p class="subtitle">
+-        Both ion species are set to the same charge sign by default, so diffusion and electrical forces drive them toward the same equilibrium concentration ratio across the membrane. Different pore widths change how quickly each species approaches that equilibrium, not the equilibrium ratio itself.
+-      </p>
++      <ul class="key-points">
++        <li>Ion A and Ion B each cross through their own selective pore.</li>
++        <li>Both ions feel the same electric field.</li>
++        <li>Pore width changes the rate of movement, not the final balance point.</li>
++      </ul>
+     </header>
+ 
+     <div class="sim-layout">
+@@ -660,23 +662,15 @@
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Particle Simulation</h3><span class="tiny">Two selective channels with one shared electric field</span></div>
+             <canvas id="sim-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Compartment Fraction Traces</h3><span class="tiny">Per-ion left/right fractions over time</span></div>
+-            <canvas id="trace-canvas" class="trace-canvas"></canvas>
++            <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+           </div>
+         </div>
+         <div class="legend">
+           <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>Ion A</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Ion B</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.fieldNegative}"></span>Negative charge wall</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.fieldPositive}"></span>Positive charge wall</span>
+-          <span><span class="swatch" style="background:rgba(245,178,72,0.8)"></span>Ion A pore</span>
+-          <span><span class="swatch" style="background:rgba(66,200,255,0.8)"></span>Ion B pore</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
+         </div>
+       </section>
+     </div>
+
+exec
+/bin/zsh -lc 'git status --short' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+ M README.md
+ M inspect_diffusion_1.html
+ M inspect_diffusion_2.html
+ M inspect_diffusion_3.html
+ M inspect_diffusion_4.html
+ M inspect_electrochemical_1.html
+ D inspect_electrochemical_2.html
+ M inspect_electrochemical_3.html
+ M inspect_resting_potential_1.html
+ M inspect_resting_potential_2.html
+ M inspect_resting_potential_3.html
+ M inspect_resting_potential_4.html
+ M src/index.ts
+ M src/pages/inspect_diffusion_1.ts
+ M src/pages/inspect_diffusion_2.ts
+ M src/pages/inspect_diffusion_3.ts
+ M src/pages/inspect_diffusion_4.ts
+ M src/pages/inspect_electrochemical_1.ts
+ D src/pages/inspect_electrochemical_2.ts
+ M src/pages/inspect_electrochemical_3.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
+index aebb3fe19252a7bbc1192b4a57f0134b47104c5f..6a9f9df30bff51ff6515abed4ebac9e1b11d8124
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
+@@ -580,9 +580,11 @@
+     <header class="page-head">
+       <p class="eyebrow">Two-Ion Transport with Selective Pores</p>
+       <h1>Two-Ion Selective Channels with Electrical Attraction</h1>
+-      <p class="subtitle">
+-        Both ion species are set to the same charge sign by default, so diffusion and electrical forces drive them toward the same equilibrium concentration ratio across the membrane. Different pore widths change how quickly each species approaches that equilibrium, not the equilibrium ratio itself.
+-      </p>
++      <ul class="key-points">
++        <li>Ion A and Ion B each cross through their own selective pore.</li>
++        <li>Both ions feel the same electric field.</li>
++        <li>Pore width changes the rate of movement, not the final balance point.</li>
++      </ul>
+     </header>
+ 
+     <div class="sim-layout">
+@@ -660,23 +662,15 @@
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Particle Simulation</h3><span class="tiny">Two selective channels with one shared electric field</span></div>
+             <canvas id="sim-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Compartment Fraction Traces</h3><span class="tiny">Per-ion left/right fractions over time</span></div>
+-            <canvas id="trace-canvas" class="trace-canvas"></canvas>
++            <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+           </div>
+         </div>
+         <div class="legend">
+           <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>Ion A</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Ion B</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.fieldNegative}"></span>Negative charge wall</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.fieldPositive}"></span>Positive charge wall</span>
+-          <span><span class="swatch" style="background:rgba(245,178,72,0.8)"></span>Ion A pore</span>
+-          <span><span class="swatch" style="background:rgba(66,200,255,0.8)"></span>Ion B pore</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
+         </div>
+       </section>
+     </div>
+
+codex
+Build passed. I’m taking a final diff snapshot for the single file I changed so I can give you a concise, exact summary.
+exec
+/bin/zsh -lc 'git diff -- src/pages/inspect_electrochemical_4.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
+index aebb3fe19252a7bbc1192b4a57f0134b47104c5f..6a9f9df30bff51ff6515abed4ebac9e1b11d8124
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
+@@ -580,9 +580,11 @@
+     <header class="page-head">
+       <p class="eyebrow">Two-Ion Transport with Selective Pores</p>
+       <h1>Two-Ion Selective Channels with Electrical Attraction</h1>
+-      <p class="subtitle">
+-        Both ion species are set to the same charge sign by default, so diffusion and electrical forces drive them toward the same equilibrium concentration ratio across the membrane. Different pore widths change how quickly each species approaches that equilibrium, not the equilibrium ratio itself.
+-      </p>
++      <ul class="key-points">
++        <li>Ion A and Ion B each cross through their own selective pore.</li>
++        <li>Both ions feel the same electric field.</li>
++        <li>Pore width changes the rate of movement, not the final balance point.</li>
++      </ul>
+     </header>
+ 
+     <div class="sim-layout">
+@@ -660,23 +662,15 @@
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Particle Simulation</h3><span class="tiny">Two selective channels with one shared electric field</span></div>
+             <canvas id="sim-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Compartment Fraction Traces</h3><span class="tiny">Per-ion left/right fractions over time</span></div>
+-            <canvas id="trace-canvas" class="trace-canvas"></canvas>
++            <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+           </div>
+         </div>
+         <div class="legend">
+           <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>Ion A</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Ion B</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.fieldNegative}"></span>Negative charge wall</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.fieldPositive}"></span>Positive charge wall</span>
+-          <span><span class="swatch" style="background:rgba(245,178,72,0.8)"></span>Ion A pore</span>
+-          <span><span class="swatch" style="background:rgba(66,200,255,0.8)"></span>Ion B pore</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
+         </div>
+       </section>
+     </div>
+
+codex
+Implemented only the requested section updates in [src/pages/inspect_electrochemical_4.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts).
+
+Changes made:
+- Replaced the subtitle paragraph with simple summary bullet points.
+- Removed the specified legend entries:
+  - `Negative charge wall`
+  - `Positive charge wall`
+  - `Ion A pore`
+  - `Ion B pore`
+  - `Ion A solid = left, dashed = right`
+  - `Ion B solid = left, dashed = right`
+- Made the trace plot square by adding `square-canvas` to the trace canvas class.
+- Removed the specified panel text by removing the two subhead blocks containing:
+  - `Particle Simulation`
+  - `Two selective channels with one shared electric field`
+  - `Compartment Fraction Traces`
+  - `Per-ion left/right fractions over time`
+
+Checks run:
+- `npm run build` passed (`tsc && vite build` succeeded).
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
+index aebb3fe19252a7bbc1192b4a57f0134b47104c5f..6a9f9df30bff51ff6515abed4ebac9e1b11d8124
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts
+@@ -580,9 +580,11 @@
+     <header class="page-head">
+       <p class="eyebrow">Two-Ion Transport with Selective Pores</p>
+       <h1>Two-Ion Selective Channels with Electrical Attraction</h1>
+-      <p class="subtitle">
+-        Both ion species are set to the same charge sign by default, so diffusion and electrical forces drive them toward the same equilibrium concentration ratio across the membrane. Different pore widths change how quickly each species approaches that equilibrium, not the equilibrium ratio itself.
+-      </p>
++      <ul class="key-points">
++        <li>Ion A and Ion B each cross through their own selective pore.</li>
++        <li>Both ions feel the same electric field.</li>
++        <li>Pore width changes the rate of movement, not the final balance point.</li>
++      </ul>
+     </header>
+ 
+     <div class="sim-layout">
+@@ -660,23 +662,15 @@
+       <section class="panel canvas-panel">
+         <div class="canvas-grid-2">
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Particle Simulation</h3><span class="tiny">Two selective channels with one shared electric field</span></div>
+             <canvas id="sim-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Compartment Fraction Traces</h3><span class="tiny">Per-ion left/right fractions over time</span></div>
+-            <canvas id="trace-canvas" class="trace-canvas"></canvas>
++            <canvas id="trace-canvas" class="trace-canvas square-canvas"></canvas>
+           </div>
+         </div>
+         <div class="legend">
+           <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>Ion A</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Ion B</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.fieldNegative}"></span>Negative charge wall</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.fieldPositive}"></span>Positive charge wall</span>
+-          <span><span class="swatch" style="background:rgba(245,178,72,0.8)"></span>Ion A pore</span>
+-          <span><span class="swatch" style="background:rgba(66,200,255,0.8)"></span>Ion B pore</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionATrace}"></span>Ion A solid = left, dashed = right</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.ionBTrace}"></span>Ion B solid = left, dashed = right</span>
+         </div>
+       </section>
+     </div>
+
+tokens used
+33,807
+Implemented only the requested section updates in [src/pages/inspect_electrochemical_4.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_electrochemical_4.ts).
+
+Changes made:
+- Replaced the subtitle paragraph with simple summary bullet points.
+- Removed the specified legend entries:
+  - `Negative charge wall`
+  - `Positive charge wall`
+  - `Ion A pore`
+  - `Ion B pore`
+  - `Ion A solid = left, dashed = right`
+  - `Ion B solid = left, dashed = right`
+- Made the trace plot square by adding `square-canvas` to the trace canvas class.
+- Removed the specified panel text by removing the two subhead blocks containing:
+  - `Particle Simulation`
+  - `Two selective channels with one shared electric field`
+  - `Compartment Fraction Traces`
+  - `Per-ion left/right fractions over time`
+
+Checks run:
+- `npm run build` passed (`tsc && vite build` succeeded).

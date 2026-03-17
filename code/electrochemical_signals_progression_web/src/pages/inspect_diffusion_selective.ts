@@ -524,19 +524,23 @@ const app = getEl<HTMLDivElement>('#app');
 app.innerHTML = `
   <div class="site-shell">
     <div class="nav-line">
-      <a href="./index.html">Back to index</a>
-      <span>•</span>
-      <span>Page: <code>inspect_diffusion_selective</code></span>
+      <a href="./index.html">← Back</a>
+      <div class="spacer"></div>
+      <button id="theme-toggle" class="theme-btn">☀</button>
     </div>
     <header class="page-head">
       <p class="eyebrow">Electrochemical Signalling in Nerve Cells</p>
       <h1>Selective Permeability</h1>
+      <p class="teaching-label">Key concepts</p>
       <ul class="key-points">
-        <li>Ion A and Ion B have the same diffusion dynamics.</li>
-        <li>Each ion crosses only through its own pore.</li>
-        <li>More permeable (wider) pores approach equilibrium faster.</li>
-        <li>Adjust Diffusion SD and pore widths to control how quickly each ion equalizes across the membrane.</li>
-        <li>Wider pores reach equal concentrations faster, but both ions eventually reach equilibrium.</li>
+        <li>Channels are selective: only the matching ion type can pass through each channel.</li>
+        <li>Each ion equilibrates independently — both eventually reach equal concentration on both sides.</li>
+        <li>Selectivity determines <em>which</em> ions cross; permeability determines <em>how fast</em>.</li>
+      </ul>
+      <p class="teaching-label questions">Questions to explore</p>
+      <ul class="guided-questions">
+        <li>Set K⁺ permeability low, Na⁺ permeability high — which equilibrates first?</li>
+        <li>Does either ion end up at a different final concentration depending on its permeability?</li>
       </ul>
     </header>
 
@@ -544,65 +548,18 @@ app.innerHTML = `
       <aside class="controls">
         <div class="panel">
           <div class="group">
-            <p class="group-label">Basic Controls</p>
             <div class="button-row">
               <button id="toggle-play" class="primary">Pause</button>
               <button id="rerun">Rerun</button>
               <button id="reset-defaults" class="warn">Reset Defaults</button>
             </div>
-            <div class="button-row">
-              <button id="rewind">Rewind</button>
-              <button id="random-seed">Randomize Seed</button>
-            </div>
             <div class="control-grid">
               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
-              <div class="field"><label for="type0-fraction">Ion A fraction</label><input id="type0-fraction" type="number" min="0" max="1" step="0.01" /></div>
+              <div class="field"><label for="type0-fraction">Na⁺ fraction</label><input id="type0-fraction" type="number" min="0" max="1" step="0.01" /></div>
               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
-              <div class="field"><label for="type0-channel-width">Ion A pore width</label><input id="type0-channel-width" type="number" min="0.5" step="0.5" /></div>
-              <div class="field"><label for="type1-channel-width">Ion B pore width</label><input id="type1-channel-width" type="number" min="0.5" step="0.5" /></div>
+              <div class="field"><label for="type0-channel-width">Na⁺ pore width</label><input id="type0-channel-width" type="number" min="0.5" step="0.5" /></div>
+              <div class="field"><label for="type1-channel-width">K⁺ pore width</label><input id="type1-channel-width" type="number" min="0.5" step="0.5" /></div>
               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
-              <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
-            </div>
-          </div>
-          <details>
-            <summary>Advanced Controls</summary>
-            <div class="group" style="margin-top: 8px;">
-              <div class="control-grid">
-                <div class="field"><label for="total-time">Trace window T (ms)</label><input id="total-time" type="number" min="100" max="20000" step="10" /></div>
-                <div class="field"><label for="dt">dt (ms)</label><input id="dt" type="number" min="0.05" max="20" step="0.05" /></div>
-                <div class="field"><label for="box-width">Box width</label><input id="box-width" type="number" min="20" max="500" step="1" /></div>
-                <div class="field"><label for="box-height">Box height</label><input id="box-height" type="number" min="20" max="500" step="1" /></div>
-                <div class="field"><label for="wall-thickness">Wall thickness</label><input id="wall-thickness" type="number" min="0.5" max="50" step="0.5" /></div>
-                <div class="field"><label for="point-size">Point size</label><input id="point-size" type="number" min="0.5" max="8" step="0.25" /></div>
-                <div class="field"><label for="target-fps">Playback FPS</label><input id="target-fps" type="number" min="1" max="120" step="1" /></div>
-              </div>
-            </div>
-          </details>
-          <div class="group">
-            <p class="group-label">Status</p>
-            <dl class="status-list">
-              <dt>Step</dt><dd id="status-frame">0</dd>
-              <dt>Time (ms)</dt><dd id="status-time">0.0</dd>
-              <dt>Ion A Left</dt><dd id="status-type0-left">0</dd>
-              <dt>Ion A Right</dt><dd id="status-type0-right">0</dd>
-              <dt>Ion B Left</dt><dd id="status-type1-left">0</dd>
-              <dt>Ion B Right</dt><dd id="status-type1-right">0</dd>
-              <dt>Ion A Right Frac</dt><dd id="status-type0-right-frac">0</dd>
-              <dt>Ion B Right Frac</dt><dd id="status-type1-right-frac">0</dd>
-              <dt>dt</dt><dd id="status-dt">0</dd>
-              <dt>Step SD</dt><dd id="status-step-sd">0</dd>
-              <dt>Seed</dt><dd id="status-seed">0</dd>
-              <dt>Trace Samples</dt><dd id="status-frames">0</dd>
-            </dl>
-          </div>
-          <div class="group">
-            <p class="group-label">Equation + Selective Gating Rule</p>
-            <div class="equation-card">
-              <pre class="equation" id="equation-block"></pre>
-              <p>
-                Both ions use the same diffusion update. Their effective permeability differs only because each ion
-                can cross the membrane through a different pore window whose width you control directly.
-              </p>
             </div>
           </div>
         </div>
@@ -624,7 +581,6 @@ app.innerHTML = `
 
 const canvas = getEl<HTMLCanvasElement>('#sim-canvas');
 const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
-const equationBlock = getEl<HTMLElement>('#equation-block');
 
 const inputs = {
   numParticles: getEl<HTMLInputElement>('#num-particles'),
@@ -632,38 +588,13 @@ const inputs = {
   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
   type0ChannelWidth: getEl<HTMLInputElement>('#type0-channel-width'),
   type1ChannelWidth: getEl<HTMLInputElement>('#type1-channel-width'),
-  playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
-  seed: getEl<HTMLInputElement>('#seed'),
-  totalTime: getEl<HTMLInputElement>('#total-time'),
-  dt: getEl<HTMLInputElement>('#dt'),
-  boxWidth: getEl<HTMLInputElement>('#box-width'),
-  boxHeight: getEl<HTMLInputElement>('#box-height'),
-  wallThickness: getEl<HTMLInputElement>('#wall-thickness'),
-  pointSize: getEl<HTMLInputElement>('#point-size'),
-  targetFps: getEl<HTMLInputElement>('#target-fps')
-};
-
-const statusEls = {
-  frame: getEl<HTMLElement>('#status-frame'),
-  time: getEl<HTMLElement>('#status-time'),
-  type0Left: getEl<HTMLElement>('#status-type0-left'),
-  type0Right: getEl<HTMLElement>('#status-type0-right'),
-  type1Left: getEl<HTMLElement>('#status-type1-left'),
-  type1Right: getEl<HTMLElement>('#status-type1-right'),
-  type0RightFrac: getEl<HTMLElement>('#status-type0-right-frac'),
-  type1RightFrac: getEl<HTMLElement>('#status-type1-right-frac'),
-  dt: getEl<HTMLElement>('#status-dt'),
-  stepSd: getEl<HTMLElement>('#status-step-sd'),
-  seed: getEl<HTMLElement>('#status-seed'),
-  frames: getEl<HTMLElement>('#status-frames')
+  playbackSpeed: getEl<HTMLInputElement>('#playback-speed')
 };
 
 const buttons = {
   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
   rerun: getEl<HTMLButtonElement>('#rerun'),
-  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults'),
-  rewind: getEl<HTMLButtonElement>('#rewind'),
-  randomSeed: getEl<HTMLButtonElement>('#random-seed')
+  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults')
 };
 
 let simParams: SimParams = { ...defaultSim };
@@ -683,26 +614,18 @@ function writeInputs(): void {
   setNumberInput(inputs.type0ChannelWidth, simParams.type0ChannelWidth, 2);
   setNumberInput(inputs.type1ChannelWidth, simParams.type1ChannelWidth, 2);
   setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
-  setNumberInput(inputs.seed, currentSeed, 0);
-  setNumberInput(inputs.totalTime, simParams.T, 0);
-  setNumberInput(inputs.dt, simParams.dt, 3);
-  setNumberInput(inputs.boxWidth, simParams.boxWidth, 1);
-  setNumberInput(inputs.boxHeight, simParams.boxHeight, 1);
-  setNumberInput(inputs.wallThickness, simParams.wallThickness, 2);
-  setNumberInput(inputs.pointSize, displayParams.pointSize, 2);
-  setNumberInput(inputs.targetFps, displayParams.targetFps, 0);
 }
 
 function readSimInputs(): SimParams {
-  const boxHeight = clamp(Number(inputs.boxHeight.value) || defaultSim.boxHeight, 20, 500);
+  const boxHeight = defaultSim.boxHeight;
   return normalizeSimParams({
-    T: clamp(Number(inputs.totalTime.value) || defaultSim.T, 100, 20000),
-    dt: clamp(Number(inputs.dt.value) || defaultSim.dt, 0.05, 20),
+    T: defaultSim.T,
+    dt: defaultSim.dt,
     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
     type0Fraction: clamp(Number(inputs.type0Fraction.value) || defaultSim.type0Fraction, 0, 1),
-    boxWidth: clamp(Number(inputs.boxWidth.value) || defaultSim.boxWidth, 20, 500),
+    boxWidth: defaultSim.boxWidth,
     boxHeight,
-    wallThickness: clamp(Number(inputs.wallThickness.value) || defaultSim.wallThickness, 0.5, 50),
+    wallThickness: defaultSim.wallThickness,
     diffusionSd: clamp(Number(inputs.diffusionSd.value) || defaultSim.diffusionSd, 0, 20),
     type0ChannelWidth: clamp(Number(inputs.type0ChannelWidth.value) || defaultSim.type0ChannelWidth, 0.5, boxHeight - 8),
     type1ChannelWidth: clamp(Number(inputs.type1ChannelWidth.value) || defaultSim.type1ChannelWidth, 0.5, boxHeight - 8)
@@ -711,66 +634,24 @@ function readSimInputs(): SimParams {
 
 function readDisplayInputs(): DisplayParams {
   return {
-    pointSize: clamp(Number(inputs.pointSize.value) || defaultDisplay.pointSize, 0.5, 8),
+    pointSize: defaultDisplay.pointSize,
     playbackSpeed: clamp(Number(inputs.playbackSpeed.value) || defaultDisplay.playbackSpeed, 0.1, 8),
-    targetFps: clamp(Math.round(Number(inputs.targetFps.value) || defaultDisplay.targetFps), 1, 120)
+    targetFps: defaultDisplay.targetFps
   };
-}
-
-function updateEquationText(): void {
-  const stepSd = simParams.diffusionSd * simParams.dt;
-  equationBlock.innerHTML = [
-    '<span class="accent">Shared live diffusion update (all particles)</span>',
-    'x_new = reflect(x_old + dxdt · dt, -W/2, W/2)',
-    'y_new = reflect(y_old + dydt · dt, -H/2, H/2)',
-    'dxdt, dydt ~ Normal(0, diffusionSd²)',
-    '',
-    '<span class="accent-2">Selective permeability comes from pore width</span>',
-    'Ion A can cross only through the Ion A pore window',
-    'Ion B can cross only through the Ion B pore window',
-    'The two pore windows are spaced automatically along the membrane so width is the key control',
-    '',
-    `Per-step displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`,
-    `Pore widths: Ion A = ${simParams.type0ChannelWidth.toFixed(1)}, Ion B = ${simParams.type1ChannelWidth.toFixed(1)}`,
-    `Trace window T = ${simParams.T.toFixed(0)} ms`
-  ].join('\n');
-}
-
-function updateStatus(): void {
-  statusEls.frame.textContent = `${state.stepCount}`;
-  statusEls.time.textContent = state.simTime.toFixed(1);
-  statusEls.type0Left.textContent = `${state.type0Left}`;
-  statusEls.type0Right.textContent = `${state.type0Right}`;
-  statusEls.type1Left.textContent = `${state.type1Left}`;
-  statusEls.type1Right.textContent = `${state.type1Right}`;
-  statusEls.type0RightFrac.textContent = state.type0Total > 0 ? (state.type0Right / state.type0Total).toFixed(3) : '0.000';
-  statusEls.type1RightFrac.textContent = state.type1Total > 0 ? (state.type1Right / state.type1Total).toFixed(3) : '0.000';
-  statusEls.dt.textContent = state.dt.toFixed(2);
-  statusEls.stepSd.textContent = (simParams.diffusionSd * simParams.dt).toFixed(3);
-  statusEls.seed.textContent = `${currentSeed >>> 0}`;
-  statusEls.frames.textContent = `${trace.times.length}`;
 }
 
 function rebuildFromInputs(): void {
   simParams = readSimInputs();
   displayParams = readDisplayInputs();
-  currentSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
   rng = new Rng(currentSeed);
   state = createState(simParams, currentSeed);
   trace = createTraceHistory(state, simParams.T);
   stepAccumulator = 0;
   writeInputs();
-  updateEquationText();
 }
 
 function applyLiveSimParams(): void {
-  const next = readSimInputs();
-  const nextSeed = clamp(Math.floor(Number(inputs.seed.value) || currentSeed), 0, 0xffffffff) >>> 0;
-  if (nextSeed !== currentSeed) {
-    currentSeed = nextSeed;
-    rng = new Rng(currentSeed);
-  }
-  simParams = next;
+  simParams = readSimInputs();
   state = resizeState(state, simParams.numParticles, rng, simParams.type0Fraction);
   state.dt = simParams.dt;
   state.boxWidth = simParams.boxWidth;
@@ -788,7 +669,6 @@ function applyLiveSimParams(): void {
   enforceGeometry(state);
   trimTrace(trace, state.simTime, simParams.T);
   writeInputs();
-  updateEquationText();
 }
 
 function refreshDisplayFromInputs(): void {
@@ -808,7 +688,6 @@ function trimTrace(traceHistory: TraceHistory, currentTime: number, traceWindowM
 }
 
 function render(): void {
-  updateStatus();
   drawFrame(canvas, state, displayParams);
   drawSideTrace(traceCanvas, trace, state.simTime, simParams.T);
 }
@@ -819,22 +698,11 @@ function setPlaying(next: boolean): void {
 }
 
 writeInputs();
-updateEquationText();
 render();
 
 buttons.togglePlay.addEventListener('click', () => setPlaying(!isPlaying));
 buttons.rerun.addEventListener('click', () => {
-  rebuildFromInputs();
-  setPlaying(true);
-  render();
-});
-buttons.rewind.addEventListener('click', () => {
-  rebuildFromInputs();
-  render();
-});
-buttons.randomSeed.addEventListener('click', () => {
   currentSeed = randomSeed();
-  setNumberInput(inputs.seed, currentSeed, 0);
   rebuildFromInputs();
   setPlaying(true);
   render();
@@ -854,13 +722,7 @@ for (const input of [
   inputs.type0Fraction,
   inputs.diffusionSd,
   inputs.type0ChannelWidth,
-  inputs.type1ChannelWidth,
-  inputs.seed,
-  inputs.totalTime,
-  inputs.dt,
-  inputs.boxWidth,
-  inputs.boxHeight,
-  inputs.wallThickness
+  inputs.type1ChannelWidth
 ] as const) {
   input.addEventListener('change', () => {
     applyLiveSimParams();
@@ -868,14 +730,17 @@ for (const input of [
   });
 }
 
-for (const input of [inputs.playbackSpeed, inputs.pointSize, inputs.targetFps] as const) {
-  input.addEventListener('change', () => {
-    refreshDisplayFromInputs();
-    render();
-  });
-}
+inputs.playbackSpeed.addEventListener('change', () => {
+  refreshDisplayFromInputs();
+  render();
+});
 
 window.addEventListener('resize', () => render());
+
+getEl<HTMLButtonElement>('#theme-toggle').addEventListener('click', () => {
+  const isLight = document.documentElement.classList.toggle('light');
+  getEl<HTMLButtonElement>('#theme-toggle').textContent = isLight ? '☽' : '☀';
+});
 
 function animate(ts: number): void {
   const dtSec = Math.max(0, (ts - lastTs) / 1000);

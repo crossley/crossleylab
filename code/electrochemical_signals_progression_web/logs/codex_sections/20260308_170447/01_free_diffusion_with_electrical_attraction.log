@@ -1,0 +1,1452 @@
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccc0c-600d-7852-a018-06a7d19409ea
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Free Diffusion with Electrical Attraction
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Free Diffusion with Electrical Attraction
+
+- Replace the separate magnitude and direction controls with
+  a single control that allows users to specify both the
+  magnitude and direction of the electrical attraction by
+  entiering a numeric value. Positive values will indicate
+  attraction, while negative values will indicate repulsion.
+
+mcp startup: no servers
+codex
+I’m going to locate the `Free Diffusion with Electrical Attraction` section in `change_requests.md`, then find the corresponding UI/state code and implement only that bullet by merging magnitude/direction into a single signed numeric control. After editing, I’ll run relevant checks/build.
+exec
+/bin/zsh -lc 'rg --files' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'rg -n "Free Diffusion with Electrical Attraction|magnitude|direction|electrical attraction|repulsion|attraction" change_requests.md src .' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+src/pages/resting_two_ion_common.ts
+src/pages/inspect_nernst_one_ion.ts
+src/pages/sim_shared.ts
+src/pages/inspect_ap_threshold_all_or_none.ts
+src/pages/inspect_resting_potential_charge_wall.ts
+src/pages/action_potential_common.ts
+src/pages/inspect_field_attraction.ts
+src/pages/inspect_diffusion_selective_permeability_rate.ts
+src/pages/inspect_diffusion_permeability.ts
+src/pages/inspect_two_ion_selective_channels.ts
+src/pages/inspect_diffusion_pore.ts
+src/pages/inspect_ap_phases.ts
+src/pages/inspect_diffusion_selective.ts
+src/pages/inspect_membrane_potential_intro.ts
+src/pages/inspect_diffusion_free.ts
+src/pages/inspect_ap_subthreshold.ts
+src/pages/inspect_nak_pump_gradients.ts
+src/lessons.ts
+src/index.ts
+src/style.css
+ succeeded in 52ms:
+Total output lines: 337
+
+change_requests.md:1:# Free Diffusion with Electrical Attraction
+change_requests.md:3:- Replace the separate magnitude and direction controls with
+change_requests.md:5:  magnitude and direction of the electrical attraction by
+change_requests.md:7:  attraction, while negative values will indicate repulsion.
+src/pages/inspect_field_attraction.ts:330:      <span>Page: <code>inspect_field_attraction</code></span>
+src/pages/inspect_field_attraction.ts:335:      <h1>Free Diffusion with Electrical Attraction</h1>
+src/pages/inspect_field_attraction.ts:361:              <div class="field"><label for="source0-magnitude">Generator 1 magnitude</label><input id="source0-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+src/pages/inspect_field_attraction.ts:362:              <div class="field"><label for="source0-direction">Generator 1 direction</label><select id="source0-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+src/pages/inspect_field_attraction.ts:363:              <div class="field"><label for="source1-magnitude">Generator 2 magnitude</label><input id="source1-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+src/pages/inspect_field_attraction.ts:364:              <div class="field"><label for="source1-direction">Generator 2 direction</label><select id="source1-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+src/pages/inspect_field_attraction.ts:365:              <div class="field"><label for="source2-magnitude">Generator 3 magnitude</label><input id="source2-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+src/pages/inspect_field_attraction.ts:366:              <div class="field"><label for="source2-direction">Generator 3 direction</label><select id="source2-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+src/pages/inspect_field_attraction.ts:367:              <div class="field"><label for="source3-magnitude">Generator 4 magnitude</label><input id="source3-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+src/pages/inspect_field_attraction.ts:368:              <div class="field"><label for="source3-direction">Generator 4 direction</label><select id="source3-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+src/pages/inspect_field_attraction.ts:429:  source0Magnitude: getEl<HTMLInputElement>('#source0-magnitude'),
+src/pages/inspect_field_attraction.ts:430:  source0Direction: getEl<HTMLSelectElement>('#source0-direction'),
+src/pages/inspect_field_attraction.ts:431:  source1Magnitude: getEl<HTMLInputElement>('#source1-magnitude'),
+src/pages/inspect_field_attraction.ts:432:  source1Direction: getEl<HTMLSelectElement>('#source1-direction'),
+codex
+I found the target in `src/pages/inspect_field_attraction.ts`; it currently has separate per-generator `magnitude` and `direction` controls. I’ll now refactor this page to a single signed numeric control per generator and keep simulation behavior consistent.
+exec
+/bin/zsh -lc "sed -n '1,260p' src/pages/inspect_field_attraction.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '260,620p' src/pages/inspect_field_attraction.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_NUM_PARTICLES,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  fieldColor,
+  pointFieldDrift
+} from './sim_shared';
+
+interface SimParams {
+  T: number;
+  dt: number;
+  numParticles: number;
+  diffusionSd: number;
+  initClusterSd: number;
+  source0Magnitude: number;
+  source0Direction: number;
+  source1Magnitude: number;
+  source1Direction: number;
+ succeeded in 52ms:
+
+  const width = canvas.width;
+  const height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = '#03060b';
+  ctx.fillRect(0, 0, width, height);
+
+  const dpr = window.devicePixelRatio || 1;
+  const axis = Math.max(1, display.axisLimit);
+  const halfW = width / 2;
+  const halfH = height / 2;
+  const sx = width / (2 * axis);
+  const sy = height / (2 * axis);
+
+  ctx.strokeStyle = 'rgba(120, 170, 255, 0.12)';
+  ctx.lineWidth = 1;
+  const gridStep = axis >= 80 ? 20 : axis >= 40 ? 10 : 5;
+  for (let g = -Math.floor(axis / gridStep) * gridStep; g <= axis; g += gridStep) {
+    const x = halfW + g * sx;
+    const y = halfH - g * sy;
+exec
+/bin/zsh -lc "sed -n '620,860p' src/pages/inspect_field_attraction.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+  rebuildFromInputs();
+  setPlaying(true);
+  render();
+});
+buttons.rewind.addEventListener('click', () => {
+  rebuildFromInputs();
+  render();
+});
+buttons.resetDefaults.addEventListener('click', () => {
+  simParams = { ...defaultSim };
+  displayParams = { ...defaultDisplay };
+  currentSeed = randomSeed();
+  writeInputs();
+  rebuildFromInputs();
+  setPlaying(true);
+  render();
+});
+buttons.randomSeed.addEventListener('click', () => {
+  currentSeed = randomSeed();
+  setNumberInput(inputs.seed, currentSeed, 0);
+codex
+I’m about to patch `inspect_field_attraction.ts` to replace each magnitude/direction pair with one signed numeric `attraction` control, and map `+` to attraction and `-` to repulsion while preserving the existing physics update internally.
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -16,10 +16,6 @@
+   initClusterSd: number;
+-  source0Magnitude: number;
+-  source0Direction: number;
+-  source1Magnitude: number;
+-  source1Direction: number;
+-  source2Magnitude: number;
+-  source2Direction: number;
+-  source3Magnitude: number;
+-  source3Direction: number;
++  source0Attraction: number;
++  source1Attraction: number;
++  source2Attraction: number;
++  source3Attraction: number;
+   negX: number;
+@@ -98,10 +94,6 @@
+   initClusterSd: 0.1,
+-  source0Magnitude: 0.15,
+-  source0Direction: -1,
+-  source1Magnitude: 0.15,
+-  source1Direction: -1,
+-  source2Magnitude: 0.15,
+-  source2Direction: -1,
+-  source3Magnitude: 0.15,
+-  source3Direction: -1,
++  source0Attraction: 0.15,
++  source1Attraction: 0.15,
++  source2Attraction: 0.15,
++  source3Attraction: 0.15,
+   negX: -20,
+@@ -201,6 +193,6 @@
+   return [
+-    { x: state.negX, y: state.negY, strength: simParams.source0Magnitude * simParams.source0Direction },
+-    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: simParams.source1Magnitude * simParams.source1Direction },
+-    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: simParams.source2Magnitude * simParams.source2Direction },
+-    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: simParams.source3Magnitude * simParams.source3Direction }
++    { x: state.negX, y: state.negY, strength: -simParams.source0Attraction },
++    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: -simParams.source1Attraction },
++    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: -simParams.source2Attraction },
++    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: -simParams.source3Attraction }
+   ];
+@@ -360,10 +352,6 @@
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-magnitude">Generator 1 magnitude</label><input id="source0-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source0-direction">Generator 1 direction</label><select id="source0-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source1-magnitude">Generator 2 magnitude</label><input id="source1-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-direction">Generator 2 direction</label><select id="source1-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source2-magnitude">Generator 3 magnitude</label><input id="source2-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-direction">Generator 3 direction</label><select id="source2-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source3-magnitude">Generator 4 magnitude</label><input id="source3-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-direction">Generator 4 direction</label><select id="source3-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
++              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+@@ -428,10 +416,6 @@
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+-  source0Magnitude: getEl<HTMLInputElement>('#source0-magnitude'),
+-  source0Direction: getEl<HTMLSelectElement>('#source0-direction'),
+-  source1Magnitude: getEl<HTMLInputElement>('#source1-magnitude'),
+-  source1Direction: getEl<HTMLSelectElement>('#source1-direction'),
+-  source2Magnitude: getEl<HTMLInputElement>('#source2-magnitude'),
+-  source2Direction: getEl<HTMLSelectElement>('#source2-direction'),
+-  source3Magnitude: getEl<HTMLInputElement>('#source3-magnitude'),
+-  source3Direction: getEl<HTMLSelectElement>('#source3-direction'),
++  source0Attraction: getEl<HTMLInputElement>('#source0-attraction'),
++  source1Attraction: getEl<HTMLInputElement>('#source1-attraction'),
++  source2Attraction: getEl<HTMLInputElement>('#source2-attraction'),
++  source3Attraction: getEl<HTMLInputElement>('#source3-attraction'),
+   playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
+@@ -479,10 +463,6 @@
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+-  setNumberInput(inputs.source0Magnitude, simParams.source0Magnitude, 3);
+-  inputs.source0Direction.value = String(simParams.source0Direction);
+-  setNumberInput(inputs.source1Magnitude, simParams.source1Magnitude, 3);
+-  inputs.source1Direction.value = String(simParams.source1Direction);
+-  setNumberInput(inputs.source2Magnitude, simParams.source2Magnitude, 3);
+-  inputs.source2Direction.value = String(simParams.source2Direction);
+-  setNumberInput(inputs.source3Magnitude, simParams.source3Magnitude, 3);
+-  inputs.source3Direction.value = String(simParams.source3Direction);
++  setNumberInput(inputs.source0Attraction, simParams.source0Attraction, 3);
++  setNumberInput(inputs.source1Attraction, simParams.source1Attraction, 3);
++  setNumberInput(inputs.source2Attraction, simParams.source2Attraction, 3);
++  setNumberInput(inputs.source3Attraction, simParams.source3Attraction, 3);
+   setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
+@@ -506,10 +486,6 @@
+     initClusterSd: clamp(Number(inputs.initClusterSd.value) || 0, 0, 20),
+-    source0Magnitude: clamp(Number(inputs.source0Magnitude.value) || 0, 0, 10),
+-    source0Direction: Number(inputs.source0Direction.value) === 1 ? 1 : -1,
+-    source1Magnitude: clamp(Number(inputs.source1Magnitude.value) || 0, 0, 10),
+-    source1Direction: Number(inputs.source1Direction.value) === 1 ? 1 : -1,
+-    source2Magnitude: clamp(Number(inputs.source2Magnitude.value) || 0, 0, 10),
+-    source2Direction: Number(inputs.source2Direction.value) === 1 ? 1 : -1,
+-    source3Magnitude: clamp(Number(inputs.source3Magnitude.value) || 0, 0, 10),
+-    source3Direction: Number(inputs.source3Direction.value) === 1 ? 1 : -1,
++    source0Attraction: clamp(Number(inputs.source0Attraction.value) || 0, -10, 10),
++    source1Attraction: clamp(Number(inputs.source1Attraction.value) || 0, -10, 10),
++    source2Attraction: clamp(Number(inputs.source2Attraction.value) || 0, -10, 10),
++    source3Attraction: clamp(Number(inputs.source3Attraction.value) || 0, -10, 10),
+     negX: Number(inputs.negX.value) || defaultSim.negX,
+@@ -542,7 +518,13 @@
+   const stepSd = sigma * dt;
++  const attractionValues = [
++    simParams.source0Attraction,
++    simParams.source1Attraction,
++    simParams.source2Attraction,
++    simParams.source3Attraction
++  ];
+   const strengths = [
+-    simParams.source0Magnitude * simParams.source0Direction,
+-    simParams.source1Magnitude * simParams.source1Direction,
+-    simParams.source2Magnitude * simParams.source2Direction,
+-    simParams.source3Magnitude * simParams.source3Direction
++    -simParams.source0Attraction,
++    -simParams.source1Attraction,
++    -simParams.source2Attraction,
++    -simParams.source3Attraction
+   ];
+@@ -564,4 +546,5 @@
+     '',
+-    'Negative electric_strength_s attracts positive charge; positive electric_strength_s repels it.',
+-    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, strengths = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
++    'UI convention: positive attraction attracts positive charge, negative attraction repels it.',
++    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, attraction = [${attractionValues.map((v) => v.toFixed(3)).join(', ')}]`,
++    `Mapped electric_strength = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
+     `Per-step displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`
+@@ -644,3 +627,3 @@
+ 
+-for (const key of ['numParticles', 'diffusionSd', 'source0Magnitude', 'source0Direction', 'source1Magnitude', 'source1Direction', 'source2Magnitude', 'source2Direction', 'source3Magnitude', 'source3Direction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'negX', 'negY'] as const) {
++for (const key of ['numParticles', 'diffusionSd', 'source0Attraction', 'source1Attraction', 'source2Attraction', 'source3Attraction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'negX', 'negY'] as const) {
+   inputs[key].addEventListener('change', () => {
+apply_patch(auto_approved=true) exited 0 in 112ms:
+Success. Updated the following files:
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+index 1b97766175097ec1c1f6c034633fa1956ef0d5dd..e027dd20e83b24b92a25116896f3900b79860eba
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -14,14 +14,10 @@
+   numParticles: number;
+   diffusionSd: number;
+   initClusterSd: number;
+-  source0Magnitude: number;
+-  source0Direction: number;
+-  source1Magnitude: number;
+-  source1Direction: number;
+-  source2Magnitude: number;
+-  source2Direction: number;
+-  source3Magnitude: number;
+-  source3Direction: number;
++  source0Attraction: number;
++  source1Attraction: number;
++  source2Attraction: number;
++  source3Attraction: number;
+   negX: number;
+   negY: number;
+ }
+@@ -96,14 +92,10 @@
+   numParticles: DEFAULT_NUM_PARTICLES,
+   diffusionSd: DEFAULT_DIFFUSION_SD,
+   initClusterSd: 0.1,
+-  source0Magnitude: 0.15,
+-  source0Direction: -1,
+-  source1Magnitude: 0.15,
+-  source1Direction: -1,
+-  source2Magnitude: 0.15,
+-  source2Direction: -1,
+-  source3Magnitude: 0.15,
+-  source3Direction: -1,
++  source0Attraction: 0.15,
++  source1Attraction: 0.15,
++  source2Attraction: 0.15,
++  source3Attraction: 0.15,
+   negX: -20,
+   negY: 0
+ };
+@@ -199,10 +191,10 @@
+ 
+ function getFieldSources(state: LiveState): FieldSource[] {
+   return [
+-    { x: state.negX, y: state.negY, strength: simParams.source0Magnitude * simParams.source0Direction },
+-    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: simParams.source1Magnitude * simParams.source1Direction },
+-    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: simParams.source2Magnitude * simParams.source2Direction },
+-    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: simParams.source3Magnitude * simParams.source3Direction }
++    { x: state.negX, y: state.negY, strength: -simParams.source0Attraction },
++    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: -simParams.source1Attraction },
++    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: -simParams.source2Attraction },
++    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: -simParams.source3Attraction }
+   ];
+ }
+ 
+@@ -358,14 +350,10 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-magnitude">Generator 1 magnitude</label><input id="source0-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source0-direction">Generator 1 direction</label><select id="source0-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source1-magnitude">Generator 2 magnitude</label><input id="source1-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-direction">Generator 2 direction</label><select id="source1-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source2-magnitude">Generator 3 magnitude</label><input id="source2-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-direction">Generator 3 direction</label><select id="source2-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source3-magnitude">Generator 4 magnitude</label><input id="source3-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-direction">Generator 4 direction</label><select id="source3-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
++              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+             </div>
+@@ -426,14 +414,10 @@
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+-  source0Magnitude: getEl<HTMLInputElement>('#source0-magnitude'),
+-  source0Direction: getEl<HTMLSelectElement>('#source0-direction'),
+-  source1Magnitude: getEl<HTMLInputElement>('#source1-magnitude'),
+-  source1Direction: getEl<HTMLSelectElement>('#source1-direction'),
+-  source2Magnitude: getEl<HTMLInputElement>('#source2-magnitude'),
+-  source2Direction: getEl<HTMLSelectElement>('#source2-direction'),
+-  source3Magnitude: getEl<HTMLInputElement>('#source3-magnitude'),
+-  source3Direction: getEl<HTMLSelectElement>('#source3-direction'),
++  source0Attraction: getEl<HTMLInputElement>('#source0-attraction'),
++  source1Attraction: getEl<HTMLInputElement>('#source1-attraction'),
++  source2Attraction: getEl<HTMLInputElement>('#source2-attraction'),
++  source3Attraction: getEl<HTMLInputElement>('#source3-attraction'),
+   playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
+   seed: getEl<HTMLInputElement>('#seed'),
+   totalTime: getEl<HTMLInputElement>('#total-time'),
+@@ -477,14 +461,10 @@
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+-  setNumberInput(inputs.source0Magnitude, simParams.source0Magnitude, 3);
+-  inputs.source0Direction.value = String(simParams.source0Direction);
+-  setNumberInput(inputs.source1Magnitude, simParams.source1Magnitude, 3);
+-  inputs.source1Direction.value = String(simParams.source1Direction);
+-  setNumberInput(inputs.source2Magnitude, simParams.source2Magnitude, 3);
+-  inputs.source2Direction.value = String(simParams.source2Direction);
+-  setNumberInput(inputs.source3Magnitude, simParams.source3Magnitude, 3);
+-  inputs.source3Direction.value = String(simParams.source3Direction);
++  setNumberInput(inputs.source0Attraction, simParams.source0Attraction, 3);
++  setNumberInput(inputs.source1Attraction, simParams.source1Attraction, 3);
++  setNumberInput(inputs.source2Attraction, simParams.source2Attraction, 3);
++  setNumberInput(inputs.source3Attraction, simParams.source3Attraction, 3);
+   setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
+   setNumberInput(inputs.seed, currentSeed, 0);
+   setNumberInput(inputs.totalTime, simParams.T, 0);
+@@ -504,14 +484,10 @@
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+     diffusionSd: clamp(Number(inputs.diffusionSd.value) || 0, 0, 20),
+     initClusterSd: clamp(Number(inputs.initClusterSd.value) || 0, 0, 20),
+-    source0Magnitude: clamp(Number(inputs.source0Magnitude.value) || 0, 0, 10),
+-    source0Direction: Number(inputs.source0Direction.value) === 1 ? 1 : -1,
+-    source1Magnitude: clamp(Number(inputs.source1Magnitude.value) || 0, 0, 10),
+-    source1Direction: Number(inputs.source1Direction.value) === 1 ? 1 : -1,
+-    source2Magnitude: clamp(Number(inputs.source2Magnitude.value) || 0, 0, 10),
+-    source2Direction: Number(inputs.source2Direction.value) === 1 ? 1 : -1,
+-    source3Magnitude: clamp(Number(inputs.source3Magnitude.value) || 0, 0, 10),
+-    source3Direction: Number(inputs.source3Direction.value) === 1 ? 1 : -1,
++    source0Attraction: clamp(Number(inputs.source0Attraction.value) || 0, -10, 10),
++    source1Attraction: clamp(Number(inputs.source1Attraction.value) || 0, -10, 10),
++    source2Attraction: clamp(Number(inputs.source2Attraction.value) || 0, -10, 10),
++    source3Attraction: clamp(Number(inputs.source3Attraction.value) || 0, -10, 10),
+     negX: Number(inputs.negX.value) || defaultSim.negX,
+     negY: Number(inputs.negY.value) || defaultSim.negY
+   };
+@@ -540,11 +516,17 @@
+   const sigma = simParams.diffusionSd;
+   const dt = simParams.dt;
+   const stepSd = sigma * dt;
++  const attractionValues = [
++    simParams.source0Attraction,
++    simParams.source1Attraction,
++    simParams.source2Attraction,
++    simParams.source3Attraction
++  ];
+   const strengths = [
+-    simParams.source0Magnitude * simParams.source0Direction,
+-    simParams.source1Magnitude * simParams.source1Direction,
+-    simParams.source2Magnitude * simParams.source2Direction,
+-    simParams.source3Magnitude * simParams.source3Direction
++    -simParams.source0Attraction,
++    -simParams.source1Attraction,
++    -simParams.source2Attraction,
++    -simParams.source3Attraction
+   ];
+   equationBlock.innerHTML = [
+     '<span class="accent">Pedagogical stochastic-rate form</span>',
+@@ -562,8 +544,9 @@
+     '<span class="accent-2">Reflective chamber rule</span>',
+     'Particles bounce off the chamber walls instead of leaving the visible box.',
+     '',
+-    'Negative electric_strength_s attracts positive charge; positive electric_strength_s repels it.',
+-    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, strengths = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
++    'UI convention: positive attraction attracts positive charge, negative attraction repels it.',
++    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, attraction = [${attractionValues.map((v) => v.toFixed(3)).join(', ')}]`,
++    `Mapped electric_strength = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
+     `Per-step displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`
+   ].join('\n');
+ }
+@@ -642,7 +625,7 @@
+   render();
+ });
+ 
+-for (const key of ['numParticles', 'diffusionSd', 'source0Magnitude', 'source0Direction', 'source1Magnitude', 'source1Direction', 'source2Magnitude', 'source2Direction', 'source3Magnitude', 'source3Direction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'negX', 'negY'] as const) {
++for (const key of ['numParticles', 'diffusionSd', 'source0Attraction', 'source1Attraction', 'source2Attraction', 'source3Attraction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'negX', 'negY'] as const) {
+   inputs[key].addEventListener('change', () => {
+     applyLiveSimParams();
+     render();
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+index 1b97766175097ec1c1f6c034633fa1956ef0d5dd..e027dd20e83b24b92a25116896f3900b79860eba
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -14,14 +14,10 @@
+   numParticles: number;
+   diffusionSd: number;
+   initClusterSd: number;
+-  source0Magnitude: number;
+-  source0Direction: number;
+-  source1Magnitude: number;
+-  source1Direction: number;
+-  source2Magnitude: number;
+-  source2Direction: number;
+-  source3Magnitude: number;
+-  source3Direction: number;
++  source0Attraction: number;
++  source1Attraction: number;
++  source2Attraction: number;
++  source3Attraction: number;
+   negX: number;
+   negY: number;
+ }
+@@ -96,14 +92,10 @@
+   numParticles: DEFAULT_NUM_PARTICLES,
+   diffusionSd: DEFAULT_DIFFUSION_SD,
+   initClusterSd: 0.1,
+-  source0Magnitude: 0.15,
+-  source0Direction: -1,
+-  source1Magnitude: 0.15,
+-  source1Direction: -1,
+-  source2Magnitude: 0.15,
+-  source2Direction: -1,
+-  source3Magnitude: 0.15,
+-  source3Direction: -1,
++  source0Attraction: 0.15,
++  source1Attraction: 0.15,
++  source2Attraction: 0.15,
++  source3Attraction: 0.15,
+   negX: -20,
+   negY: 0
+ };
+@@ -199,10 +191,10 @@
+ 
+ function getFieldSources(state: LiveState): FieldSource[] {
+   return [
+-    { x: state.negX, y: state.negY, strength: simParams.source0Magnitude * simParams.source0Direction },
+-    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: simParams.source1Magnitude * simParams.source1Direction },
+-    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: simParams.source2Magnitude * simParams.source2Direction },
+-    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: simParams.source3Magnitude * simParams.source3Direction }
++    { x: state.negX, y: state.negY, strength: -simParams.source0Attraction },
++    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: -simParams.source1Attraction },
++    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: -simParams.source2Attraction },
++    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: -simParams.source3Attraction }
+   ];
+ }
+ 
+@@ -358,14 +350,10 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-magnitude">Generator 1 magnitude</label><input id="source0-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source0-direction">Generator 1 direction</label><select id="source0-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source1-magnitude">Generator 2 magnitude</label><input id="source1-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-direction">Generator 2 direction</label><select id="source1-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source2-magnitude">Generator 3 magnitude</label><input id="source2-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-direction">Generator 3 direction</label><select id="source2-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source3-magnitude">Generator 4 magnitude</label><input id="source3-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-direction">Generator 4 direction</label><select id="source3-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
++              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+             </div>
+@@ -426,14 +414,10 @@
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+-  source0Magnitude: getEl<HTMLInputElement>('#source0-magnitude'),
+-  source0Direction: getEl<HTMLSelectElement>('#source0-direction'),
+-  source1Magnitude: getEl<HTMLInputElement>('#source1-magnitude'),
+-  source1Direction: getEl<HTMLSelectElement>('#source1-direction'),
+-  source2Magnitude: getEl<HTMLInputElement>('#source2-magnitude'),
+-  source2Direction: getEl<HTMLSelectElement>('#source2-direction'),
+-  source3Magnitude: getEl<HTMLInputElement>('#source3-magnitude'),
+-  source3Direction: getEl<HTMLSelectElement>('#source3-direction'),
++  source0Attraction: getEl<HTMLInputElement>('#source0-attraction'),
++  source1Attraction: getEl<HTMLInputElement>('#source1-attraction'),
++  source2Attraction: getEl<HTMLInputElement>('#source2-attraction'),
++  source3Attraction: getEl<HTMLInputElement>('#source3-attraction'),
+   playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
+   seed: getEl<HTMLInputElement>('#seed'),
+   totalTime: getEl<HTMLInputElement>('#total-time'),
+@@ -477,14 +461,10 @@
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+-  setNumberInput(inputs.source0Magnitude, simParams.source0Magnitude, 3);
+-  inputs.source0Direction.value = String(simParams.source0Direction);
+-  setNumberInput(inputs.source1Magnitude, simParams.source1Magnitude, 3);
+-  inputs.source1Direction.value = String(simParams.source1Direction);
+-  setNumberInput(inputs.source2Magnitude, simParams.source2Magnitude, 3);
+-  inputs.source2Direction.value = String(simParams.source2Direction);
+-  setNumberInput(inputs.source3Magnitude, simParams.source3Magnitude, 3);
+-  inputs.source3Direction.value = String(simParams.source3Direction);
++  setNumberInput(inputs.source0Attraction, simParams.source0Attraction, 3);
++  setNumberInput(inputs.source1Attraction, simParams.source1Attraction, 3);
++  setNumberInput(inputs.source2Attraction, simParams.source2Attraction, 3);
++  setNumberInput(inputs.source3Attraction, simParams.source3Attraction, 3);
+   setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
+   setNumberInput(inputs.seed, currentSeed, 0);
+   setNumberInput(inputs.totalTime, simParams.T, 0);
+@@ -504,14 +484,10 @@
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+     diffusionSd: clamp(Number(inputs.diffusionSd.value) || 0, 0, 20),
+     initClusterSd: clamp(Number(inputs.initClusterSd.value) || 0, 0, 20),
+-    source0Magnitude: clamp(Number(inputs.source0Magnitude.value) || 0, 0, 10),
+-    source0Direction: Number(inputs.source0Direction.value) === 1 ? 1 : -1,
+-    source1Magnitude: clamp(Number(inputs.source1Magnitude.value) || 0, 0, 10),
+-    source1Direction: Number(inputs.source1Direction.value) === 1 ? 1 : -1,
+-    source2Magnitude: clamp(Number(inputs.source2Magnitude.value) || 0, 0, 10),
+-    source2Direction: Number(inputs.source2Direction.value) === 1 ? 1 : -1,
+-    source3Magnitude: clamp(Number(inputs.source3Magnitude.value) || 0, 0, 10),
+-    source3Direction: Number(inputs.source3Direction.value) === 1 ? 1 : -1,
++    source0Attraction: clamp(Number(inputs.source0Attraction.value) || 0, -10, 10),
++    source1Attraction: clamp(Number(inputs.source1Attraction.value) || 0, -10, 10),
++    source2Attraction: clamp(Number(inputs.source2Attraction.value) || 0, -10, 10),
++    source3Attraction: clamp(Number(inputs.source3Attraction.value) || 0, -10, 10),
+     negX: Number(inputs.negX.value) || defaultSim.negX,
+     negY: Number(inputs.negY.value) || defaultSim.negY
+   };
+@@ -540,11 +516,17 @@
+   const sigma = simParams.diffusionSd;
+   const dt = simParams.dt;
+   const stepSd = sigma * dt;
++  const attractionValues = [
++    simParams.source0Attraction,
++    simParams.source1Attraction,
++    simParams.source2Attraction,
++    simParams.source3Attraction
++  ];
+   const strengths = [
+-    simParams.source0Magnitude * simParams.source0Direction,
+-    simParams.source1Magnitude * simParams.source1Direction,
+-    simParams.source2Magnitude * simParams.source2Direction,
+-    simParams.source3Magnitude * simParams.source3Direction
++    -simParams.source0Attraction,
++    -simParams.source1Attraction,
++    -simParams.source2Attraction,
++    -simParams.source3Attraction
+   ];
+   equationBlock.innerHTML = [
+     '<span class="accent">Pedagogical stochastic-rate form</span>',
+@@ -562,8 +544,9 @@
+     '<span class="accent-2">Reflective chamber rule</span>',
+     'Particles bounce off the chamber walls instead of leaving the visible box.',
+     '',
+-    'Negative electric_strength_s attracts positive charge; positive electric_strength_s repels it.',
+-    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, strengths = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
++    'UI convention: positive attraction attracts positive charge, negative attraction repels it.',
++    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, attraction = [${attractionValues.map((v) => v.toFixed(3)).join(', ')}]`,
++    `Mapped electric_strength = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
+     `Per-step displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`
+   ].join('\n');
+ }
+@@ -642,7 +625,7 @@
+   render();
+ });
+ 
+-for (const key of ['numParticles', 'diffusionSd', 'source0Magnitude', 'source0Direction', 'source1Magnitude', 'source1Direction', 'source2Magnitude', 'source2Direction', 'source3Magnitude', 'source3Direction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'negX', 'negY'] as const) {
++for (const key of ['numParticles', 'diffusionSd', 'source0Attraction', 'source1Attraction', 'source2Attraction', 'source3Attraction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'negX', 'negY'] as const) {
+   inputs[key].addEventListener('change', () => {
+     applyLiveSimParams();
+     render();
+
+codex
+The refactor is in place. I’m running a quick grep for leftover old control IDs/fields and then a build to verify the page still compiles cleanly.
+exec
+/bin/zsh -lc 'rg -n "source[0-3]Magnitude|source[0-3]Direction|source[0-3]-magnitude|source[0-3]-direction" src/pages/inspect_field_attraction.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'cat package.json' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web exited 1 in 51ms:
+
+ succeeded in 51ms:
+{
+  "name": "electrochemical-signals-progression-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "lint": "tsc --noEmit",
+    "check-pages": "node scripts/check-pages.mjs",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.4.1"
+  }
+}
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+index 1b97766175097ec1c1f6c034633fa1956ef0d5dd..e027dd20e83b24b92a25116896f3900b79860eba
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -14,14 +14,10 @@
+   numParticles: number;
+   diffusionSd: number;
+   initClusterSd: number;
+-  source0Magnitude: number;
+-  source0Direction: number;
+-  source1Magnitude: number;
+-  source1Direction: number;
+-  source2Magnitude: number;
+-  source2Direction: number;
+-  source3Magnitude: number;
+-  source3Direction: number;
++  source0Attraction: number;
++  source1Attraction: number;
++  source2Attraction: number;
++  source3Attraction: number;
+   negX: number;
+   negY: number;
+ }
+@@ -96,14 +92,10 @@
+   numParticles: DEFAULT_NUM_PARTICLES,
+   diffusionSd: DEFAULT_DIFFUSION_SD,
+   initClusterSd: 0.1,
+-  source0Magnitude: 0.15,
+-  source0Direction: -1,
+-  source1Magnitude: 0.15,
+-  source1Direction: -1,
+-  source2Magnitude: 0.15,
+-  source2Direction: -1,
+-  source3Magnitude: 0.15,
+-  source3Direction: -1,
++  source0Attraction: 0.15,
++  source1Attraction: 0.15,
++  source2Attraction: 0.15,
++  source3Attraction: 0.15,
+   negX: -20,
+   negY: 0
+ };
+@@ -199,10 +191,10 @@
+ 
+ function getFieldSources(state: LiveState): FieldSource[] {
+   return [
+-    { x: state.negX, y: state.negY, strength: simParams.source0Magnitude * simParams.source0Direction },
+-    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: simParams.source1Magnitude * simParams.source1Direction },
+-    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: simParams.source2Magnitude * simParams.source2Direction },
+-    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: simParams.source3Magnitude * simParams.source3Direction }
++    { x: state.negX, y: state.negY, strength: -simParams.source0Attraction },
++    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: -simParams.source1Attraction },
++    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: -simParams.source2Attraction },
++    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: -simParams.source3Attraction }
+   ];
+ }
+ 
+@@ -358,14 +350,10 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-magnitude">Generator 1 magnitude</label><input id="source0-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source0-direction">Generator 1 direction</label><select id="source0-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source1-magnitude">Generator 2 magnitude</label><input id="source1-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-direction">Generator 2 direction</label><select id="source1-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source2-magnitude">Generator 3 magnitude</label><input id="source2-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-direction">Generator 3 direction</label><select id="source2-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source3-magnitude">Generator 4 magnitude</label><input id="source3-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-direction">Generator 4 direction</label><select id="source3-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
++              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+             </div>
+@@ -426,14 +414,10 @@
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+-  source0Magnitude: getEl<HTMLInputElement>('#source0-magnitude'),
+-  source0Direction: getEl<HTMLSelectElement>('#source0-direction'),
+-  source1Magnitude: getEl<HTMLInputElement>('#source1-magnitude'),
+-  source1Direction: getEl<HTMLSelectElement>('#source1-direction'),
+-  source2Magnitude: getEl<HTMLInputElement>('#source2-magnitude'),
+-  source2Direction: getEl<HTMLSelectElement>('#source2-direction'),
+-  source3Magnitude: getEl<HTMLInputElement>('#source3-magnitude'),
+-  source3Direction: getEl<HTMLSelectElement>('#source3-direction'),
++  source0Attraction: getEl<HTMLInputElement>('#source0-attraction'),
++  source1Attraction: getEl<HTMLInputElement>('#source1-attraction'),
++  source2Attraction: getEl<HTMLInputElement>('#source2-attraction'),
++  source3Attraction: getEl<HTMLInputElement>('#source3-attraction'),
+   playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
+   seed: getEl<HTMLInputElement>('#seed'),
+   totalTime: getEl<HTMLInputElement>('#total-time'),
+@@ -477,14 +461,10 @@
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+-  setNumberInput(inputs.source0Magnitude, simParams.source0Magnitude, 3);
+-  inputs.source0Direction.value = String(simParams.source0Direction);
+-  setNumberInput(inputs.source1Magnitude, simParams.source1Magnitude, 3);
+-  inputs.source1Direction.value = String(simParams.source1Direction);
+-  setNumberInput(inputs.source2Magnitude, simParams.source2Magnitude, 3);
+-  inputs.source2Direction.value = String(simParams.source2Direction);
+-  setNumberInput(inputs.source3Magnitude, simParams.source3Magnitude, 3);
+-  inputs.source3Direction.value = String(simParams.source3Direction);
++  setNumberInput(inputs.source0Attraction, simParams.source0Attraction, 3);
++  setNumberInput(inputs.source1Attraction, simParams.source1Attraction, 3);
++  setNumberInput(inputs.source2Attraction, simParams.source2Attraction, 3);
++  setNumberInput(inputs.source3Attraction, simParams.source3Attraction, 3);
+   setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
+   setNumberInput(inputs.seed, currentSeed, 0);
+   setNumberInput(inputs.totalTime, simParams.T, 0);
+@@ -504,14 +484,10 @@
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+     diffusionSd: clamp(Number(inputs.diffusionSd.value) || 0, 0, 20),
+     initClusterSd: clamp(Number(inputs.initClusterSd.value) || 0, 0, 20),
+-    source0Magnitude: clamp(Number(inputs.source0Magnitude.value) || 0, 0, 10),
+-    source0Direction: Number(inputs.source0Direction.value) === 1 ? 1 : -1,
+-    source1Magnitude: clamp(Number(inputs.source1Magnitude.value) || 0, 0, 10),
+-    source1Direction: Number(inputs.source1Direction.value) === 1 ? 1 : -1,
+-    source2Magnitude: clamp(Number(inputs.source2Magnitude.value) || 0, 0, 10),
+-    source2Direction: Number(inputs.source2Direction.value) === 1 ? 1 : -1,
+-    source3Magnitude: clamp(Number(inputs.source3Magnitude.value) || 0, 0, 10),
+-    source3Direction: Number(inputs.source3Direction.value) === 1 ? 1 : -1,
++    source0Attraction: clamp(Number(inputs.source0Attraction.value) || 0, -10, 10),
++    source1Attraction: clamp(Number(inputs.source1Attraction.value) || 0, -10, 10),
++    source2Attraction: clamp(Number(inputs.source2Attraction.value) || 0, -10, 10),
++    source3Attraction: clamp(Number(inputs.source3Attraction.value) || 0, -10, 10),
+     negX: Number(inputs.negX.value) || defaultSim.negX,
+     negY: Number(inputs.negY.value) || defaultSim.negY
+   };
+@@ -540,11 +516,17 @@
+   const sigma = simParams.diffusionSd;
+   const dt = simParams.dt;
+   const stepSd = sigma * dt;
++  const attractionValues = [
++    simParams.source0Attraction,
++    simParams.source1Attraction,
++    simParams.source2Attraction,
++    simParams.source3Attraction
++  ];
+   const strengths = [
+-    simParams.source0Magnitude * simParams.source0Direction,
+-    simParams.source1Magnitude * simParams.source1Direction,
+-    simParams.source2Magnitude * simParams.source2Direction,
+-    simParams.source3Magnitude * simParams.source3Direction
++    -simParams.source0Attraction,
++    -simParams.source1Attraction,
++    -simParams.source2Attraction,
++    -simParams.source3Attraction
+   ];
+   equationBlock.innerHTML = [
+     '<span class="accent">Pedagogical stochastic-rate form</span>',
+@@ -562,8 +544,9 @@
+     '<span class="accent-2">Reflective chamber rule</span>',
+     'Particles bounce off the chamber walls instead of leaving the visible box.',
+     '',
+-    'Negative electric_strength_s attracts positive charge; positive electric_strength_s repels it.',
+-    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, strengths = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
++    'UI convention: positive attraction attracts positive charge, negative attraction repels it.',
++    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, attraction = [${attractionValues.map((v) => v.toFixed(3)).join(', ')}]`,
++    `Mapped electric_strength = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
+     `Per-step displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`
+   ].join('\n');
+ }
+@@ -642,7 +625,7 @@
+   render();
+ });
+ 
+-for (const key of ['numParticles', 'diffusionSd', 'source0Magnitude', 'source0Direction', 'source1Magnitude', 'source1Direction', 'source2Magnitude', 'source2Direction', 'source3Magnitude', 'source3Direction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'negX', 'negY'] as const) {
++for (const key of ['numParticles', 'diffusionSd', 'source0Attraction', 'source1Attraction', 'source2Attraction', 'source3Attraction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'negX', 'negY'] as const) {
+   inputs[key].addEventListener('change', () => {
+     applyLiveSimParams();
+     render();
+
+exec
+/bin/zsh -lc 'npm run lint && npm run build' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 4.07s:
+
+> electrochemical-signals-progression-web@0.1.0 lint
+> tsc --noEmit
+
+
+> electrochemical-signals-progression-web@0.1.0 build
+> tsc && vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 37 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                         0.50 kB │ gzip: 0.31 kB
+dist/inspect_diffusion_free.html                                        0.58 kB │ gzip: 0.32 kB
+dist/inspect_diffusion_selective.html                                   0.59 kB │ gzip: 0.33 kB
+dist/inspect_nernst_one_ion.html                                        0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_pore.html                                        0.60 kB │ gzip: 0.34 kB
+dist/inspect_nak_pump_gradients.html                                    0.60 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_permeability.html                                0.60 kB │ gzip: 0.34 kB
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+index 1b97766175097ec1c1f6c034633fa1956ef0d5dd..e027dd20e83b24b92a25116896f3900b79860eba
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -14,14 +14,10 @@
+   numParticles: number;
+   diffusionSd: number;
+   initClusterSd: number;
+-  source0Magnitude: number;
+-  source0Direction: number;
+-  source1Magnitude: number;
+-  source1Direction: number;
+-  source2Magnitude: number;
+-  source2Direction: number;
+-  source3Magnitude: number;
+-  source3Direction: number;
++  source0Attraction: number;
++  source1Attraction: number;
++  source2Attraction: number;
++  source3Attraction: number;
+   negX: number;
+   negY: number;
+ }
+@@ -96,14 +92,10 @@
+   numParticles: DEFAULT_NUM_PARTICLES,
+   diffusionSd: DEFAULT_DIFFUSION_SD,
+   initClusterSd: 0.1,
+-  source0Magnitude: 0.15,
+-  source0Direction: -1,
+-  source1Magnitude: 0.15,
+-  source1Direction: -1,
+-  source2Magnitude: 0.15,
+-  source2Direction: -1,
+-  source3Magnitude: 0.15,
+-  source3Direction: -1,
++  source0Attraction: 0.15,
++  source1Attraction: 0.15,
++  source2Attraction: 0.15,
++  source3Attraction: 0.15,
+   negX: -20,
+   negY: 0
+ };
+@@ -199,10 +191,10 @@
+ 
+ function getFieldSources(state: LiveState): FieldSource[] {
+   return [
+-    { x: state.negX, y: state.negY, strength: simParams.source0Magnitude * simParams.source0Direction },
+-    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: simParams.source1Magnitude * simParams.source1Direction },
+-    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: simParams.source2Magnitude * simParams.source2Direction },
+-    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: simParams.source3Magnitude * simParams.source3Direction }
++    { x: state.negX, y: state.negY, strength: -simParams.source0Attraction },
++    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: -simParams.source1Attraction },
++    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: -simParams.source2Attraction },
++    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: -simParams.source3Attraction }
+   ];
+ }
+ 
+@@ -358,14 +350,10 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-magnitude">Generator 1 magnitude</label><input id="source0-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source0-direction">Generator 1 direction</label><select id="source0-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source1-magnitude">Generator 2 magnitude</label><input id="source1-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-direction">Generator 2 direction</label><select id="source1-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source2-magnitude">Generator 3 magnitude</label><input id="source2-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-direction">Generator 3 direction</label><select id="source2-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source3-magnitude">Generator 4 magnitude</label><input id="source3-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-direction">Generator 4 direction</label><select id="source3-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
++              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+             </div>
+@@ -426,14 +414,10 @@
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+-  source0Magnitude: getEl<HTMLInputElement>('#source0-magnitude'),
+-  source0Direction: getEl<HTMLSelectElement>('#source0-direction'),
+-  source1Magnitude: getEl<HTMLInputElement>('#source1-magnitude'),
+-  source1Direction: getEl<HTMLSelectElement>('#source1-direction'),
+-  source2Magnitude: getEl<HTMLInputElement>('#source2-magnitude'),
+-  source2Direction: getEl<HTMLSelectElement>('#source2-direction'),
+-  source3Magnitude: getEl<HTMLInputElement>('#source3-magnitude'),
+-  source3Direction: getEl<HTMLSelectElement>('#source3-direction'),
++  source0Attraction: getEl<HTMLInputElement>('#source0-attraction'),
++  source1Attraction: getEl<HTMLInputElement>('#source1-attraction'),
++  source2Attraction: getEl<HTMLInputElement>('#source2-attraction'),
++  source3Attraction: getEl<HTMLInputElement>('#source3-attraction'),
+   playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
+   seed: getEl<HTMLInputElement>('#seed'),
+   totalTime: getEl<HTMLInputElement>('#total-time'),
+@@ -477,14 +461,10 @@
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+-  setNumberInput(inputs.source0Magnitude, simParams.source0Magnitude, 3);
+-  inputs.source0Direction.value = String(simParams.source0Direction);
+-  setNumberInput(inputs.source1Magnitude, simParams.source1Magnitude, 3);
+-  inputs.source1Direction.value = String(simParams.source1Direction);
+-  setNumberInput(inputs.source2Magnitude, simParams.source2Magnitude, 3);
+-  inputs.source2Direction.value = String(simParams.source2Direction);
+-  setNumberInput(inputs.source3Magnitude, simParams.source3Magnitude, 3);
+-  inputs.source3Direction.value = String(simParams.source3Direction);
++  setNumberInput(inputs.source0Attraction, simParams.source0Attraction, 3);
++  setNumberInput(inputs.source1Attraction, simParams.source1Attraction, 3);
++  setNumberInput(inputs.source2Attraction, simParams.source2Attraction, 3);
++  setNumberInput(inputs.source3Attraction, simParams.source3Attraction, 3);
+   setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
+   setNumberInput(inputs.seed, currentSeed, 0);
+   setNumberInput(inputs.totalTime, simParams.T, 0);
+@@ -504,14 +484,10 @@
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+     diffusionSd: clamp(Number(inputs.diffusionSd.value) || 0, 0, 20),
+     initClusterSd: clamp(Number(inputs.initClusterSd.value) || 0, 0, 20),
+-    source0Magnitude: clamp(Number(inputs.source0Magnitude.value) || 0, 0, 10),
+-    source0Direction: Number(inputs.source0Direction.value) === 1 ? 1 : -1,
+-    source1Magnitude: clamp(Number(inputs.source1Magnitude.value) || 0, 0, 10),
+-    source1Direction: Number(inputs.source1Direction.value) === 1 ? 1 : -1,
+-    source2Magnitude: clamp(Number(inputs.source2Magnitude.value) || 0, 0, 10),
+-    source2Direction: Number(inputs.source2Direction.value) === 1 ? 1 : -1,
+-    source3Magnitude: clamp(Number(inputs.source3Magnitude.value) || 0, 0, 10),
+-    source3Direction: Number(inputs.source3Direction.value) === 1 ? 1 : -1,
++    source0Attraction: clamp(Number(inputs.source0Attraction.value) || 0, -10, 10),
++    source1Attraction: clamp(Number(inputs.source1Attraction.value) || 0, -10, 10),
++    source2Attraction: clamp(Number(inputs.source2Attraction.value) || 0, -10, 10),
++    source3Attraction: clamp(Number(inputs.source3Attraction.value) || 0, -10, 10),
+     negX: Number(inputs.negX.value) || defaultSim.negX,
+     negY: Number(inputs.negY.value) || defaultSim.negY
+   };
+@@ -540,11 +516,17 @@
+   const sigma = simParams.diffusionSd;
+   const dt = simParams.dt;
+   const stepSd = sigma * dt;
++  const attractionValues = [
++    simParams.source0Attraction,
++    simParams.source1Attraction,
++    simParams.source2Attraction,
++    simParams.source3Attraction
++  ];
+   const strengths = [
+-    simParams.source0Magnitude * simParams.source0Direction,
+-    simParams.source1Magnitude * simParams.source1Direction,
+-    simParams.source2Magnitude * simParams.source2Direction,
+-    simParams.source3Magnitude * simParams.source3Direction
++    -simParams.source0Attraction,
++    -simParams.source1Attraction,
++    -simParams.source2Attraction,
++    -simParams.source3Attraction
+   ];
+   equationBlock.innerHTML = [
+     '<span class="accent">Pedagogical stochastic-rate form</span>',
+@@ -562,8 +544,9 @@
+     '<span class="accent-2">Reflective chamber rule</span>',
+     'Particles bounce off the chamber walls instead of leaving the visible box.',
+     '',
+-    'Negative electric_strength_s attracts positive charge; positive electric_strength_s repels it.',
+-    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, strengths = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
++    'UI convention: positive attraction attracts positive charge, negative attraction repels it.',
++    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, attraction = [${attractionValues.map((v) => v.toFixed(3)).join(', ')}]`,
++    `Mapped electric_strength = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
+     `Per-step displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`
+   ].join('\n');
+ }
+@@ -642,7 +625,7 @@
+   render();
+ });
+ 
+-for (const key of ['numParticles', 'diffusionSd', 'source0Magnitude', 'source0Direction', 'source1Magnitude', 'source1Direction', 'source2Magnitude', 'source2Direction', 'source3Magnitude', 'source3Direction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'negX', 'negY'] as const) {
++for (const key of ['numParticles', 'diffusionSd', 'source0Attraction', 'source1Attraction', 'source2Attraction', 'source3Attraction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'negX', 'negY'] as const) {
+   inputs[key].addEventListener('change', () => {
+     applyLiveSimParams();
+     render();
+
+exec
+/bin/zsh -lc "git status --short && git diff -- src/pages/inspect_field_attraction.ts | sed -n '1,240p'" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+ M README.md
+ D inspect_diffusion_1.html
+ D inspect_diffusion_2.html
+ D inspect_diffusion_3.html
+ D inspect_diffusion_4.html
+ D inspect_electrochemical_1.html
+ D inspect_electrochemical_2.html
+ D inspect_electrochemical_3.html
+ D inspect_resting_potential_1.html
+ D inspect_resting_potential_2.html
+ D inspect_resting_potential_3.html
+ D inspect_resting_potential_4.html
+ M package.json
+ M src/index.ts
+ D src/pages/inspect_diffusion_1.ts
+ D src/pages/inspect_diffusion_2.ts
+ D src/pages/inspect_diffusion_3.ts
+ D src/pages/inspect_diffusion_4.ts
+ D src/pages/inspect_electrochemical_1.ts
+ D src/pages/inspect_electrochemical_2.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+index 1b97766175097ec1c1f6c034633fa1956ef0d5dd..e027dd20e83b24b92a25116896f3900b79860eba
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -14,14 +14,10 @@
+   numParticles: number;
+   diffusionSd: number;
+   initClusterSd: number;
+-  source0Magnitude: number;
+-  source0Direction: number;
+-  source1Magnitude: number;
+-  source1Direction: number;
+-  source2Magnitude: number;
+-  source2Direction: number;
+-  source3Magnitude: number;
+-  source3Direction: number;
++  source0Attraction: number;
++  source1Attraction: number;
++  source2Attraction: number;
++  source3Attraction: number;
+   negX: number;
+   negY: number;
+ }
+@@ -96,14 +92,10 @@
+   numParticles: DEFAULT_NUM_PARTICLES,
+   diffusionSd: DEFAULT_DIFFUSION_SD,
+   initClusterSd: 0.1,
+-  source0Magnitude: 0.15,
+-  source0Direction: -1,
+-  source1Magnitude: 0.15,
+-  source1Direction: -1,
+-  source2Magnitude: 0.15,
+-  source2Direction: -1,
+-  source3Magnitude: 0.15,
+-  source3Direction: -1,
++  source0Attraction: 0.15,
++  source1Attraction: 0.15,
++  source2Attraction: 0.15,
++  source3Attraction: 0.15,
+   negX: -20,
+   negY: 0
+ };
+@@ -199,10 +191,10 @@
+ 
+ function getFieldSources(state: LiveState): FieldSource[] {
+   return [
+-    { x: state.negX, y: state.negY, strength: simParams.source0Magnitude * simParams.source0Direction },
+-    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: simParams.source1Magnitude * simParams.source1Direction },
+-    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: simParams.source2Magnitude * simParams.source2Direction },
+-    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: simParams.source3Magnitude * simParams.source3Direction }
++    { x: state.negX, y: state.negY, strength: -simParams.source0Attraction },
++    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: -simParams.source1Attraction },
++    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: -simParams.source2Attraction },
++    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: -simParams.source3Attraction }
+   ];
+ }
+ 
+@@ -358,14 +350,10 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-magnitude">Generator 1 magnitude</label><input id="source0-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source0-direction">Generator 1 direction</label><select id="source0-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source1-magnitude">Generator 2 magnitude</label><input id="source1-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-direction">Generator 2 direction</label><select id="source1-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source2-magnitude">Generator 3 magnitude</label><input id="source2-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-direction">Generator 3 direction</label><select id="source2-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source3-magnitude">Generator 4 magnitude</label><input id="source3-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-direction">Generator 4 direction</label><select id="source3-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
++              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+             </div>
+@@ -426,14 +414,10 @@
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+-  source0Magnitude: getEl<HTMLInputElement>('#source0-magnitude'),
+-  source0Direction: getEl<HTMLSelectElement>('#source0-direction'),
+-  source1Magnitude: getEl<HTMLInputElement>('#source1-magnitude'),
+-  source1Direction: getEl<HTMLSelectElement>('#source1-direction'),
+-  source2Magnitude: getEl<HTMLInputElement>('#source2-magnitude'),
+-  source2Direction: getEl<HTMLSelectElement>('#source2-direction'),
+-  source3Magnitude: getEl<HTMLInputElement>('#source3-magnitude'),
+-  source3Direction: getEl<HTMLSelectElement>('#source3-direction'),
++  source0Attraction: getEl<HTMLInputElement>('#source0-attraction'),
++  source1Attraction: getEl<HTMLInputElement>('#source1-attraction'),
++  source2Attraction: getEl<HTMLInputElement>('#source2-attraction'),
++  source3Attraction: getEl<HTMLInputElement>('#source3-attraction'),
+   playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
+   seed: getEl<HTMLInputElement>('#seed'),
+   totalTime: getEl<HTMLInputElement>('#total-time'),
+@@ -477,14 +461,10 @@
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+-  setNumberInput(inputs.source0Magnitude, simParams.source0Magnitude, 3);
+-  inputs.source0Direction.value = String(simParams.source0Direction);
+-  setNumberInput(inputs.source1Magnitude, simParams.source1Magnitude, 3);
+-  inputs.source1Direction.value = String(simParams.source1Direction);
+-  setNumberInput(inputs.source2Magnitude, simParams.source2Magnitude, 3);
+-  inputs.source2Direction.value = String(simParams.source2Direction);
+-  setNumberInput(inputs.source3Magnitude, simParams.source3Magnitude, 3);
+-  inputs.source3Direction.value = String(simParams.source3Direction);
++  setNumberInput(inputs.source0Attraction, simParams.source0Attraction, 3);
++  setNumberInput(inputs.source1Attraction, simParams.source1Attraction, 3);
++  setNumberInput(inputs.source2Attraction, simParams.source2Attraction, 3);
++  setNumberInput(inputs.source3Attraction, simParams.source3Attraction, 3);
+   setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
+   setNumberInput(inputs.seed, currentSeed, 0);
+   setNumberInput(inputs.totalTime, simParams.T, 0);
+@@ -504,14 +484,10 @@
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+     diffusionSd: clamp(Number(inputs.diffusionSd.value) || 0, 0, 20),
+     initClusterSd: clamp(Number(inputs.initClusterSd.value) || 0, 0, 20),
+-    source0Magnitude: clamp(Number(inputs.source0Magnitude.value) || 0, 0, 10),
+-    source0Direction: Number(inputs.source0Direction.value) === 1 ? 1 : -1,
+-    source1Magnitude: clamp(Number(inputs.source1Magnitude.value) || 0, 0, 10),
+-    source1Direction: Number(inputs.source1Direction.value) === 1 ? 1 : -1,
+-    source2Magnitude: clamp(Number(inputs.source2Magnitude.value) || 0, 0, 10),
+-    source2Direction: Number(inputs.source2Direction.value) === 1 ? 1 : -1,
+-    source3Magnitude: clamp(Number(inputs.source3Magnitude.value) || 0, 0, 10),
+-    source3Direction: Number(inputs.source3Direction.value) === 1 ? 1 : -1,
++    source0Attraction: clamp(Number(inputs.source0Attraction.value) || 0, -10, 10),
++    source1Attraction: clamp(Number(inputs.source1Attraction.value) || 0, -10, 10),
++    source2Attraction: clamp(Number(inputs.source2Attraction.value) || 0, -10, 10),
++    source3Attraction: clamp(Number(inputs.source3Attraction.value) || 0, -10, 10),
+     negX: Number(inputs.negX.value) || defaultSim.negX,
+     negY: Number(inputs.negY.value) || defaultSim.negY
+   };
+@@ -540,11 +516,17 @@
+   const sigma = simParams.diffusionSd;
+   const dt = simParams.dt;
+   const stepSd = sigma * dt;
++  const attractionValues = [
++    simParams.source0Attraction,
++    simParams.source1Attraction,
++    simParams.source2Attraction,
++    simParams.source3Attraction
++  ];
+   const strengths = [
+-    simParams.source0Magnitude * simParams.source0Direction,
+-    simParams.source1Magnitude * simParams.source1Direction,
+-    simParams.source2Magnitude * simParams.source2Direction,
+-    simParams.source3Magnitude * simParams.source3Direction
++    -simParams.source0Attraction,
++    -simParams.source1Attraction,
++    -simParams.source2Attraction,
++    -simParams.source3Attraction
+   ];
+   equationBlock.innerHTML = [
+     '<span class="accent">Pedagogical stochastic-rate form</span>',
+@@ -562,8 +544,9 @@
+     '<span class="accent-2">Reflective chamber rule</span>',
+     'Particles bounce off the chamber walls instead of leaving the visible box.',
+     '',
+-    'Negative electric_strength_s attracts positive charge; positive electric_strength_s repels it.',
+-    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, strengths = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
++    'UI convention: positive attraction attracts positive charge, negative attraction repels it.',
++    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, attraction = [${attractionValues.map((v) => v.toFixed(3)).join(', ')}]`,
++    `Mapped electric_strength = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
+     `Per-step displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`
+   ].join('\n');
+ }
+@@ -642,7 +625,7 @@
+   render();
+ });
+ 
+-for (const key of ['numParticles', 'diffusionSd', 'source0Magnitude', 'source0Direction', 'source1Magnitude', 'source1Direction', 'source2Magnitude', 'source2Direction', 'source3Magnitude', 'source3Direction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'negX', 'negY'] as const) {
++for (const key of ['numParticles', 'diffusionSd', 'source0Attraction', 'source1Attraction', 'source2Attraction', 'source3Attraction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'negX', 'negY'] as const) {
+   inputs[key].addEventListener('change', () => {
+     applyLiveSimParams();
+     render();
+
+codex
+Implemented only the `Free Diffusion with Electrical Attraction` request by updating the control model in [src/pages/inspect_field_attraction.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts).
+
+Changes made:
+- Replaced separate per-generator `magnitude` + `direction` inputs with a single signed numeric input per generator:
+  - `Generator N attraction (+ attract, - repel)`
+- Updated simulation params/state wiring to use `sourceNAttraction` values.
+- Mapped UI semantics to existing field math so:
+  - positive entered value means attraction
+  - negative entered value means repulsion
+- Updated input read/write logic, live-change listeners, and equation/status text to reflect the new signed-control model.
+
+Validation run:
+- `npm run lint` passed.
+- `npm run build` passed.
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+index 1b97766175097ec1c1f6c034633fa1956ef0d5dd..e027dd20e83b24b92a25116896f3900b79860eba
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts
+@@ -14,14 +14,10 @@
+   numParticles: number;
+   diffusionSd: number;
+   initClusterSd: number;
+-  source0Magnitude: number;
+-  source0Direction: number;
+-  source1Magnitude: number;
+-  source1Direction: number;
+-  source2Magnitude: number;
+-  source2Direction: number;
+-  source3Magnitude: number;
+-  source3Direction: number;
++  source0Attraction: number;
++  source1Attraction: number;
++  source2Attraction: number;
++  source3Attraction: number;
+   negX: number;
+   negY: number;
+ }
+@@ -96,14 +92,10 @@
+   numParticles: DEFAULT_NUM_PARTICLES,
+   diffusionSd: DEFAULT_DIFFUSION_SD,
+   initClusterSd: 0.1,
+-  source0Magnitude: 0.15,
+-  source0Direction: -1,
+-  source1Magnitude: 0.15,
+-  source1Direction: -1,
+-  source2Magnitude: 0.15,
+-  source2Direction: -1,
+-  source3Magnitude: 0.15,
+-  source3Direction: -1,
++  source0Attraction: 0.15,
++  source1Attraction: 0.15,
++  source2Attraction: 0.15,
++  source3Attraction: 0.15,
+   negX: -20,
+   negY: 0
+ };
+@@ -199,10 +191,10 @@
+ 
+ function getFieldSources(state: LiveState): FieldSource[] {
+   return [
+-    { x: state.negX, y: state.negY, strength: simParams.source0Magnitude * simParams.source0Direction },
+-    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: simParams.source1Magnitude * simParams.source1Direction },
+-    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: simParams.source2Magnitude * simParams.source2Direction },
+-    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: simParams.source3Magnitude * simParams.source3Direction }
++    { x: state.negX, y: state.negY, strength: -simParams.source0Attraction },
++    { x: EXTRA_FIELD_SOURCES[0].x, y: EXTRA_FIELD_SOURCES[0].y, strength: -simParams.source1Attraction },
++    { x: EXTRA_FIELD_SOURCES[1].x, y: EXTRA_FIELD_SOURCES[1].y, strength: -simParams.source2Attraction },
++    { x: EXTRA_FIELD_SOURCES[2].x, y: EXTRA_FIELD_SOURCES[2].y, strength: -simParams.source3Attraction }
+   ];
+ }
+ 
+@@ -358,14 +350,10 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="1" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
+-              <div class="field"><label for="source0-magnitude">Generator 1 magnitude</label><input id="source0-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source0-direction">Generator 1 direction</label><select id="source0-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source1-magnitude">Generator 2 magnitude</label><input id="source1-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source1-direction">Generator 2 direction</label><select id="source1-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source2-magnitude">Generator 3 magnitude</label><input id="source2-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source2-direction">Generator 3 direction</label><select id="source2-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
+-              <div class="field"><label for="source3-magnitude">Generator 4 magnitude</label><input id="source3-magnitude" type="number" min="0" max="10" step="0.01" /></div>
+-              <div class="field"><label for="source3-direction">Generator 4 direction</label><select id="source3-direction"><option value="-1">Attract</option><option value="1">Repel</option></select></div>
++              <div class="field"><label for="source0-attraction">Generator 1 attraction (+ attract, - repel)</label><input id="source0-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source1-attraction">Generator 2 attraction (+ attract, - repel)</label><input id="source1-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source2-attraction">Generator 3 attraction (+ attract, - repel)</label><input id="source2-attraction" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="source3-attraction">Generator 4 attraction (+ attract, - repel)</label><input id="source3-attraction" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+             </div>
+@@ -426,14 +414,10 @@
+ const inputs = {
+   numParticles: getEl<HTMLInputElement>('#num-particles'),
+   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
+-  source0Magnitude: getEl<HTMLInputElement>('#source0-magnitude'),
+-  source0Direction: getEl<HTMLSelectElement>('#source0-direction'),
+-  source1Magnitude: getEl<HTMLInputElement>('#source1-magnitude'),
+-  source1Direction: getEl<HTMLSelectElement>('#source1-direction'),
+-  source2Magnitude: getEl<HTMLInputElement>('#source2-magnitude'),
+-  source2Direction: getEl<HTMLSelectElement>('#source2-direction'),
+-  source3Magnitude: getEl<HTMLInputElement>('#source3-magnitude'),
+-  source3Direction: getEl<HTMLSelectElement>('#source3-direction'),
++  source0Attraction: getEl<HTMLInputElement>('#source0-attraction'),
++  source1Attraction: getEl<HTMLInputElement>('#source1-attraction'),
++  source2Attraction: getEl<HTMLInputElement>('#source2-attraction'),
++  source3Attraction: getEl<HTMLInputElement>('#source3-attraction'),
+   playbackSpeed: getEl<HTMLInputElement>('#playback-speed'),
+   seed: getEl<HTMLInputElement>('#seed'),
+   totalTime: getEl<HTMLInputElement>('#total-time'),
+@@ -477,14 +461,10 @@
+ function writeInputs(): void {
+   setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+-  setNumberInput(inputs.source0Magnitude, simParams.source0Magnitude, 3);
+-  inputs.source0Direction.value = String(simParams.source0Direction);
+-  setNumberInput(inputs.source1Magnitude, simParams.source1Magnitude, 3);
+-  inputs.source1Direction.value = String(simParams.source1Direction);
+-  setNumberInput(inputs.source2Magnitude, simParams.source2Magnitude, 3);
+-  inputs.source2Direction.value = String(simParams.source2Direction);
+-  setNumberInput(inputs.source3Magnitude, simParams.source3Magnitude, 3);
+-  inputs.source3Direction.value = String(simParams.source3Direction);
++  setNumberInput(inputs.source0Attraction, simParams.source0Attraction, 3);
++  setNumberInput(inputs.source1Attraction, simParams.source1Attraction, 3);
++  setNumberInput(inputs.source2Attraction, simParams.source2Attraction, 3);
++  setNumberInput(inputs.source3Attraction, simParams.source3Attraction, 3);
+   setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
+   setNumberInput(inputs.seed, currentSeed, 0);
+   setNumberInput(inputs.totalTime, simParams.T, 0);
+@@ -504,14 +484,10 @@
+     numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 1, MAX_PARTICLES),
+     diffusionSd: clamp(Number(inputs.diffusionSd.value) || 0, 0, 20),
+     initClusterSd: clamp(Number(inputs.initClusterSd.value) || 0, 0, 20),
+-    source0Magnitude: clamp(Number(inputs.source0Magnitude.value) || 0, 0, 10),
+-    source0Direction: Number(inputs.source0Direction.value) === 1 ? 1 : -1,
+-    source1Magnitude: clamp(Number(inputs.source1Magnitude.value) || 0, 0, 10),
+-    source1Direction: Number(inputs.source1Direction.value) === 1 ? 1 : -1,
+-    source2Magnitude: clamp(Number(inputs.source2Magnitude.value) || 0, 0, 10),
+-    source2Direction: Number(inputs.source2Direction.value) === 1 ? 1 : -1,
+-    source3Magnitude: clamp(Number(inputs.source3Magnitude.value) || 0, 0, 10),
+-    source3Direction: Number(inputs.source3Direction.value) === 1 ? 1 : -1,
++    source0Attraction: clamp(Number(inputs.source0Attraction.value) || 0, -10, 10),
++    source1Attraction: clamp(Number(inputs.source1Attraction.value) || 0, -10, 10),
++    source2Attraction: clamp(Number(inputs.source2Attraction.value) || 0, -10, 10),
++    source3Attraction: clamp(Number(inputs.source3Attraction.value) || 0, -10, 10),
+     negX: Number(inputs.negX.value) || defaultSim.negX,
+     negY: Number(inputs.negY.value) || defaultSim.negY
+   };
+@@ -540,11 +516,17 @@
+   const sigma = simParams.diffusionSd;
+   const dt = simParams.dt;
+   const stepSd = sigma * dt;
++  const attractionValues = [
++    simParams.source0Attraction,
++    simParams.source1Attraction,
++    simParams.source2Attraction,
++    simParams.source3Attraction
++  ];
+   const strengths = [
+-    simParams.source0Magnitude * simParams.source0Direction,
+-    simParams.source1Magnitude * simParams.source1Direction,
+-    simParams.source2Magnitude * simParams.source2Direction,
+-    simParams.source3Magnitude * simParams.source3Direction
++    -simParams.source0Attraction,
++    -simParams.source1Attraction,
++    -simParams.source2Attraction,
++    -simParams.source3Attraction
+   ];
+   equationBlock.innerHTML = [
+     '<span class="accent">Pedagogical stochastic-rate form</span>',
+@@ -562,8 +544,9 @@
+     '<span class="accent-2">Reflective chamber rule</span>',
+     'Particles bounce off the chamber walls instead of leaving the visible box.',
+     '',
+-    'Negative electric_strength_s attracts positive charge; positive electric_strength_s repels it.',
+-    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, strengths = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
++    'UI convention: positive attraction attracts positive charge, negative attraction repels it.',
++    `Current: diffusionSd = ${sigma.toFixed(3)}, dt = ${dt.toFixed(3)}, attraction = [${attractionValues.map((v) => v.toFixed(3)).join(', ')}]`,
++    `Mapped electric_strength = [${strengths.map((v) => v.toFixed(3)).join(', ')}]`,
+     `Per-step displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`
+   ].join('\n');
+ }
+@@ -642,7 +625,7 @@
+   render();
+ });
+ 
+-for (const key of ['numParticles', 'diffusionSd', 'source0Magnitude', 'source0Direction', 'source1Magnitude', 'source1Direction', 'source2Magnitude', 'source2Direction', 'source3Magnitude', 'source3Direction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'negX', 'negY'] as const) {
++for (const key of ['numParticles', 'diffusionSd', 'source0Attraction', 'source1Attraction', 'source2Attraction', 'source3Attraction', 'seed', 'totalTime', 'dt', 'initClusterSd', 'negX', 'negY'] as const) {
+   inputs[key].addEventListener('change', () => {
+     applyLiveSimParams();
+     render();
+
+tokens used
+33,290
+Implemented only the `Free Diffusion with Electrical Attraction` request by updating the control model in [src/pages/inspect_field_attraction.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_field_attraction.ts).
+
+Changes made:
+- Replaced separate per-generator `magnitude` + `direction` inputs with a single signed numeric input per generator:
+  - `Generator N attraction (+ attract, - repel)`
+- Updated simulation params/state wiring to use `sourceNAttraction` values.
+- Mapped UI semantics to existing field math so:
+  - positive entered value means attraction
+  - negative entered value means repulsion
+- Updated input read/write logic, live-change listeners, and equation/status text to reflect the new signed-control model.
+
+Validation run:
+- `npm run lint` passed.
+- `npm run build` passed.

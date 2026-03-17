@@ -1,0 +1,706 @@
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccad1-a839-7281-afe6-23cb3f8a6ef4
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Diffusion Through a Membrane Pore
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Diffusion Through a Membrane Pore
+
+- Change to two column layout with particle sims on the left
+  and trace on the right
+
+mcp startup: no servers
+codex
+I’m going to locate the “Diffusion Through a Membrane Pore” implementation and update only that section to a two-column layout with particle simulations on the left and the trace on the right. After editing, I’ll run available checks/build to verify it still works.
+exec
+/bin/zsh -lc 'rg -n "Diffusion Through a Membrane Pore|membrane pore|particle sims|trace" -S .' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'ls -la' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+Total output lines: 634
+
+./src/pages/resting_two_ion_common.ts:41:  tracePanelTitle?: string;
+./src/pages/resting_two_ion_common.ts:42:  traceHint?: string;
+./src/pages/resting_two_ion_common.ts:43:  traceTitle?: string;
+./src/pages/resting_two_ion_common.ts:74:  traceYLimit: number;
+./src/pages/resting_two_ion_common.ts:282:function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
+./src/pages/resting_two_ion_common.ts:283:  const trace: TraceHistory = { times: [], va: [], vb: [], vTotal: [], vGoldman: [] };
+./src/pages/resting_two_ion_common.ts:284:  pushTrace(trace, state, traceWindowMs);
+./src/pages/resting_two_ion_common.ts:285:  return trace;
+./src/pages/resting_two_ion_common.ts:288:function pushTrace(trace: TraceHistory, state: LiveState, traceWindowMs: number): void {
+./src/pages/resting_two_ion_common.ts:289:  trace.times.push(state.simTime);
+./src/pages/resting_two_ion_common.ts:290:  trace.va.push(state.VA);
+./src/pages/resting_two_ion_common.ts:291:  trace.vb.push(state.VB);
+./src/pages/resting_two_ion_common.ts:292:  trace.vTotal.push(state.VTotal);
+./src/pages/resting_two_ion_common.ts:293:  trace.vGoldman.push(state.VGoldman);
+./src/pages/resting_two_ion_common.ts:294:  const minTime = Math.max(0, state.simTime - traceWindowMs);
+./src/pages/resting_two_ion_common.ts:295:  while (trace.times.length > 1 && trace.times[0] < minTime) {
+./src/pages/resting_two_ion_common.ts:296:    trace.times.shift(); trace.va.shift(); trace.vb.shift(); trace.vTotal.shift(); trace.vGoldman.shift();
+./src/pages/resting_two_ion_common.ts:298:  while (trace.times.length > 4000) {
+ succeeded in 51ms:
+total 272
+drwxr-xr-x@ 34 mq20185996  staff   1088 Mar  8 11:18 .
+drwxr-xr-x@ 16 mq20185996  staff    512 Mar  6 21:53 ..
+-rw-r--r--@  1 mq20185996  staff     37 Feb 20 19:46 .gitignore
+-rw-r--r--@  1 mq20185996  staff   1239 Mar  7 18:41 README.md
+-rw-r--r--@  1 mq20185996  staff   2315 Mar  8 11:16 change_requests.md
+drwxr-xr-x@ 18 mq20185996  staff    576 Mar  8 10:06 dist
+drwxr-xr-x@  3 mq20185996  staff     96 Mar  6 21:52 docs
+-rw-r--r--@  1 mq20185996  staff    327 Feb 24 00:31 index.html
+-rw-r--r--@  1 mq20185996  staff    352 Mar  7 22:32 inspect_action_potential_1.html
+-rw-r--r--@  1 mq20185996  staff    355 Mar  7 22:32 inspect_action_potential_2.html
+-rw-r--r--@  1 mq20185996  staff    353 Mar  7 22:32 inspect_action_potential_3.html
+-rw-r--r--@  1 mq20185996  staff    322 Mar  1 21:52 inspect_diffusion_1.html
+-rw-r--r--@  1 mq20185996  staff    339 Mar  1 21:52 inspect_diffusion_2.html
+-rw-r--r--@  1 mq20185996  staff    335 Mar  1 21:52 inspect_diffusion_3.html
+-rw-r--r--@  1 mq20185996  staff    328 Mar  1 21:52 inspect_diffusion_4.html
+-rw-r--r--@  1 mq20185996  staff    353 Mar  1 21:52 inspect_electrochemical_1.html
+-rw-r--r--@  1 mq20185996  staff    346 Mar  7 17:50 inspect_electrochemical_2.html
+-rw-r--r--@  1 mq20185996  staff    365 Mar  7 17:33 inspect_electrochemical_3.html
+-rw-r--r--@  1 mq20185996  staff    361 Mar  1 21:52 inspect_electrochemical_4.html
+codex
+I found the target page in `src/pages/inspect_diffusion_2.ts`; next I’m inspecting its layout/CSS blocks to switch only this page to the requested two-column arrangement.
+exec
+/bin/zsh -lc "sed -n '1,260p' src/pages/inspect_diffusion_2.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '260,620p' src/pages/inspect_diffusion_2.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '620,980p' src/pages/inspect_diffusion_2.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_NUM_PARTICLES,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  centeredChannelBounds,
+  drawMembraneWall
+} from './sim_shared';
+
+interface SimParams {
+  T: number;
+  dt: number;
+  numParticles: number;
+  boxWidth: number;
+  boxHeight: number;
+  wallThickness: number;
+  channelWidth: number;
+  diffusionSd: number;
+}
+ succeeded in 51ms:
+      xNew = tryingToCrossLeft
+        ? reflectIntoBounds(2 * state.leftWall - xTrial, -halfW, halfW)
+        : reflectIntoBounds(2 * state.rightWall - xTrial, -halfW, halfW);
+    } else if (!inChannel && xTrial > state.leftWall && xTrial < state.rightWall) {
+      xNew = xPrev < 0 ? state.leftWall : state.rightWall;
+    }
+
+    state.x[i] = xNew;
+    state.y[i] = yNew;
+  }
+
+  state.stepCount += 1;
+  state.simTime = state.stepCount * state.dt;
+  const counts = countSides(state);
+  state.leftCount = counts.left;
+  state.rightCount = counts.right;
+}
+
+function pushTracePoint(trace: TraceHistory, state: LiveSimState, traceWindowMs: number): void {
+  trace.times.push(state.simTime);
+ succeeded in 52ms:
+let displayParams: DisplayParams = { ...defaultDisplay };
+let currentSeed = randomSeed();
+let rng = new Rng(currentSeed);
+let state = createState(simParams, currentSeed);
+let trace = createTraceHistory(state, simParams.T);
+let isPlaying = true;
+let lastTs = performance.now();
+let stepAccumulator = 0;
+
+function writeInputs(): void {
+  setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+  setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+  setNumberInput(inputs.channelWidth, simParams.channelWidth, 2);
+  setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
+  setNumberInput(inputs.seed, currentSeed, 0);
+  setNumberInput(inputs.totalTime, simParams.T, 0);
+  setNumberInput(inputs.dt, simParams.dt, 3);
+  setNumberInput(inputs.boxWidth, simParams.boxWidth, 1);
+  setNumberInput(inputs.boxHeight, simParams.boxHeight, 1);
+  setNumberInput(inputs.wallThickness, simParams.wallThickness, 2);
+codex
+I’ve confirmed the structure: controls sidebar plus a single canvas panel stacking sim above trace. I’m now checking shared CSS to implement a page-scoped two-column layout without affecting other sections/pages.
+exec
+/bin/zsh -lc 'rg -n "sim-layout|canvas-panel|trace-canvas|inspect_diffusion_2|site-shell|canvas-head" src/style.css src/pages/*.ts -S' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+src/pages/inspect_diffusion_2.ts:483:  <div class="site-shell">
+src/pages/inspect_diffusion_2.ts:487:      <span>Page: <code>inspect_diffusion_2</code></span>
+src/pages/inspect_diffusion_2.ts:500:    <div class="sim-layout">
+src/pages/inspect_diffusion_2.ts:565:      <section class="panel canvas-panel">
+src/pages/inspect_diffusion_2.ts:567:        <div class="canvas-head">
+src/pages/inspect_diffusion_2.ts:570:        <canvas id="trace-canvas" class="trace-canvas" aria-label="Compartment fraction trace"></canvas>
+src/pages/inspect_diffusion_2.ts:581:const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
+src/pages/inspect_diffusion_3.ts:464:  <div class="site-shell">
+src/pages/inspect_diffusion_3.ts:480:    <div class="sim-layout">
+src/pages/inspect_diffusion_3.ts:545:      <section class="panel canvas-panel">
+src/pages/inspect_diffusion_3.ts:556:        <div class="canvas-head">
+src/pages/inspect_diffusion_3.ts:562:            <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
+src/pages/inspect_diffusion_3.ts:566:            <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
+src/pages/inspect_diffusion_3.ts:580:const narrowTraceCanvas = getEl<HTMLCanvasElement>('#narrow-trace-canvas');
+src/pages/inspect_diffusion_3.ts:581:const wideTraceCanvas = getEl<HTMLCanvasElement>('#wide-trace-canvas');
+src/pages/action_potential_common.ts:836:    <div class="site-shell">
+src/pages/action_potential_common.ts:845:      <div class="sim-layout">
+src/pages/action_potential_common.ts:874:        <section class="panel canvas-panel">
+src/pages/action_potential_common.ts:882:              <canvas id="trace-canvas"></canvas>
+src/pages/action_potential_common.ts:898:  const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
+exec
+/bin/zsh -lc "sed -n '1,240p' src/style.css && sed -n '240,420p' src/style.css" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+:root {
+  --bg0: #05070b;
+  --bg1: #020307;
+  --ink: #eaf2ff;
+  --muted: #9eafc7;
+  --panel: rgba(12, 16, 24, 0.86);
+  --panel-border: rgba(160, 190, 255, 0.12);
+  --accent: #42c8ff;
+  --accent-2: #9fff6a;
+  --danger: #ff6f8f;
+  --canvas-bg: #03060b;
+  --gridline: rgba(130, 178, 255, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+codex
+I’m about to make a scoped layout change for `inspect_diffusion_2` only: split the simulation panel into two columns, placing the particle canvas on the left and the trace panel on the right, with a mobile fallback to stacked columns.
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
+@@ -564,11 +564,20 @@
+ 
+-      <section class="panel canvas-panel">
+-        <canvas id="sim-canvas" aria-label="Diffusion through membrane channel simulation"></canvas>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <canvas id="trace-canvas" class="trace-canvas" aria-label="Compartment fraction trace"></canvas>
+-        <div class="legend">
+-          <span><span class="swatch" style="background: ${SIM_COLORS.outsideTrace}"></span>Left fraction trace</span>
+-          <span><span class="swatch" style="background: ${SIM_COLORS.insideTrace}"></span>Right fraction trace</span>
++      <section class="panel canvas-panel diffusion-pore-panel">
++        <div class="canvas-two-col">
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Particle Simulation</h2>
++            </div>
++            <canvas id="sim-canvas" aria-label="Diffusion through membrane channel simulation"></canvas>
++          </div>
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Compartment Fractions Over Time</h2>
++            </div>
++            <canvas id="trace-canvas" class="trace-canvas pore-trace-canvas" aria-label="Compartment fraction trace"></canvas>
++            <div class="legend">
++              <span><span class="swatch" style="background: ${SIM_COLORS.outsideTrace}"></span>Left fraction trace</span>
++              <span><span class="swatch" style="background: ${SIM_COLORS.insideTrace}"></span>Right fraction trace</span>
++            </div>
++          </div>
+         </div>
+apply_patch(auto_approved=true) exited 0 in 74ms:
+Success. Updated the following files:
+M src/pages/inspect_diffusion_2.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
+index 791d631e5e5a38b82928368d1ab3636eb4fb03f5..bc05a0b3660f3123680b5e9cd70e93819240f6fd
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
+@@ -562,15 +562,24 @@
+         </div>
+       </aside>
+ 
+-      <section class="panel canvas-panel">
+-        <canvas id="sim-canvas" aria-label="Diffusion through membrane channel simulation"></canvas>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <canvas id="trace-canvas" class="trace-canvas" aria-label="Compartment fraction trace"></canvas>
+-        <div class="legend">
+-          <span><span class="swatch" style="background: ${SIM_COLORS.outsideTrace}"></span>Left fraction trace</span>
+-          <span><span class="swatch" style="background: ${SIM_COLORS.insideTrace}"></span>Right fraction trace</span>
++      <section class="panel canvas-panel diffusion-pore-panel">
++        <div class="canvas-two-col">
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Particle Simulation</h2>
++            </div>
++            <canvas id="sim-canvas" aria-label="Diffusion through membrane channel simulation"></canvas>
++          </div>
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Compartment Fractions Over Time</h2>
++            </div>
++            <canvas id="trace-canvas" class="trace-canvas pore-trace-canvas" aria-label="Compartment fraction trace"></canvas>
++            <div class="legend">
++              <span><span class="swatch" style="background: ${SIM_COLORS.outsideTrace}"></span>Left fraction trace</span>
++              <span><span class="swatch" style="background: ${SIM_COLORS.insideTrace}"></span>Right fraction trace</span>
++            </div>
++          </div>
+         </div>
+       </section>
+     </div>
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
+index 791d631e5e5a38b82928368d1ab3636eb4fb03f5..bc05a0b3660f3123680b5e9cd70e93819240f6fd
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
+@@ -562,15 +562,24 @@
+         </div>
+       </aside>
+ 
+-      <section class="panel canvas-panel">
+-        <canvas id="sim-canvas" aria-label="Diffusion through membrane channel simulation"></canvas>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <canvas id="trace-canvas" class="trace-canvas" aria-label="Compartment fraction trace"></canvas>
+-        <div class="legend">
+-          <span><span class="swatch" style="background: ${SIM_COLORS.outsideTrace}"></span>Left fraction trace</span>
+-          <span><span class="swatch" style="background: ${SIM_COLORS.insideTrace}"></span>Right fraction trace</span>
++      <section class="panel canvas-panel diffusion-pore-panel">
++        <div class="canvas-two-col">
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Particle Simulation</h2>
++            </div>
++            <canvas id="sim-canvas" aria-label="Diffusion through membrane channel simulation"></canvas>
++          </div>
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Compartment Fractions Over Time</h2>
++            </div>
++            <canvas id="trace-canvas" class="trace-canvas pore-trace-canvas" aria-label="Compartment fraction trace"></canvas>
++            <div class="legend">
++              <span><span class="swatch" style="background: ${SIM_COLORS.outsideTrace}"></span>Left fraction trace</span>
++              <span><span class="swatch" style="background: ${SIM_COLORS.insideTrace}"></span>Right fraction trace</span>
++            </div>
++          </div>
+         </div>
+       </section>
+     </div>
+
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/style.css
+@@ -310,2 +310,15 @@
+ 
++.canvas-two-col {
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
++  gap: 10px;
++  align-items: start;
++}
++
++@media (max-width: 980px) {
++  .canvas-two-col {
++    grid-template-columns: 1fr;
++  }
++}
++
+ .subhead {
+@@ -352,2 +365,6 @@
+ 
++.diffusion-pore-panel .pore-trace-canvas {
++  height: min(54vh, 512px);
++}
++
+ .square-canvas {
+apply_patch(auto_approved=true) exited 0 in 78ms:
+Success. Updated the following files:
+M src/style.css
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
+index 791d631e5e5a38b82928368d1ab3636eb4fb03f5..bc05a0b3660f3123680b5e9cd70e93819240f6fd
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
+@@ -562,15 +562,24 @@
+         </div>
+       </aside>
+ 
+-      <section class="panel canvas-panel">
+-        <canvas id="sim-canvas" aria-label="Diffusion through membrane channel simulation"></canvas>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <canvas id="trace-canvas" class="trace-canvas" aria-label="Compartment fraction trace"></canvas>
+-        <div class="legend">
+-          <span><span class="swatch" style="background: ${SIM_COLORS.outsideTrace}"></span>Left fraction trace</span>
+-          <span><span class="swatch" style="background: ${SIM_COLORS.insideTrace}"></span>Right fraction trace</span>
++      <section class="panel canvas-panel diffusion-pore-panel">
++        <div class="canvas-two-col">
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Particle Simulation</h2>
++            </div>
++            <canvas id="sim-canvas" aria-label="Diffusion through membrane channel simulation"></canvas>
++          </div>
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Compartment Fractions Over Time</h2>
++            </div>
++            <canvas id="trace-canvas" class="trace-canvas pore-trace-canvas" aria-label="Compartment fraction trace"></canvas>
++            <div class="legend">
++              <span><span class="swatch" style="background: ${SIM_COLORS.outsideTrace}"></span>Left fraction trace</span>
++              <span><span class="swatch" style="background: ${SIM_COLORS.insideTrace}"></span>Right fraction trace</span>
++            </div>
++          </div>
+         </div>
+       </section>
+     </div>
+diff --git a/code/electrochemical_signals_progression_web/src/style.css b/code/electrochemical_signals_progression_web/src/style.css
+index ba3824db923ce0d3ef0bf0ab93e1cac5feb48dab..23f49d7d3aaa06e6b9f535bea236d50ede75c219
+--- a/code/electrochemical_signals_progression_web/src/style.css
++++ b/code/electrochemical_signals_progression_web/src/style.css
+@@ -308,6 +308,19 @@
+   gap: 6px;
+ }
+ 
++.canvas-two-col {
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
++  gap: 10px;
++  align-items: start;
++}
++
++@media (max-width: 980px) {
++  .canvas-two-col {
++    grid-template-columns: 1fr;
++  }
++}
++
+ .subhead {
+   display: flex;
+   justify-content: space-between;
+@@ -350,6 +363,10 @@
+   height: min(26vh, 208px);
+ }
+ 
++.diffusion-pore-panel .pore-trace-canvas {
++  height: min(54vh, 512px);
++}
++
+ .square-canvas {
+   aspect-ratio: 1 / 1;
+   height: auto;
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
+index 791d631e5e5a38b82928368d1ab3636eb4fb03f5..bc05a0b3660f3123680b5e9cd70e93819240f6fd
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
+@@ -562,15 +562,24 @@
+         </div>
+       </aside>
+ 
+-      <section class="panel canvas-panel">
+-        <canvas id="sim-canvas" aria-label="Diffusion through membrane channel simulation"></canvas>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <canvas id="trace-canvas" class="trace-canvas" aria-label="Compartment fraction trace"></canvas>
+-        <div class="legend">
+-          <span><span class="swatch" style="background: ${SIM_COLORS.outsideTrace}"></span>Left fraction trace</span>
+-          <span><span class="swatch" style="background: ${SIM_COLORS.insideTrace}"></span>Right fraction trace</span>
++      <section class="panel canvas-panel diffusion-pore-panel">
++        <div class="canvas-two-col">
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Particle Simulation</h2>
++            </div>
++            <canvas id="sim-canvas" aria-label="Diffusion through membrane channel simulation"></canvas>
++          </div>
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Compartment Fractions Over Time</h2>
++            </div>
++            <canvas id="trace-canvas" class="trace-canvas pore-trace-canvas" aria-label="Compartment fraction trace"></canvas>
++            <div class="legend">
++              <span><span class="swatch" style="background: ${SIM_COLORS.outsideTrace}"></span>Left fraction trace</span>
++              <span><span class="swatch" style="background: ${SIM_COLORS.insideTrace}"></span>Right fraction trace</span>
++            </div>
++          </div>
+         </div>
+       </section>
+     </div>
+diff --git a/code/electrochemical_signals_progression_web/src/style.css b/code/electrochemical_signals_progression_web/src/style.css
+index ba3824db923ce0d3ef0bf0ab93e1cac5feb48dab..23f49d7d3aaa06e6b9f535bea236d50ede75c219
+--- a/code/electrochemical_signals_progression_web/src/style.css
++++ b/code/electrochemical_signals_progression_web/src/style.css
+@@ -308,6 +308,19 @@
+   gap: 6px;
+ }
+ 
++.canvas-two-col {
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
++  gap: 10px;
++  align-items: start;
++}
++
++@media (max-width: 980px) {
++  .canvas-two-col {
++    grid-template-columns: 1fr;
++  }
++}
++
+ .subhead {
+   display: flex;
+   justify-content: space-between;
+@@ -350,6 +363,10 @@
+   height: min(26vh, 208px);
+ }
+ 
++.diffusion-pore-panel .pore-trace-canvas {
++  height: min(54vh, 512px);
++}
++
+ .square-canvas {
+   aspect-ratio: 1 / 1;
+   height: auto;
+
+codex
+Layout edits are in place. I’m now running the project build/checks to confirm the change compiles cleanly.
+exec
+/bin/zsh -lc 'cat package.json' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+{
+  "name": "electrochemical-signals-progression-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.4.1"
+  }
+}
+exec
+/bin/zsh -lc 'npm run build' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 1.08s:
+
+> electrochemical-signals-progression-web@0.1.0 build
+> tsc && vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 33 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                            0.50 kB │ gzip: 0.31 kB
+dist/inspect_diffusion_1.html                              0.58 kB │ gzip: 0.32 kB
+dist/inspect_diffusion_4.html                              0.58 kB │ gzip: 0.33 kB
+dist/inspect_nak_pump.html                                 0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_3.html                              0.59 kB │ gzip: 0.33 kB
+dist/inspect_diffusion_2.html                              0.59 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_2.html                      0.59 kB │ gzip: 0.33 kB
+dist/inspect_resting_potential_1.html                      0.60 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_nernst.html                 0.60 kB │ gzip: 0.34 kB
+dist/inspect_electrochemical_1.html                        0.61 kB │ gzip: 0.34 kB
+dist/inspect_electrochemical_3.html                        0.62 kB │ gzip: 0.35 kB
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
+index 791d631e5e5a38b82928368d1ab3636eb4fb03f5..bc05a0b3660f3123680b5e9cd70e93819240f6fd
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
+@@ -562,15 +562,24 @@
+         </div>
+       </aside>
+ 
+-      <section class="panel canvas-panel">
+-        <canvas id="sim-canvas" aria-label="Diffusion through membrane channel simulation"></canvas>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <canvas id="trace-canvas" class="trace-canvas" aria-label="Compartment fraction trace"></canvas>
+-        <div class="legend">
+-          <span><span class="swatch" style="background: ${SIM_COLORS.outsideTrace}"></span>Left fraction trace</span>
+-          <span><span class="swatch" style="background: ${SIM_COLORS.insideTrace}"></span>Right fraction trace</span>
++      <section class="panel canvas-panel diffusion-pore-panel">
++        <div class="canvas-two-col">
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Particle Simulation</h2>
++            </div>
++            <canvas id="sim-canvas" aria-label="Diffusion through membrane channel simulation"></canvas>
++          </div>
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Compartment Fractions Over Time</h2>
++            </div>
++            <canvas id="trace-canvas" class="trace-canvas pore-trace-canvas" aria-label="Compartment fraction trace"></canvas>
++            <div class="legend">
++              <span><span class="swatch" style="background: ${SIM_COLORS.outsideTrace}"></span>Left fraction trace</span>
++              <span><span class="swatch" style="background: ${SIM_COLORS.insideTrace}"></span>Right fraction trace</span>
++            </div>
++          </div>
+         </div>
+       </section>
+     </div>
+diff --git a/code/electrochemical_signals_progression_web/src/style.css b/code/electrochemical_signals_progression_web/src/style.css
+index ba3824db923ce0d3ef0bf0ab93e1cac5feb48dab..23f49d7d3aaa06e6b9f535bea236d50ede75c219
+--- a/code/electrochemical_signals_progression_web/src/style.css
++++ b/code/electrochemical_signals_progression_web/src/style.css
+@@ -308,6 +308,19 @@
+   gap: 6px;
+ }
+ 
++.canvas-two-col {
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
++  gap: 10px;
++  align-items: start;
++}
++
++@media (max-width: 980px) {
++  .canvas-two-col {
++    grid-template-columns: 1fr;
++  }
++}
++
+ .subhead {
+   display: flex;
+   justify-content: space-between;
+@@ -350,6 +363,10 @@
+   height: min(26vh, 208px);
+ }
+ 
++.diffusion-pore-panel .pore-trace-canvas {
++  height: min(54vh, 512px);
++}
++
+ .square-canvas {
+   aspect-ratio: 1 / 1;
+   height: auto;
+
+codex
+I finished the requested section-only change and the build passes. I’ll provide a concise file-by-file summary of what changed and why.
+codex
+Implemented only the **“Diffusion Through a Membrane Pore”** request by changing that page to a two-column content layout: particle simulation on the left, trace on the right.
+
+Files changed:
+- [src/pages/inspect_diffusion_2.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts)
+  - Reworked the canvas section markup into a two-column structure inside the panel.
+  - Left column now contains the particle simulation canvas.
+  - Right column now contains the trace heading, trace canvas, and legend.
+- [src/style.css](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/style.css)
+  - Added `.canvas-two-col` grid class for a 2-column layout with responsive single-column fallback on smaller screens.
+  - Added scoped `.diffusion-pore-panel .pore-trace-canvas` height rule so the right trace panel matches the left simulation panel scale.
+
+Validation run:
+- `npm run build` succeeded (`tsc && vite build`).
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
+index 791d631e5e5a38b82928368d1ab3636eb4fb03f5..bc05a0b3660f3123680b5e9cd70e93819240f6fd
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts
+@@ -562,15 +562,24 @@
+         </div>
+       </aside>
+ 
+-      <section class="panel canvas-panel">
+-        <canvas id="sim-canvas" aria-label="Diffusion through membrane channel simulation"></canvas>
+-        <div class="canvas-head">
+-          <h2>Compartment Fractions Over Time</h2>
+-        </div>
+-        <canvas id="trace-canvas" class="trace-canvas" aria-label="Compartment fraction trace"></canvas>
+-        <div class="legend">
+-          <span><span class="swatch" style="background: ${SIM_COLORS.outsideTrace}"></span>Left fraction trace</span>
+-          <span><span class="swatch" style="background: ${SIM_COLORS.insideTrace}"></span>Right fraction trace</span>
++      <section class="panel canvas-panel diffusion-pore-panel">
++        <div class="canvas-two-col">
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Particle Simulation</h2>
++            </div>
++            <canvas id="sim-canvas" aria-label="Diffusion through membrane channel simulation"></canvas>
++          </div>
++          <div class="canvas-subpanel">
++            <div class="canvas-head">
++              <h2>Compartment Fractions Over Time</h2>
++            </div>
++            <canvas id="trace-canvas" class="trace-canvas pore-trace-canvas" aria-label="Compartment fraction trace"></canvas>
++            <div class="legend">
++              <span><span class="swatch" style="background: ${SIM_COLORS.outsideTrace}"></span>Left fraction trace</span>
++              <span><span class="swatch" style="background: ${SIM_COLORS.insideTrace}"></span>Right fraction trace</span>
++            </div>
++          </div>
+         </div>
+       </section>
+     </div>
+diff --git a/code/electrochemical_signals_progression_web/src/style.css b/code/electrochemical_signals_progression_web/src/style.css
+index ba3824db923ce0d3ef0bf0ab93e1cac5feb48dab..23f49d7d3aaa06e6b9f535bea236d50ede75c219
+--- a/code/electrochemical_signals_progression_web/src/style.css
++++ b/code/electrochemical_signals_progression_web/src/style.css
+@@ -308,6 +308,19 @@
+   gap: 6px;
+ }
+ 
++.canvas-two-col {
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
++  gap: 10px;
++  align-items: start;
++}
++
++@media (max-width: 980px) {
++  .canvas-two-col {
++    grid-template-columns: 1fr;
++  }
++}
++
+ .subhead {
+   display: flex;
+   justify-content: space-between;
+@@ -350,6 +363,10 @@
+   height: min(26vh, 208px);
+ }
+ 
++.diffusion-pore-panel .pore-trace-canvas {
++  height: min(54vh, 512px);
++}
++
+ .square-canvas {
+   aspect-ratio: 1 / 1;
+   height: auto;
+
+tokens used
+32,308
+Implemented only the **“Diffusion Through a Membrane Pore”** request by changing that page to a two-column content layout: particle simulation on the left, trace on the right.
+
+Files changed:
+- [src/pages/inspect_diffusion_2.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_2.ts)
+  - Reworked the canvas section markup into a two-column structure inside the panel.
+  - Left column now contains the particle simulation canvas.
+  - Right column now contains the trace heading, trace canvas, and legend.
+- [src/style.css](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/style.css)
+  - Added `.canvas-two-col` grid class for a 2-column layout with responsive single-column fallback on smaller screens.
+  - Added scoped `.diffusion-pore-panel .pore-trace-canvas` height rule so the right trace panel matches the left simulation panel scale.
+
+Validation run:
+- `npm run build` succeeded (`tsc && vite build`).

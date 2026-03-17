@@ -1,0 +1,669 @@
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccbfb-1408-7090-a25f-741ef0e2765a
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Narrow vs Wide Pore Diffusion
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Narrow vs Wide Pore Diffusion
+
+- change such that the trace axes are square and the same
+  size and aligned with their corresponding particle
+  simulation
+
+mcp startup: no servers
+codex
+I’m going to locate the “Narrow vs Wide Pore Diffusion” implementation, then adjust the layout so each trace axis is square, equal-sized, and aligned with its matching particle simulation panel. After that I’ll run the project checks/build to verify nothing regressed.
+exec
+/bin/zsh -lc 'rg --files' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+src/pages/resting_two_ion_common.ts
+src/pages/inspect_nernst_one_ion.ts
+src/pages/sim_shared.ts
+src/pages/inspect_ap_threshold_all_or_none.ts
+src/pages/inspect_resting_potential_charge_wall.ts
+src/pages/action_potential_common.ts
+src/pages/inspect_field_attraction.ts
+src/pages/inspect_diffusion_selective_permeability_rate.ts
+src/pages/inspect_diffusion_permeability.ts
+src/pages/inspect_two_ion_selective_channels.ts
+src/pages/inspect_diffusion_pore.ts
+src/pages/inspect_ap_phases.ts
+src/pages/inspect_diffusion_selective.ts
+src/pages/inspect_membrane_potential_intro.ts
+src/pages/inspect_diffusion_free.ts
+src/pages/inspect_ap_subthreshold.ts
+src/pages/inspect_nak_pump_gradients.ts
+src/lessons.ts
+src/index.ts
+src/style.css
+exec
+/bin/zsh -lc 'rg -n "Narrow vs Wide Pore Diffusion|narrow|wide pore|pore" src/pages change_requests.md inspect_diffusion_permeability.html inspect_diffusion_pore.html src/lessons.json' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+inspect_diffusion_pore.html:10:    <script type="module" src="/src/pages/inspect_diffusion_pore.ts"></script>
+inspect_diffusion_permeability.html:6:    <title>Narrow vs Wide Pore Diffusion</title>
+src/lessons.json:13:    "id": "inspect_diffusion_pore",
+src/lessons.json:15:    "description": "A membrane separates two compartments and particles can cross only through one pore",
+src/lessons.json:16:    "htmlPath": "inspect_diffusion_pore.html",
+src/lessons.json:17:    "tsEntry": "src/pages/inspect_diffusion_pore.ts",
+src/lessons.json:25:    "description": "Compare a narrow pore with a wide pore to see how permeability changes transport",
+src/lessons.json:35:    "description": "Two particle types cross different pores, introducing selective permeability",
+src/lessons.json:45:    "description": "Hold pore geometry fixed and control cross-membrane flow by ion-specific pore permeability probabilities.",
+src/lessons.json:85:    "description": "Two ion species with selective pores approach the same equilibrium concentration ratio at different rates",
+src/lessons.json:135:    "description": "A staged visual model links depolarization, repolarization, and recovery to selective pores",
+change_requests.md:1:# Narrow vs Wide Pore Diffusion
+src/pages/action_potential_common.ts:868:                <div class="field"><label for="na-channel-max">Na+ max pore width</label><input id="na-channel-max" type="number" min="2" step="0.5" /></div>
+src/pages/action_potential_common.ts:869:                <div class="field"><label for="k-channel-max">K+ max pore width</label><input id="k-channel-max" type="number" min="2" step="0.5" /></div>
+src/pages/inspect_diffusion_selective_permeability_rate.ts:561:        <li>Each ion crosses only through its own pore.</li>
+src/pages/inspect_diffusion_selective_permeability_rate.ts:585:              <div class="field"><label for="type0-permeability">Ion A pore permeability</label><input id="type0-permeability" type="number" min="0" max="1" step="0.01" /></div>
+src/pages/inspect_diffusion_selective_permeability_rate.ts:586:              <div class="field"><label for="type1-permeability">Ion B pore permeability</label><input id="type1-permeability" type="number" min="0" max="1" step="0.01" /></div>
+src/pages/inspect_diffusion_selective_permeability_rate.ts:754:    '<span class="accent-2">Selective permeability comes from pore open probability</span>',
+src/pages/inspect_diffusion_selective_permeability_rate.ts:755:    'Ion A can cross only through the Ion A pore window',
+src/pages/inspect_diffusion_selective_permeability_rate.ts:756:    'Ion B can cross only through the Ion B pore window',
+codex
+I found the target page in `src/pages/inspect_diffusion_permeability.ts`; next I’m inspecting its layout/CSS and draw sizing logic to make the trace panels square and aligned with each corresponding simulation canvas.
+exec
+/bin/zsh -lc "sed -n '430,620p' src/pages/inspect_diffusion_permeability.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '620,920p' src/pages/inspect_diffusion_permeability.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '1,220p' src/pages/inspect_diffusion_permeability.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+      if (!started) {
+        ctx.moveTo(px, py);
+        started = true;
+      } else {
+        ctx.lineTo(px, py);
+      }
+    }
+    if (started) ctx.stroke();
+  }
+
+  if (title.trim()) {
+    ctx.fillStyle = 'rgba(232, 243, 255, 0.92)';
+    ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+  }
+
+  ctx.fillStyle = 'rgba(232, 243, 255, 0.78)';
+  ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+  ctx.textAlign = 'left';
+ succeeded in 51ms:
+let lastTs = performance.now();
+let stepAccumulator = 0;
+
+function writeInputs(): void {
+  setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+  setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
+  setNumberInput(inputs.narrowChannelWidth, simParams.narrowChannelWidth, 2);
+  setNumberInput(inputs.wideChannelWidth, simParams.wideChannelWidth, 2);
+  setNumberInput(inputs.playbackSpeed, displayParams.playbackSpeed, 2);
+  setNumberInput(inputs.seed, currentSeed, 0);
+  setNumberInput(inputs.totalTime, simParams.T, 0);
+  setNumberInput(inputs.dt, simParams.dt, 3);
+  setNumberInput(inputs.boxWidth, simParams.boxWidth, 1);
+  setNumberInput(inputs.boxHeight, simParams.boxHeight, 1);
+  setNumberInput(inputs.wallThickness, simParams.wallThickness, 2);
+  setNumberInput(inputs.pointSize, displayParams.pointSize, 2);
+  setNumberInput(inputs.targetFps, displayParams.targetFps, 0);
+}
+
+function readSimInputs(): SimParams {
+ succeeded in 51ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_NUM_PARTICLES,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  centeredChannelBounds,
+  drawMembraneWall
+} from './sim_shared';
+
+interface SimParams {
+  T: number;
+  dt: number;
+  numParticles: number;
+  boxWidth: number;
+  boxHeight: number;
+  wallThickness: number;
+  diffusionSd: number;
+  narrowChannelWidth: number;
+  wideChannelWidth: number;
+exec
+/bin/zsh -lc "rg -n \"canvas-grid-2|canvas-column|canvas-subpanel|square-canvas|trace-canvas|canvas-panel\" src/style.css src/pages/inspect_diffusion_permeability.ts && sed -n '1,320p' src/style.css" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+src/style.css:283:.canvas-panel {
+src/style.css:288:.canvas-grid-2 {
+src/style.css:294:.canvas-column {
+src/style.css:301:  .canvas-grid-2 {
+src/style.css:306:.canvas-subpanel {
+src/style.css:362:.trace-canvas {
+src/style.css:366:.diffusion-pore-panel .pore-trace-canvas {
+src/style.css:370:.square-canvas {
+src/pages/inspect_diffusion_permeability.ts:543:      <section class="panel canvas-panel">
+src/pages/inspect_diffusion_permeability.ts:544:        <div class="canvas-grid-2">
+src/pages/inspect_diffusion_permeability.ts:545:          <div class="canvas-column">
+src/pages/inspect_diffusion_permeability.ts:546:            <div class="canvas-subpanel">
+src/pages/inspect_diffusion_permeability.ts:547:              <canvas id="narrow-canvas" class="square-canvas" aria-label="Narrow pore diffusion comparison"></canvas>
+src/pages/inspect_diffusion_permeability.ts:549:            <div class="canvas-subpanel">
+src/pages/inspect_diffusion_permeability.ts:550:              <canvas id="wide-canvas" class="square-canvas" aria-label="Wide pore diffusion comparison"></canvas>
+src/pages/inspect_diffusion_permeability.ts:553:          <div class="canvas-column">
+src/pages/inspect_diffusion_permeability.ts:554:            <div class="canvas-subpanel">
+src/pages/inspect_diffusion_permeability.ts:555:              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
+src/pages/inspect_diffusion_permeability.ts:557:            <div class="canvas-subpanel">
+src/pages/inspect_diffusion_permeability.ts:558:              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
+exec
+/bin/zsh -lc "sed -n '320,460p' src/style.css" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+    grid-template-columns: 1fr;
+  }
+}
+
+.subhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.subhead h3 {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.canvas-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+codex
+I confirmed the issue is mostly layout/CSS: simulation canvases are square, but trace canvases are shorter rectangles. I’m now making this page a row-paired grid (`narrow sim ↔ narrow trace`, `wide sim ↔ wide trace`) and forcing trace canvases to the same square sizing as simulation canvases.
+exec
+/bin/zsh -lc 'rg -n "canvas-grid-2" src/pages src/style.css' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+src/style.css:288:.canvas-grid-2 {
+src/style.css:301:  .canvas-grid-2 {
+src/pages/resting_two_ion_common.ts:553:          <div class="canvas-grid-2">
+src/pages/inspect_nernst_one_ion.ts:486:        <div class="canvas-grid-2">
+src/pages/action_potential_common.ts:875:          <div class="canvas-grid-2">
+src/pages/inspect_diffusion_selective_permeability_rate.ts:636:        <div class="canvas-grid-2">
+src/pages/inspect_diffusion_permeability.ts:544:        <div class="canvas-grid-2">
+src/pages/inspect_membrane_potential_intro.ts:366:        <div class="canvas-grid-2">
+src/pages/inspect_two_ion_selective_channels.ts:691:        <div class="canvas-grid-2">
+src/pages/inspect_diffusion_selective.ts:610:        <div class="canvas-grid-2">
+src/pages/inspect_nak_pump_gradients.ts:642:        <div class="canvas-grid-2">
+exec
+/bin/zsh -lc 'rg -n "function drawState|function drawSideTrace|resize|clientWidth|devicePixelRatio|canvas.width" src/pages/inspect_diffusion_permeability.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+199:function resizeState(state: LiveState, nextCount: number, rng: Rng): LiveState {
+290:  const dpr = window.devicePixelRatio || 1;
+294:  if (canvas.width !== w || canvas.height !== h) {
+295:    canvas.width = w;
+306:function drawState(canvas: HTMLCanvasElement, state: LiveState, pointSize: number): void {
+310:  const w = canvas.width;
+312:  const dpr = window.devicePixelRatio || 1;
+360:function drawSideTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: number, traceWindowMs: number, title: string): void {
+364:  const w = canvas.width;
+366:  const dpr = window.devicePixelRatio || 1;
+687:  narrowState = resizeState(narrowState, simParams.numParticles, narrowRng);
+688:  wideState = resizeState(wideState, simParams.numParticles, wideRng);
+821:window.addEventListener('resize', () => render());
+exec
+/bin/zsh -lc "sed -n '250,420p' src/pages/inspect_diffusion_permeability.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+      xNew = tryingToCrossLeft
+        ? reflectIntoBounds(2 * state.leftWall - xTrial, -halfW, halfW)
+        : reflectIntoBounds(2 * state.rightWall - xTrial, -halfW, halfW);
+    } else if (!inChannel && xTrial > state.leftWall && xTrial < state.rightWall) {
+      xNew = xPrev < 0 ? state.leftWall : state.rightWall;
+    }
+    state.x[i] = xNew;
+    state.y[i] = yNew;
+  }
+  state.stepCount += 1;
+  state.simTime = state.stepCount * state.dt;
+  const counts = countSides(state);
+  state.leftCount = counts.left;
+  state.rightCount = counts.right;
+}
+
+function createTraceHistory(state: LiveState, traceWindowMs: number): TraceHistory {
+  const trace: TraceHistory = { times: [], leftFrac: [], rightFrac: [] };
+  pushTracePoint(trace, state, traceWindowMs);
+  return trace;
+codex
+I’m applying two focused edits in the target page: adding square sizing to the two trace canvases, and updating the trace renderer so the plotted axis box itself is square. This keeps each trace panel equal-sized and visually aligned with its paired particle simulation.
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+@@ -385,8 +385,12 @@
+ 
+-  const padL = 62 * dpr;
+-  const padR = 12 * dpr;
+-  const padT = 18 * dpr;
+-  const padB = 22 * dpr;
+-  const plotW = Math.max(1, w - padL - padR);
+-  const plotH = Math.max(1, h - padT - padB);
++  const labelPadL = 52 * dpr;
++  const labelPadB = 24 * dpr;
++  const edgePad = 12 * dpr;
++  const maxPlotW = Math.max(1, w - labelPadL - edgePad * 2);
++  const maxPlotH = Math.max(1, h - labelPadB - edgePad * 2);
++  const plotSize = Math.max(1, Math.min(maxPlotW, maxPlotH));
++  const padL = labelPadL + (maxPlotW - plotSize) / 2 + edgePad;
++  const padT = edgePad + (maxPlotH - plotSize) / 2;
++  const plotW = plotSize;
++  const plotH = plotSize;
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+@@ -554,6 +558,6 @@
+             <div class="canvas-subpanel">
+-              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="narrow-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+             <div class="canvas-subpanel">
+-              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="wide-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+apply_patch(auto_approved=true) exited 0 in 83ms:
+Success. Updated the following files:
+M src/pages/inspect_diffusion_permeability.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+index a6daa0d010195f287e32c2c95a4516c6e7a75000..873b6cfad0aa4d25c7fa4f8fd384b57a11a723d1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+@@ -383,12 +383,16 @@
+     ctx.stroke();
+   }
+ 
+-  const padL = 62 * dpr;
+-  const padR = 12 * dpr;
+-  const padT = 18 * dpr;
+-  const padB = 22 * dpr;
+-  const plotW = Math.max(1, w - padL - padR);
+-  const plotH = Math.max(1, h - padT - padB);
++  const labelPadL = 52 * dpr;
++  const labelPadB = 24 * dpr;
++  const edgePad = 12 * dpr;
++  const maxPlotW = Math.max(1, w - labelPadL - edgePad * 2);
++  const maxPlotH = Math.max(1, h - labelPadB - edgePad * 2);
++  const plotSize = Math.max(1, Math.min(maxPlotW, maxPlotH));
++  const padL = labelPadL + (maxPlotW - plotSize) / 2 + edgePad;
++  const padT = edgePad + (maxPlotH - plotSize) / 2;
++  const plotW = plotSize;
++  const plotH = plotSize;
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const tRange = Math.max(traceWindowMs, 1);
+   const xMap = (tt: number) => padL + ((tt - startTime) / tRange) * plotW;
+@@ -552,10 +556,10 @@
+           </div>
+           <div class="canvas-column">
+             <div class="canvas-subpanel">
+-              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="narrow-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+             <div class="canvas-subpanel">
+-              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="wide-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+           </div>
+         </div>
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+index a6daa0d010195f287e32c2c95a4516c6e7a75000..873b6cfad0aa4d25c7fa4f8fd384b57a11a723d1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+@@ -383,12 +383,16 @@
+     ctx.stroke();
+   }
+ 
+-  const padL = 62 * dpr;
+-  const padR = 12 * dpr;
+-  const padT = 18 * dpr;
+-  const padB = 22 * dpr;
+-  const plotW = Math.max(1, w - padL - padR);
+-  const plotH = Math.max(1, h - padT - padB);
++  const labelPadL = 52 * dpr;
++  const labelPadB = 24 * dpr;
++  const edgePad = 12 * dpr;
++  const maxPlotW = Math.max(1, w - labelPadL - edgePad * 2);
++  const maxPlotH = Math.max(1, h - labelPadB - edgePad * 2);
++  const plotSize = Math.max(1, Math.min(maxPlotW, maxPlotH));
++  const padL = labelPadL + (maxPlotW - plotSize) / 2 + edgePad;
++  const padT = edgePad + (maxPlotH - plotSize) / 2;
++  const plotW = plotSize;
++  const plotH = plotSize;
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const tRange = Math.max(traceWindowMs, 1);
+   const xMap = (tt: number) => padL + ((tt - startTime) / tRange) * plotW;
+@@ -552,10 +556,10 @@
+           </div>
+           <div class="canvas-column">
+             <div class="canvas-subpanel">
+-              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="narrow-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+             <div class="canvas-subpanel">
+-              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="wide-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+           </div>
+         </div>
+
+exec
+/bin/zsh -lc 'cat package.json' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+{
+  "name": "electrochemical-signals-progression-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "lint": "tsc --noEmit",
+    "check-pages": "node scripts/check-pages.mjs",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.4.1"
+  }
+}
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+index a6daa0d010195f287e32c2c95a4516c6e7a75000..873b6cfad0aa4d25c7fa4f8fd384b57a11a723d1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+@@ -383,12 +383,16 @@
+     ctx.stroke();
+   }
+ 
+-  const padL = 62 * dpr;
+-  const padR = 12 * dpr;
+-  const padT = 18 * dpr;
+-  const padB = 22 * dpr;
+-  const plotW = Math.max(1, w - padL - padR);
+-  const plotH = Math.max(1, h - padT - padB);
++  const labelPadL = 52 * dpr;
++  const labelPadB = 24 * dpr;
++  const edgePad = 12 * dpr;
++  const maxPlotW = Math.max(1, w - labelPadL - edgePad * 2);
++  const maxPlotH = Math.max(1, h - labelPadB - edgePad * 2);
++  const plotSize = Math.max(1, Math.min(maxPlotW, maxPlotH));
++  const padL = labelPadL + (maxPlotW - plotSize) / 2 + edgePad;
++  const padT = edgePad + (maxPlotH - plotSize) / 2;
++  const plotW = plotSize;
++  const plotH = plotSize;
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const tRange = Math.max(traceWindowMs, 1);
+   const xMap = (tt: number) => padL + ((tt - startTime) / tRange) * plotW;
+@@ -552,10 +556,10 @@
+           </div>
+           <div class="canvas-column">
+             <div class="canvas-subpanel">
+-              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="narrow-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+             <div class="canvas-subpanel">
+-              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="wide-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+           </div>
+         </div>
+
+codex
+I’ve made the page-specific code changes and will now run `lint` and `build` to verify the repository still compiles cleanly.
+exec
+/bin/zsh -lc 'npm run build' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'npm run lint' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 774ms:
+
+> electrochemical-signals-progression-web@0.1.0 lint
+> tsc --noEmit
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+index a6daa0d010195f287e32c2c95a4516c6e7a75000..873b6cfad0aa4d25c7fa4f8fd384b57a11a723d1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+@@ -383,12 +383,16 @@
+     ctx.stroke();
+   }
+ 
+-  const padL = 62 * dpr;
+-  const padR = 12 * dpr;
+-  const padT = 18 * dpr;
+-  const padB = 22 * dpr;
+-  const plotW = Math.max(1, w - padL - padR);
+-  const plotH = Math.max(1, h - padT - padB);
++  const labelPadL = 52 * dpr;
++  const labelPadB = 24 * dpr;
++  const edgePad = 12 * dpr;
++  const maxPlotW = Math.max(1, w - labelPadL - edgePad * 2);
++  const maxPlotH = Math.max(1, h - labelPadB - edgePad * 2);
++  const plotSize = Math.max(1, Math.min(maxPlotW, maxPlotH));
++  const padL = labelPadL + (maxPlotW - plotSize) / 2 + edgePad;
++  const padT = edgePad + (maxPlotH - plotSize) / 2;
++  const plotW = plotSize;
++  const plotH = plotSize;
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const tRange = Math.max(traceWindowMs, 1);
+   const xMap = (tt: number) => padL + ((tt - startTime) / tRange) * plotW;
+@@ -552,10 +556,10 @@
+           </div>
+           <div class="canvas-column">
+             <div class="canvas-subpanel">
+-              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="narrow-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+             <div class="canvas-subpanel">
+-              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="wide-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+           </div>
+         </div>
+
+ succeeded in 1.26s:
+
+> electrochemical-signals-progression-web@0.1.0 build
+> tsc && vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 37 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                         0.50 kB │ gzip: 0.31 kB
+dist/inspect_diffusion_free.html                                        0.58 kB │ gzip: 0.32 kB
+dist/inspect_diffusion_selective.html                                   0.59 kB │ gzip: 0.33 kB
+dist/inspect_nernst_one_ion.html                                        0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_pore.html                                        0.60 kB │ gzip: 0.34 kB
+dist/inspect_nak_pump_gradients.html                                    0.60 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_permeability.html                                0.60 kB │ gzip: 0.34 kB
+dist/inspect_membrane_potential_intro.html                              0.60 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_charge_wall.html                         0.60 kB │ gzip: 0.34 kB
+dist/inspect_field_attraction.html                                      0.61 kB │ gzip: 0.34 kB
+dist/inspect_two_ion_selective_channels.html                            0.63 kB │ gzip: 0.35 kB
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+index a6daa0d010195f287e32c2c95a4516c6e7a75000..873b6cfad0aa4d25c7fa4f8fd384b57a11a723d1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+@@ -383,12 +383,16 @@
+     ctx.stroke();
+   }
+ 
+-  const padL = 62 * dpr;
+-  const padR = 12 * dpr;
+-  const padT = 18 * dpr;
+-  const padB = 22 * dpr;
+-  const plotW = Math.max(1, w - padL - padR);
+-  const plotH = Math.max(1, h - padT - padB);
++  const labelPadL = 52 * dpr;
++  const labelPadB = 24 * dpr;
++  const edgePad = 12 * dpr;
++  const maxPlotW = Math.max(1, w - labelPadL - edgePad * 2);
++  const maxPlotH = Math.max(1, h - labelPadB - edgePad * 2);
++  const plotSize = Math.max(1, Math.min(maxPlotW, maxPlotH));
++  const padL = labelPadL + (maxPlotW - plotSize) / 2 + edgePad;
++  const padT = edgePad + (maxPlotH - plotSize) / 2;
++  const plotW = plotSize;
++  const plotH = plotSize;
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const tRange = Math.max(traceWindowMs, 1);
+   const xMap = (tt: number) => padL + ((tt - startTime) / tRange) * plotW;
+@@ -552,10 +556,10 @@
+           </div>
+           <div class="canvas-column">
+             <div class="canvas-subpanel">
+-              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="narrow-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+             <div class="canvas-subpanel">
+-              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="wide-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+           </div>
+         </div>
+
+exec
+/bin/zsh -lc 'git status --short && git diff -- src/pages/inspect_diffusion_permeability.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+ M README.md
+ D inspect_diffusion_1.html
+ D inspect_diffusion_2.html
+ D inspect_diffusion_3.html
+ D inspect_diffusion_4.html
+ D inspect_electrochemical_1.html
+ D inspect_electrochemical_2.html
+ D inspect_electrochemical_3.html
+ D inspect_resting_potential_1.html
+ D inspect_resting_potential_2.html
+ D inspect_resting_potential_3.html
+ D inspect_resting_potential_4.html
+ M package.json
+ M src/index.ts
+ D src/pages/inspect_diffusion_1.ts
+ D src/pages/inspect_diffusion_2.ts
+ D src/pages/inspect_diffusion_3.ts
+ D src/pages/inspect_diffusion_4.ts
+ D src/pages/inspect_electrochemical_1.ts
+ D src/pages/inspect_electrochemical_2.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+index a6daa0d010195f287e32c2c95a4516c6e7a75000..873b6cfad0aa4d25c7fa4f8fd384b57a11a723d1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+@@ -383,12 +383,16 @@
+     ctx.stroke();
+   }
+ 
+-  const padL = 62 * dpr;
+-  const padR = 12 * dpr;
+-  const padT = 18 * dpr;
+-  const padB = 22 * dpr;
+-  const plotW = Math.max(1, w - padL - padR);
+-  const plotH = Math.max(1, h - padT - padB);
++  const labelPadL = 52 * dpr;
++  const labelPadB = 24 * dpr;
++  const edgePad = 12 * dpr;
++  const maxPlotW = Math.max(1, w - labelPadL - edgePad * 2);
++  const maxPlotH = Math.max(1, h - labelPadB - edgePad * 2);
++  const plotSize = Math.max(1, Math.min(maxPlotW, maxPlotH));
++  const padL = labelPadL + (maxPlotW - plotSize) / 2 + edgePad;
++  const padT = edgePad + (maxPlotH - plotSize) / 2;
++  const plotW = plotSize;
++  const plotH = plotSize;
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const tRange = Math.max(traceWindowMs, 1);
+   const xMap = (tt: number) => padL + ((tt - startTime) / tRange) * plotW;
+@@ -552,10 +556,10 @@
+           </div>
+           <div class="canvas-column">
+             <div class="canvas-subpanel">
+-              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="narrow-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+             <div class="canvas-subpanel">
+-              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="wide-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+           </div>
+         </div>
+
+codex
+Implemented only the **“Narrow vs Wide Pore Diffusion”** section request.
+
+### Files changed
+- [src/pages/inspect_diffusion_permeability.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts)
+  - Made both trace canvases square by adding `square-canvas` to:
+    - `#narrow-trace-canvas`
+    - `#wide-trace-canvas`
+  - Updated `drawSideTrace(...)` so the plotted trace axis box is explicitly square (`plotW === plotH`) and centered with label padding.
+  - Result: trace axes are square, same-sized, and aligned with their corresponding particle simulation panels.
+
+### Checks run
+- `npm run lint` passed (`tsc --noEmit`)
+- `npm run build` passed (`tsc && vite build`)
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+index a6daa0d010195f287e32c2c95a4516c6e7a75000..873b6cfad0aa4d25c7fa4f8fd384b57a11a723d1
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts
+@@ -383,12 +383,16 @@
+     ctx.stroke();
+   }
+ 
+-  const padL = 62 * dpr;
+-  const padR = 12 * dpr;
+-  const padT = 18 * dpr;
+-  const padB = 22 * dpr;
+-  const plotW = Math.max(1, w - padL - padR);
+-  const plotH = Math.max(1, h - padT - padB);
++  const labelPadL = 52 * dpr;
++  const labelPadB = 24 * dpr;
++  const edgePad = 12 * dpr;
++  const maxPlotW = Math.max(1, w - labelPadL - edgePad * 2);
++  const maxPlotH = Math.max(1, h - labelPadB - edgePad * 2);
++  const plotSize = Math.max(1, Math.min(maxPlotW, maxPlotH));
++  const padL = labelPadL + (maxPlotW - plotSize) / 2 + edgePad;
++  const padT = edgePad + (maxPlotH - plotSize) / 2;
++  const plotW = plotSize;
++  const plotH = plotSize;
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const tRange = Math.max(traceWindowMs, 1);
+   const xMap = (tt: number) => padL + ((tt - startTime) / tRange) * plotW;
+@@ -552,10 +556,10 @@
+           </div>
+           <div class="canvas-column">
+             <div class="canvas-subpanel">
+-              <canvas id="narrow-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="narrow-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+             <div class="canvas-subpanel">
+-              <canvas id="wide-trace-canvas" class="trace-canvas"></canvas>
++              <canvas id="wide-trace-canvas" class="trace-canvas square-canvas"></canvas>
+             </div>
+           </div>
+         </div>
+
+tokens used
+26,772
+Implemented only the **“Narrow vs Wide Pore Diffusion”** section request.
+
+### Files changed
+- [src/pages/inspect_diffusion_permeability.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_diffusion_permeability.ts)
+  - Made both trace canvases square by adding `square-canvas` to:
+    - `#narrow-trace-canvas`
+    - `#wide-trace-canvas`
+  - Updated `drawSideTrace(...)` so the plotted trace axis box is explicitly square (`plotW === plotH`) and centered with label padding.
+  - Result: trace axes are square, same-sized, and aligned with their corresponding particle simulation panels.
+
+### Checks run
+- `npm run lint` passed (`tsc --noEmit`)
+- `npm run build` passed (`tsc && vite build`)

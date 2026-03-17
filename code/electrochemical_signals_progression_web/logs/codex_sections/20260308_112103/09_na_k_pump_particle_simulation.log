@@ -1,0 +1,2097 @@
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccad1-a83a-7410-a125-f406a547cb74
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Na/K Pump Particle Simulation
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Na/K Pump Particle Simulation
+
+- Remove "Particle Simulation" from title
+
+- THe pump UI controls "Pump cycles per step" and "Pump
+  capture radius" are not intuitive. Change to a single UI
+  control called "Pump strength" that adjusts both of these
+  parameters. 
+
+- Remove membrane potential from the trace. This sim is just
+  about showing that without a pump, equilibrium is always
+  equal NA and K on both side. With the pump, equilibrium is
+  3 NA out and 2 K in.
+
+mcp startup: no servers
+codex
+I’ll locate the “Na/K Pump Particle Simulation” implementation and update only that section’s requested behavior: title text, pump controls consolidation, and removing membrane potential from the trace. Then I’ll run the relevant checks/build.
+exec
+/bin/zsh -lc 'ls -la' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'rg -n "Na/K Pump|Particle Simulation|Pump cycles per step|Pump capture radius|membrane potential|Pump strength" -S .' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+total 272
+drwxr-xr-x@ 34 mq20185996  staff   1088 Mar  8 11:18 .
+drwxr-xr-x@ 16 mq20185996  staff    512 Mar  6 21:53 ..
+-rw-r--r--@  1 mq20185996  staff     37 Feb 20 19:46 .gitignore
+-rw-r--r--@  1 mq20185996  staff   1239 Mar  7 18:41 README.md
+-rw-r--r--@  1 mq20185996  staff   2315 Mar  8 11:16 change_requests.md
+drwxr-xr-x@ 18 mq20185996  staff    576 Mar  8 10:06 dist
+drwxr-xr-x@  3 mq20185996  staff     96 Mar  6 21:52 docs
+-rw-r--r--@  1 mq20185996  staff    327 Feb 24 00:31 index.html
+-rw-r--r--@  1 mq20185996  staff    352 Mar  7 22:32 inspect_action_potential_1.html
+-rw-r--r--@  1 mq20185996  staff    355 Mar  7 22:32 inspect_action_potential_2.html
+-rw-r--r--@  1 mq20185996  staff    353 Mar  7 22:32 inspect_action_potential_3.html
+-rw-r--r--@  1 mq20185996  staff    322 Mar  1 21:52 inspect_diffusion_1.html
+-rw-r--r--@  1 mq20185996  staff    339 Mar  1 21:52 inspect_diffusion_2.html
+-rw-r--r--@  1 mq20185996  staff    335 Mar  1 21:52 inspect_diffusion_3.html
+-rw-r--r--@  1 mq20185996  staff    328 Mar  1 21:52 inspect_diffusion_4.html
+-rw-r--r--@  1 mq20185996  staff    353 Mar  1 21:52 inspect_electrochemical_1.html
+-rw-r--r--@  1 mq20185996  staff    346 Mar  7 17:50 inspect_electrochemical_2.html
+-rw-r--r--@  1 mq20185996  staff    365 Mar  7 17:33 inspect_electrochemical_3.html
+-rw-r--r--@  1 mq20185996  staff    361 Mar  1 21:52 inspect_electrochemical_4.html
+ succeeded in 50ms:
+./src/pages/resting_two_ion_common.ts:375:  ctx.fillText('membrane potential proxy (mV-scaled)', 0, 0);
+./src/pages/inspect_resting_potential_nernst.ts:324:  ctx.fillText('membrane potential proxy (mV-scaled)', 0, 0);
+./src/pages/inspect_resting_potential_nernst.ts:437:                Purple is the simulated membrane potential from compartment concentrations.
+./src/pages/inspect_resting_potential_nernst.ts:453:          <span><span class="swatch" style="background:${SIM_COLORS.totalTrace}"></span>Simulated membrane potential trace</span>
+./docs/evaluation/instructor_observation_sheet.md:60:- [ ] The membrane potential should equal one ion's concentration ratio only
+./change_requests.md:52:- Remove the text: Particle Simulation Two selective
+./change_requests.md:56:# Na/K Pump Particle Simulation
+./change_requests.md:57:- Remove "Particle Simulation" from title
+./change_requests.md:59:- THe pump UI controls "Pump cycles per step" and "Pump
+./change_requests.md:61:  control called "Pump strength" that adjusts both of these
+./change_requests.md:64:- Remove membrane potential from the trace. This sim is just
+./src/pages/inspect_electrochemical_2.ts:567:            <div class="subhead"><h3>Particle Simulation</h3><span class="tiny">Single centered pore plus a left-edge charge wall</span></div>
+./src/index.ts:12:      <p class="eyebrow">A teaching sequence that moves from diffusion, to membrane transport, to electrical attraction, to membrane potential and resting potential.</p>
+./src/index.ts:54:          <strong>Na/K Pump Establishes Gradients</strong>
+./src/pages/inspect_nak_pump.ts:517:  ctx.fillText('Na+/K+ Passive Channels + Active Na/K Pump', 12 * dpr, 14 * dpr);
+./src/pages/inspect_nak_pump.ts:606:      <h1>Na/K Pump Particle Simulation</h1>
+./src/pages/inspect_nak_pump.ts:635:              <div class="field"><label for="pump-rate">Pump cycles per step</label><input id="pump-rate" type="number" min="0" max="4" step="0.01" /></div>
+./src/pages/inspect_nak_pump.ts:636:              <div class="field"><label for="pump-capture-radius">Pump capture radius</label><input id="pump-capture-radius" type="number" min="1" max="20" step="0.5" /></div>
+./docs/evaluation/student_feedback_form.md:70:- Prior confidence with membrane potential concepts before this session: low / medium / high
+./docs/evaluation/concept_inventory.md:85:Why is the resting membrane potential usually not equal to the equilibrium potential of just one ion?
+codex
+I found the target in `src/pages/inspect_nak_pump.ts`. Next I’ll inspect its control wiring and chart series so I can make only the required changes without touching other sections.
+exec
+/bin/zsh -lc "sed -n '1,260p' src/pages/inspect_nak_pump.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '260,560p' src/pages/inspect_nak_pump.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc "sed -n '560,920p' src/pages/inspect_nak_pump.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+import '../style.css';
+import {
+  DEFAULT_DIFFUSION_SD,
+  DEFAULT_NUM_PARTICLES,
+  drawMembraneWall,
+  MAX_PARTICLES,
+  SIM_COLORS,
+  evenlySpacedChannelBounds,
+  fieldColor,
+  leftEdgeChargeWallX,
+  wallFieldDrift
+} from './sim_shared';
+
+type IonType = 0 | 1; // 0 = Na+, 1 = K+
+
+interface SimParams {
+  T: number;
+  dt: number;
+  numParticles: number;
+  naFraction: number;
+ succeeded in 50ms:
+    charges,
+    numParticles: p.numParticles,
+    dt: p.dt,
+    simTime: 0,
+    stepCount: 0,
+    boxWidth: p.boxWidth,
+    boxHeight: p.boxHeight,
+    leftWall,
+    rightWall,
+    chargeWallX: p.chargeWallX,
+    naYMin,
+    naYMax,
+    kYMin,
+    kYMax,
+    naLeft: 0,
+    naRight: 0,
+    kLeft: 0,
+    kRight: 0,
+    vmProxy: 0
+  };
+ succeeded in 51ms:
+    ctx.lineWidth = 1.8 * dpr;
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < trace.times.length; i += 1) {
+      if (trace.times[i] < startTime) continue;
+      const px = xMap(trace.times[i]);
+      const py = yFrac(s.data[i]);
+      if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+    }
+    if (started) ctx.stroke();
+  }
+
+  ctx.strokeStyle = SIM_COLORS.totalTrace;
+  ctx.lineWidth = 1.8 * dpr;
+  ctx.setLineDash([5 * dpr, 4 * dpr]);
+  ctx.beginPath();
+  let started = false;
+  for (let i = 0; i < trace.times.length; i += 1) {
+    if (trace.times[i] < startTime) continue;
+    const px = xMap(trace.times[i]);
+codex
+I’ve identified all required edits in `inspect_nak_pump.ts`. I’ll now patch it to: rename the page title, replace the two pump inputs with one “Pump strength” control that drives both internals, and remove the membrane-potential series/labels from the trace and legend.
+exec
+/bin/zsh -lc 'cat tsconfig.json' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_webexec
+/bin/zsh -lc 'cat package.json' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "include": ["src"]
+}
+ succeeded in 52ms:
+{
+  "name": "electrochemical-signals-progression-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.4.1"
+  }
+}
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+@@ -30,4 +30,3 @@
+   chargeWallX: number;
+-  pumpRate: number;
+-  pumpCaptureRadius: number;
++  pumpStrength: number;
+ }
+@@ -68,3 +67,2 @@
+   kInsideFrac: number[];
+-  vmProxy: number[];
+ }
+@@ -125,4 +123,3 @@
+   chargeWallX: leftEdgeChargeWallX(100),
+-  pumpRate: 0.7,
+-  pumpCaptureRadius: 7
++  pumpStrength: 1
+ };
+@@ -182,4 +179,3 @@
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(params.pumpRate, 0, 4),
+-    pumpCaptureRadius: clamp(params.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(params.pumpStrength, 0, 2)
+   };
+@@ -346,4 +342,6 @@
+ function applyPump(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: boolean): void {
+-  if (!pumpEnabled || params.pumpRate <= 0) return;
+-  const radius = params.pumpCaptureRadius;
++  const strength = clamp(params.pumpStrength, 0, 2);
++  const rate = clamp(0.7 * strength, 0, 4);
++  const radius = clamp(7 * strength, 1, 20);
++  if (!pumpEnabled || rate <= 0) return;
+   const pumpY = ((state.naYMin + state.naYMax) * 0.5 + (state.kYMin + state.kYMax) * 0.5) * 0.5;
+@@ -360,4 +358,4 @@
+ 
+-  let cycles = Math.floor(params.pumpRate * state.dt);
+-  if (rng.next() < params.pumpRate * state.dt - cycles) cycles += 1;
++  let cycles = Math.floor(rate * state.dt);
++  if (rng.next() < rate * state.dt - cycles) cycles += 1;
+   cycles = clamp(cycles, 0, 20);
+@@ -418,3 +416,2 @@
+   trace.kInsideFrac.push(state.kLeft / Math.max(1, state.kLeft + state.kRight));
+-  trace.vmProxy.push(state.vmProxy);
+   const minTime = Math.max(0, state.simTime - traceWindowMs);
+@@ -424,3 +421,2 @@
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+@@ -430,3 +426,2 @@
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+@@ -435,3 +430,3 @@
+ function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
+-  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [], vmProxy: [] };
++  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [] };
+   pushTrace(trace, state, traceWindowMs);
+@@ -538,8 +533,3 @@
+   const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(1, traceWindowMs)) * plotW;
+-  let vmMax = 1;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] >= startTime) vmMax = Math.max(vmMax, Math.abs(trace.vmProxy[i]));
+-  }
+   const yFrac = (v: number) => padT + (1 - v) * plotH;
+-  const yVm = (v: number) => padT + (1 - (v + vmMax) / Math.max(1e-6, 2 * vmMax)) * plotH;
+ 
+@@ -571,19 +561,5 @@
+ 
+-  ctx.strokeStyle = SIM_COLORS.totalTrace;
+-  ctx.lineWidth = 1.8 * dpr;
+-  ctx.setLineDash([5 * dpr, 4 * dpr]);
+-  ctx.beginPath();
+-  let started = false;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] < startTime) continue;
+-    const px = xMap(trace.times[i]);
+-    const py = yVm(trace.vmProxy[i]);
+-    if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+-  }
+-  if (started) ctx.stroke();
+-  ctx.setLineDash([]);
+-
+   ctx.fillStyle = 'rgba(232,243,255,0.92)';
+   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+-  ctx.fillText('Inside fractions: Na (blue), K (orange); Vm proxy (dashed purple)', 12 * dpr, 14 * dpr);
++  ctx.fillText('Inside fractions: Na (blue), K (orange)', 12 * dpr, 14 * dpr);
+   ctx.fillStyle = 'rgba(232,243,255,0.78)';
+@@ -595,3 +571,3 @@
+   ctx.textAlign = 'center';
+-  ctx.fillText('fraction (solid) and Vm proxy (mV-scaled, dashed)', 0, 0);
++  ctx.fillText('inside fraction', 0, 0);
+   ctx.restore();
+@@ -605,3 +581,3 @@
+       <p class="eyebrow">Passive Selective Permeability vs Active Pumping</p>
+-      <h1>Na/K Pump Particle Simulation</h1>
++      <h1>Na/K Pump</h1>
+       <ul class="key-points">
+@@ -634,4 +610,3 @@
+               <div class="field"><label for="k-channel-width">K+ channel width</label><input id="k-channel-width" type="number" min="0.5" step="0.5" /></div>
+-              <div class="field"><label for="pump-rate">Pump cycles per step</label><input id="pump-rate" type="number" min="0" max="4" step="0.01" /></div>
+-              <div class="field"><label for="pump-capture-radius">Pump capture radius</label><input id="pump-capture-radius" type="number" min="1" max="20" step="0.5" /></div>
++              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
+             </div>
+@@ -647,3 +622,3 @@
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Gradient + Voltage Traces</h3><span class="tiny">Inside fractions for Na+/K+ and Vm proxy</span></div>
++            <div class="subhead"><h3>Gradient Traces</h3><span class="tiny">Inside fractions for Na+/K+</span></div>
+             <canvas id="trace-canvas"></canvas>
+@@ -655,3 +630,2 @@
+           <span><span class="swatch" style="background:${SIM_COLORS.ionC}"></span>Na/K pump</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.totalTrace}"></span>Vm proxy (dashed, mV-scaled)</span>
+         </div>
+@@ -673,4 +647,3 @@
+   kChannelWidth: getEl<HTMLInputElement>('#k-channel-width'),
+-  pumpRate: getEl<HTMLInputElement>('#pump-rate'),
+-  pumpCaptureRadius: getEl<HTMLInputElement>('#pump-capture-radius')
++  pumpStrength: getEl<HTMLInputElement>('#pump-strength')
+ };
+@@ -703,4 +676,3 @@
+   setNumberInput(inputs.kChannelWidth, simParams.kChannelWidth, 2);
+-  setNumberInput(inputs.pumpRate, simParams.pumpRate, 2);
+-  setNumberInput(inputs.pumpCaptureRadius, simParams.pumpCaptureRadius, 2);
++  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+@@ -726,4 +698,3 @@
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(Number(inputs.pumpRate.value) || 0, 0, 4),
+-    pumpCaptureRadius: clamp(Number(inputs.pumpCaptureRadius.value) || defaultSim.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(Number(inputs.pumpStrength.value) || 0, 0, 2)
+   });
+apply_patch(auto_approved=true) exited 0 in 90ms:
+Success. Updated the following files:
+M src/pages/inspect_nak_pump.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+index 2f49cc6426fe5e78b48cfe24f69bed07791d92f3..e412f3742c75552763c618b4fc0e44634d2ecf56
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+@@ -28,8 +28,7 @@
+   kChannelWidth: number;
+   electricStrength: number;
+   chargeWallX: number;
+-  pumpRate: number;
+-  pumpCaptureRadius: number;
++  pumpStrength: number;
+ }
+ 
+ interface DisplayParams {
+@@ -66,7 +65,6 @@
+   times: number[];
+   naInsideFrac: number[];
+   kInsideFrac: number[];
+-  vmProxy: number[];
+ }
+ 
+ class Rng {
+@@ -123,8 +121,7 @@
+   kChannelWidth: 22,
+   electricStrength: -0.12,
+   chargeWallX: leftEdgeChargeWallX(100),
+-  pumpRate: 0.7,
+-  pumpCaptureRadius: 7
++  pumpStrength: 1
+ };
+ 
+ const defaultDisplay: DisplayParams = {
+@@ -180,8 +177,7 @@
+     kChannelWidth: clamp(params.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(params.electricStrength, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(params.pumpRate, 0, 4),
+-    pumpCaptureRadius: clamp(params.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(params.pumpStrength, 0, 2)
+   };
+ }
+ 
+@@ -344,8 +340,10 @@
+ }
+ 
+ function applyPump(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: boolean): void {
+-  if (!pumpEnabled || params.pumpRate <= 0) return;
+-  const radius = params.pumpCaptureRadius;
++  const strength = clamp(params.pumpStrength, 0, 2);
++  const rate = clamp(0.7 * strength, 0, 4);
++  const radius = clamp(7 * strength, 1, 20);
++  if (!pumpEnabled || rate <= 0) return;
+   const pumpY = ((state.naYMin + state.naYMax) * 0.5 + (state.kYMin + state.kYMax) * 0.5) * 0.5;
+   const naCandidates: number[] = [];
+   const kCandidates: number[] = [];
+@@ -358,8 +356,8 @@
+   shuffleInPlace(naCandidates, rng);
+   shuffleInPlace(kCandidates, rng);
+ 
+-  let cycles = Math.floor(params.pumpRate * state.dt);
+-  if (rng.next() < params.pumpRate * state.dt - cycles) cycles += 1;
++  let cycles = Math.floor(rate * state.dt);
++  if (rng.next() < rate * state.dt - cycles) cycles += 1;
+   cycles = clamp(cycles, 0, 20);
+ 
+   let naCursor = 0;
+@@ -416,24 +414,21 @@
+   trace.times.push(state.simTime);
+   trace.naInsideFrac.push(state.naLeft / Math.max(1, state.naLeft + state.naRight));
+   trace.kInsideFrac.push(state.kLeft / Math.max(1, state.kLeft + state.kRight));
+-  trace.vmProxy.push(state.vmProxy);
+   const minTime = Math.max(0, state.simTime - traceWindowMs);
+   while (trace.times.length > 1 && trace.times[0] < minTime) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+   while (trace.times.length > TRACE_HISTORY_MAX_POINTS) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+ }
+ 
+ function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
+-  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [], vmProxy: [] };
++  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [] };
+   pushTrace(trace, state, traceWindowMs);
+   return trace;
+ }
+@@ -536,12 +531,7 @@
+   const plotH = Math.max(1, h - padT - padB);
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(1, traceWindowMs)) * plotW;
+-  let vmMax = 1;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] >= startTime) vmMax = Math.max(vmMax, Math.abs(trace.vmProxy[i]));
+-  }
+   const yFrac = (v: number) => padT + (1 - v) * plotH;
+-  const yVm = (v: number) => padT + (1 - (v + vmMax) / Math.max(1e-6, 2 * vmMax)) * plotH;
+ 
+   ctx.strokeStyle = 'rgba(180,220,255,0.28)';
+   ctx.lineWidth = 1 * dpr;
+@@ -569,23 +559,9 @@
+     if (started) ctx.stroke();
+   }
+ 
+-  ctx.strokeStyle = SIM_COLORS.totalTrace;
+-  ctx.lineWidth = 1.8 * dpr;
+-  ctx.setLineDash([5 * dpr, 4 * dpr]);
+-  ctx.beginPath();
+-  let started = false;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] < startTime) continue;
+-    const px = xMap(trace.times[i]);
+-    const py = yVm(trace.vmProxy[i]);
+-    if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+-  }
+-  if (started) ctx.stroke();
+-  ctx.setLineDash([]);
+-
+   ctx.fillStyle = 'rgba(232,243,255,0.92)';
+   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+-  ctx.fillText('Inside fractions: Na (blue), K (orange); Vm proxy (dashed purple)', 12 * dpr, 14 * dpr);
++  ctx.fillText('Inside fractions: Na (blue), K (orange)', 12 * dpr, 14 * dpr);
+   ctx.fillStyle = 'rgba(232,243,255,0.78)';
+   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+   ctx.fillText('time (ms)', padL + plotW - 52 * dpr, h - 6 * dpr);
+@@ -593,7 +569,7 @@
+   ctx.translate(12 * dpr, padT + plotH / 2);
+   ctx.rotate(-Math.PI / 2);
+   ctx.textAlign = 'center';
+-  ctx.fillText('fraction (solid) and Vm proxy (mV-scaled, dashed)', 0, 0);
++  ctx.fillText('inside fraction', 0, 0);
+   ctx.restore();
+ }
+ 
+@@ -603,7 +579,7 @@
+     <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>inspect_nak_pump</code></span></div>
+     <header class="page-head">
+       <p class="eyebrow">Passive Selective Permeability vs Active Pumping</p>
+-      <h1>Na/K Pump Particle Simulation</h1>
++      <h1>Na/K Pump</h1>
+       <ul class="key-points">
+         <li>Convention: left = inside, right = outside.</li>
+         <li>Na+ and K+ diffuse through separate passive channels.</li>
+@@ -632,8 +608,7 @@
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="na-channel-width">Na+ channel width</label><input id="na-channel-width" type="number" min="0.5" step="0.5" /></div>
+               <div class="field"><label for="k-channel-width">K+ channel width</label><input id="k-channel-width" type="number" min="0.5" step="0.5" /></div>
+-              <div class="field"><label for="pump-rate">Pump cycles per step</label><input id="pump-rate" type="number" min="0" max="4" step="0.01" /></div>
+-              <div class="field"><label for="pump-capture-radius">Pump capture radius</label><input id="pump-capture-radius" type="number" min="1" max="20" step="0.5" /></div>
++              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
+             </div>
+           </div>
+         </div>
+@@ -645,7 +620,7 @@
+             <canvas id="particle-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Gradient + Voltage Traces</h3><span class="tiny">Inside fractions for Na+/K+ and Vm proxy</span></div>
++            <div class="subhead"><h3>Gradient Traces</h3><span class="tiny">Inside fractions for Na+/K+</span></div>
+             <canvas id="trace-canvas"></canvas>
+           </div>
+         </div>
+@@ -653,7 +628,6 @@
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Na+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>K+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionC}"></span>Na/K pump</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.totalTrace}"></span>Vm proxy (dashed, mV-scaled)</span>
+         </div>
+       </section>
+     </div>
+@@ -671,8 +645,7 @@
+   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+   naChannelWidth: getEl<HTMLInputElement>('#na-channel-width'),
+   kChannelWidth: getEl<HTMLInputElement>('#k-channel-width'),
+-  pumpRate: getEl<HTMLInputElement>('#pump-rate'),
+-  pumpCaptureRadius: getEl<HTMLInputElement>('#pump-capture-radius')
++  pumpStrength: getEl<HTMLInputElement>('#pump-strength')
+ };
+ const buttons = {
+   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
+@@ -701,8 +674,7 @@
+   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
+   setNumberInput(inputs.naChannelWidth, simParams.naChannelWidth, 2);
+   setNumberInput(inputs.kChannelWidth, simParams.kChannelWidth, 2);
+-  setNumberInput(inputs.pumpRate, simParams.pumpRate, 2);
+-  setNumberInput(inputs.pumpCaptureRadius, simParams.pumpCaptureRadius, 2);
++  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+ }
+ 
+@@ -724,8 +696,7 @@
+     kChannelWidth: clamp(Number(inputs.kChannelWidth.value) || defaultSim.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(Number(inputs.electricStrength.value) || 0, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(Number(inputs.pumpRate.value) || 0, 0, 4),
+-    pumpCaptureRadius: clamp(Number(inputs.pumpCaptureRadius.value) || defaultSim.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(Number(inputs.pumpStrength.value) || 0, 0, 2)
+   });
+ }
+ 
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+index 2f49cc6426fe5e78b48cfe24f69bed07791d92f3..e412f3742c75552763c618b4fc0e44634d2ecf56
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+@@ -28,8 +28,7 @@
+   kChannelWidth: number;
+   electricStrength: number;
+   chargeWallX: number;
+-  pumpRate: number;
+-  pumpCaptureRadius: number;
++  pumpStrength: number;
+ }
+ 
+ interface DisplayParams {
+@@ -66,7 +65,6 @@
+   times: number[];
+   naInsideFrac: number[];
+   kInsideFrac: number[];
+-  vmProxy: number[];
+ }
+ 
+ class Rng {
+@@ -123,8 +121,7 @@
+   kChannelWidth: 22,
+   electricStrength: -0.12,
+   chargeWallX: leftEdgeChargeWallX(100),
+-  pumpRate: 0.7,
+-  pumpCaptureRadius: 7
++  pumpStrength: 1
+ };
+ 
+ const defaultDisplay: DisplayParams = {
+@@ -180,8 +177,7 @@
+     kChannelWidth: clamp(params.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(params.electricStrength, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(params.pumpRate, 0, 4),
+-    pumpCaptureRadius: clamp(params.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(params.pumpStrength, 0, 2)
+   };
+ }
+ 
+@@ -344,8 +340,10 @@
+ }
+ 
+ function applyPump(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: boolean): void {
+-  if (!pumpEnabled || params.pumpRate <= 0) return;
+-  const radius = params.pumpCaptureRadius;
++  const strength = clamp(params.pumpStrength, 0, 2);
++  const rate = clamp(0.7 * strength, 0, 4);
++  const radius = clamp(7 * strength, 1, 20);
++  if (!pumpEnabled || rate <= 0) return;
+   const pumpY = ((state.naYMin + state.naYMax) * 0.5 + (state.kYMin + state.kYMax) * 0.5) * 0.5;
+   const naCandidates: number[] = [];
+   const kCandidates: number[] = [];
+@@ -358,8 +356,8 @@
+   shuffleInPlace(naCandidates, rng);
+   shuffleInPlace(kCandidates, rng);
+ 
+-  let cycles = Math.floor(params.pumpRate * state.dt);
+-  if (rng.next() < params.pumpRate * state.dt - cycles) cycles += 1;
++  let cycles = Math.floor(rate * state.dt);
++  if (rng.next() < rate * state.dt - cycles) cycles += 1;
+   cycles = clamp(cycles, 0, 20);
+ 
+   let naCursor = 0;
+@@ -416,24 +414,21 @@
+   trace.times.push(state.simTime);
+   trace.naInsideFrac.push(state.naLeft / Math.max(1, state.naLeft + state.naRight));
+   trace.kInsideFrac.push(state.kLeft / Math.max(1, state.kLeft + state.kRight));
+-  trace.vmProxy.push(state.vmProxy);
+   const minTime = Math.max(0, state.simTime - traceWindowMs);
+   while (trace.times.length > 1 && trace.times[0] < minTime) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+   while (trace.times.length > TRACE_HISTORY_MAX_POINTS) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+ }
+ 
+ function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
+-  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [], vmProxy: [] };
++  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [] };
+   pushTrace(trace, state, traceWindowMs);
+   return trace;
+ }
+@@ -536,12 +531,7 @@
+   const plotH = Math.max(1, h - padT - padB);
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(1, traceWindowMs)) * plotW;
+-  let vmMax = 1;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] >= startTime) vmMax = Math.max(vmMax, Math.abs(trace.vmProxy[i]));
+-  }
+   const yFrac = (v: number) => padT + (1 - v) * plotH;
+-  const yVm = (v: number) => padT + (1 - (v + vmMax) / Math.max(1e-6, 2 * vmMax)) * plotH;
+ 
+   ctx.strokeStyle = 'rgba(180,220,255,0.28)';
+   ctx.lineWidth = 1 * dpr;
+@@ -569,23 +559,9 @@
+     if (started) ctx.stroke();
+   }
+ 
+-  ctx.strokeStyle = SIM_COLORS.totalTrace;
+-  ctx.lineWidth = 1.8 * dpr;
+-  ctx.setLineDash([5 * dpr, 4 * dpr]);
+-  ctx.beginPath();
+-  let started = false;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] < startTime) continue;
+-    const px = xMap(trace.times[i]);
+-    const py = yVm(trace.vmProxy[i]);
+-    if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+-  }
+-  if (started) ctx.stroke();
+-  ctx.setLineDash([]);
+-
+   ctx.fillStyle = 'rgba(232,243,255,0.92)';
+   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+-  ctx.fillText('Inside fractions: Na (blue), K (orange); Vm proxy (dashed purple)', 12 * dpr, 14 * dpr);
++  ctx.fillText('Inside fractions: Na (blue), K (orange)', 12 * dpr, 14 * dpr);
+   ctx.fillStyle = 'rgba(232,243,255,0.78)';
+   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+   ctx.fillText('time (ms)', padL + plotW - 52 * dpr, h - 6 * dpr);
+@@ -593,7 +569,7 @@
+   ctx.translate(12 * dpr, padT + plotH / 2);
+   ctx.rotate(-Math.PI / 2);
+   ctx.textAlign = 'center';
+-  ctx.fillText('fraction (solid) and Vm proxy (mV-scaled, dashed)', 0, 0);
++  ctx.fillText('inside fraction', 0, 0);
+   ctx.restore();
+ }
+ 
+@@ -603,7 +579,7 @@
+     <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>inspect_nak_pump</code></span></div>
+     <header class="page-head">
+       <p class="eyebrow">Passive Selective Permeability vs Active Pumping</p>
+-      <h1>Na/K Pump Particle Simulation</h1>
++      <h1>Na/K Pump</h1>
+       <ul class="key-points">
+         <li>Convention: left = inside, right = outside.</li>
+         <li>Na+ and K+ diffuse through separate passive channels.</li>
+@@ -632,8 +608,7 @@
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="na-channel-width">Na+ channel width</label><input id="na-channel-width" type="number" min="0.5" step="0.5" /></div>
+               <div class="field"><label for="k-channel-width">K+ channel width</label><input id="k-channel-width" type="number" min="0.5" step="0.5" /></div>
+-              <div class="field"><label for="pump-rate">Pump cycles per step</label><input id="pump-rate" type="number" min="0" max="4" step="0.01" /></div>
+-              <div class="field"><label for="pump-capture-radius">Pump capture radius</label><input id="pump-capture-radius" type="number" min="1" max="20" step="0.5" /></div>
++              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
+             </div>
+           </div>
+         </div>
+@@ -645,7 +620,7 @@
+             <canvas id="particle-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Gradient + Voltage Traces</h3><span class="tiny">Inside fractions for Na+/K+ and Vm proxy</span></div>
++            <div class="subhead"><h3>Gradient Traces</h3><span class="tiny">Inside fractions for Na+/K+</span></div>
+             <canvas id="trace-canvas"></canvas>
+           </div>
+         </div>
+@@ -653,7 +628,6 @@
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Na+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>K+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionC}"></span>Na/K pump</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.totalTrace}"></span>Vm proxy (dashed, mV-scaled)</span>
+         </div>
+       </section>
+     </div>
+@@ -671,8 +645,7 @@
+   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+   naChannelWidth: getEl<HTMLInputElement>('#na-channel-width'),
+   kChannelWidth: getEl<HTMLInputElement>('#k-channel-width'),
+-  pumpRate: getEl<HTMLInputElement>('#pump-rate'),
+-  pumpCaptureRadius: getEl<HTMLInputElement>('#pump-capture-radius')
++  pumpStrength: getEl<HTMLInputElement>('#pump-strength')
+ };
+ const buttons = {
+   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
+@@ -701,8 +674,7 @@
+   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
+   setNumberInput(inputs.naChannelWidth, simParams.naChannelWidth, 2);
+   setNumberInput(inputs.kChannelWidth, simParams.kChannelWidth, 2);
+-  setNumberInput(inputs.pumpRate, simParams.pumpRate, 2);
+-  setNumberInput(inputs.pumpCaptureRadius, simParams.pumpCaptureRadius, 2);
++  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+ }
+ 
+@@ -724,8 +696,7 @@
+     kChannelWidth: clamp(Number(inputs.kChannelWidth.value) || defaultSim.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(Number(inputs.electricStrength.value) || 0, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(Number(inputs.pumpRate.value) || 0, 0, 4),
+-    pumpCaptureRadius: clamp(Number(inputs.pumpCaptureRadius.value) || defaultSim.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(Number(inputs.pumpStrength.value) || 0, 0, 2)
+   });
+ }
+ 
+
+codex
+I’ve applied the main patch. I’m now validating for any leftover references to removed fields/text and then running the build.
+exec
+/bin/zsh -lc "rg -n \"pumpRate|pumpCaptureRadius|vmProxy|Gradient \\+ Voltage|Particle Simulation|pump-rate|pump-capture-radius|totalTrace\" src/pages/inspect_nak_pump.ts -S" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+61:  vmProxy: number;
+214:  state.vmProxy = 80 * ((naLeft + kLeft) - (naRight + kRight)) / total;
+274:    vmProxy: 0
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+index 2f49cc6426fe5e78b48cfe24f69bed07791d92f3..e412f3742c75552763c618b4fc0e44634d2ecf56
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+@@ -28,8 +28,7 @@
+   kChannelWidth: number;
+   electricStrength: number;
+   chargeWallX: number;
+-  pumpRate: number;
+-  pumpCaptureRadius: number;
++  pumpStrength: number;
+ }
+ 
+ interface DisplayParams {
+@@ -66,7 +65,6 @@
+   times: number[];
+   naInsideFrac: number[];
+   kInsideFrac: number[];
+-  vmProxy: number[];
+ }
+ 
+ class Rng {
+@@ -123,8 +121,7 @@
+   kChannelWidth: 22,
+   electricStrength: -0.12,
+   chargeWallX: leftEdgeChargeWallX(100),
+-  pumpRate: 0.7,
+-  pumpCaptureRadius: 7
++  pumpStrength: 1
+ };
+ 
+ const defaultDisplay: DisplayParams = {
+@@ -180,8 +177,7 @@
+     kChannelWidth: clamp(params.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(params.electricStrength, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(params.pumpRate, 0, 4),
+-    pumpCaptureRadius: clamp(params.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(params.pumpStrength, 0, 2)
+   };
+ }
+ 
+@@ -344,8 +340,10 @@
+ }
+ 
+ function applyPump(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: boolean): void {
+-  if (!pumpEnabled || params.pumpRate <= 0) return;
+-  const radius = params.pumpCaptureRadius;
++  const strength = clamp(params.pumpStrength, 0, 2);
++  const rate = clamp(0.7 * strength, 0, 4);
++  const radius = clamp(7 * strength, 1, 20);
++  if (!pumpEnabled || rate <= 0) return;
+   const pumpY = ((state.naYMin + state.naYMax) * 0.5 + (state.kYMin + state.kYMax) * 0.5) * 0.5;
+   const naCandidates: number[] = [];
+   const kCandidates: number[] = [];
+@@ -358,8 +356,8 @@
+   shuffleInPlace(naCandidates, rng);
+   shuffleInPlace(kCandidates, rng);
+ 
+-  let cycles = Math.floor(params.pumpRate * state.dt);
+-  if (rng.next() < params.pumpRate * state.dt - cycles) cycles += 1;
++  let cycles = Math.floor(rate * state.dt);
++  if (rng.next() < rate * state.dt - cycles) cycles += 1;
+   cycles = clamp(cycles, 0, 20);
+ 
+   let naCursor = 0;
+@@ -416,24 +414,21 @@
+   trace.times.push(state.simTime);
+   trace.naInsideFrac.push(state.naLeft / Math.max(1, state.naLeft + state.naRight));
+   trace.kInsideFrac.push(state.kLeft / Math.max(1, state.kLeft + state.kRight));
+-  trace.vmProxy.push(state.vmProxy);
+   const minTime = Math.max(0, state.simTime - traceWindowMs);
+   while (trace.times.length > 1 && trace.times[0] < minTime) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+   while (trace.times.length > TRACE_HISTORY_MAX_POINTS) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+ }
+ 
+ function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
+-  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [], vmProxy: [] };
++  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [] };
+   pushTrace(trace, state, traceWindowMs);
+   return trace;
+ }
+@@ -536,12 +531,7 @@
+   const plotH = Math.max(1, h - padT - padB);
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(1, traceWindowMs)) * plotW;
+-  let vmMax = 1;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] >= startTime) vmMax = Math.max(vmMax, Math.abs(trace.vmProxy[i]));
+-  }
+   const yFrac = (v: number) => padT + (1 - v) * plotH;
+-  const yVm = (v: number) => padT + (1 - (v + vmMax) / Math.max(1e-6, 2 * vmMax)) * plotH;
+ 
+   ctx.strokeStyle = 'rgba(180,220,255,0.28)';
+   ctx.lineWidth = 1 * dpr;
+@@ -569,23 +559,9 @@
+     if (started) ctx.stroke();
+   }
+ 
+-  ctx.strokeStyle = SIM_COLORS.totalTrace;
+-  ctx.lineWidth = 1.8 * dpr;
+-  ctx.setLineDash([5 * dpr, 4 * dpr]);
+-  ctx.beginPath();
+-  let started = false;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] < startTime) continue;
+-    const px = xMap(trace.times[i]);
+-    const py = yVm(trace.vmProxy[i]);
+-    if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+-  }
+-  if (started) ctx.stroke();
+-  ctx.setLineDash([]);
+-
+   ctx.fillStyle = 'rgba(232,243,255,0.92)';
+   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+-  ctx.fillText('Inside fractions: Na (blue), K (orange); Vm proxy (dashed purple)', 12 * dpr, 14 * dpr);
++  ctx.fillText('Inside fractions: Na (blue), K (orange)', 12 * dpr, 14 * dpr);
+   ctx.fillStyle = 'rgba(232,243,255,0.78)';
+   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+   ctx.fillText('time (ms)', padL + plotW - 52 * dpr, h - 6 * dpr);
+@@ -593,7 +569,7 @@
+   ctx.translate(12 * dpr, padT + plotH / 2);
+   ctx.rotate(-Math.PI / 2);
+   ctx.textAlign = 'center';
+-  ctx.fillText('fraction (solid) and Vm proxy (mV-scaled, dashed)', 0, 0);
++  ctx.fillText('inside fraction', 0, 0);
+   ctx.restore();
+ }
+ 
+@@ -603,7 +579,7 @@
+     <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>inspect_nak_pump</code></span></div>
+     <header class="page-head">
+       <p class="eyebrow">Passive Selective Permeability vs Active Pumping</p>
+-      <h1>Na/K Pump Particle Simulation</h1>
++      <h1>Na/K Pump</h1>
+       <ul class="key-points">
+         <li>Convention: left = inside, right = outside.</li>
+         <li>Na+ and K+ diffuse through separate passive channels.</li>
+@@ -632,8 +608,7 @@
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="na-channel-width">Na+ channel width</label><input id="na-channel-width" type="number" min="0.5" step="0.5" /></div>
+               <div class="field"><label for="k-channel-width">K+ channel width</label><input id="k-channel-width" type="number" min="0.5" step="0.5" /></div>
+-              <div class="field"><label for="pump-rate">Pump cycles per step</label><input id="pump-rate" type="number" min="0" max="4" step="0.01" /></div>
+-              <div class="field"><label for="pump-capture-radius">Pump capture radius</label><input id="pump-capture-radius" type="number" min="1" max="20" step="0.5" /></div>
++              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
+             </div>
+           </div>
+         </div>
+@@ -645,7 +620,7 @@
+             <canvas id="particle-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Gradient + Voltage Traces</h3><span class="tiny">Inside fractions for Na+/K+ and Vm proxy</span></div>
++            <div class="subhead"><h3>Gradient Traces</h3><span class="tiny">Inside fractions for Na+/K+</span></div>
+             <canvas id="trace-canvas"></canvas>
+           </div>
+         </div>
+@@ -653,7 +628,6 @@
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Na+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>K+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionC}"></span>Na/K pump</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.totalTrace}"></span>Vm proxy (dashed, mV-scaled)</span>
+         </div>
+       </section>
+     </div>
+@@ -671,8 +645,7 @@
+   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+   naChannelWidth: getEl<HTMLInputElement>('#na-channel-width'),
+   kChannelWidth: getEl<HTMLInputElement>('#k-channel-width'),
+-  pumpRate: getEl<HTMLInputElement>('#pump-rate'),
+-  pumpCaptureRadius: getEl<HTMLInputElement>('#pump-capture-radius')
++  pumpStrength: getEl<HTMLInputElement>('#pump-strength')
+ };
+ const buttons = {
+   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
+@@ -701,8 +674,7 @@
+   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
+   setNumberInput(inputs.naChannelWidth, simParams.naChannelWidth, 2);
+   setNumberInput(inputs.kChannelWidth, simParams.kChannelWidth, 2);
+-  setNumberInput(inputs.pumpRate, simParams.pumpRate, 2);
+-  setNumberInput(inputs.pumpCaptureRadius, simParams.pumpCaptureRadius, 2);
++  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+ }
+ 
+@@ -724,8 +696,7 @@
+     kChannelWidth: clamp(Number(inputs.kChannelWidth.value) || defaultSim.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(Number(inputs.electricStrength.value) || 0, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(Number(inputs.pumpRate.value) || 0, 0, 4),
+-    pumpCaptureRadius: clamp(Number(inputs.pumpCaptureRadius.value) || defaultSim.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(Number(inputs.pumpStrength.value) || 0, 0, 2)
+   });
+ }
+ 
+
+exec
+/bin/zsh -lc 'npm run build' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 1.11s:
+
+> electrochemical-signals-progression-web@0.1.0 build
+> tsc && vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 33 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                            0.50 kB │ gzip: 0.31 kB
+dist/inspect_diffusion_1.html                              0.58 kB │ gzip: 0.32 kB
+dist/inspect_diffusion_4.html                              0.58 kB │ gzip: 0.33 kB
+dist/inspect_nak_pump.html                                 0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_3.html                              0.59 kB │ gzip: 0.33 kB
+dist/inspect_resting_potential_2.html                      0.59 kB │ gzip: 0.33 kB
+dist/inspect_diffusion_2.html                              0.59 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_1.html                      0.60 kB │ gzip: 0.34 kB
+dist/inspect_resting_potential_nernst.html                 0.60 kB │ gzip: 0.34 kB
+dist/inspect_electrochemical_1.html                        0.61 kB │ gzip: 0.34 kB
+dist/inspect_electrochemical_3.html                        0.62 kB │ gzip: 0.35 kB
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+index 2f49cc6426fe5e78b48cfe24f69bed07791d92f3..e412f3742c75552763c618b4fc0e44634d2ecf56
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+@@ -28,8 +28,7 @@
+   kChannelWidth: number;
+   electricStrength: number;
+   chargeWallX: number;
+-  pumpRate: number;
+-  pumpCaptureRadius: number;
++  pumpStrength: number;
+ }
+ 
+ interface DisplayParams {
+@@ -66,7 +65,6 @@
+   times: number[];
+   naInsideFrac: number[];
+   kInsideFrac: number[];
+-  vmProxy: number[];
+ }
+ 
+ class Rng {
+@@ -123,8 +121,7 @@
+   kChannelWidth: 22,
+   electricStrength: -0.12,
+   chargeWallX: leftEdgeChargeWallX(100),
+-  pumpRate: 0.7,
+-  pumpCaptureRadius: 7
++  pumpStrength: 1
+ };
+ 
+ const defaultDisplay: DisplayParams = {
+@@ -180,8 +177,7 @@
+     kChannelWidth: clamp(params.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(params.electricStrength, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(params.pumpRate, 0, 4),
+-    pumpCaptureRadius: clamp(params.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(params.pumpStrength, 0, 2)
+   };
+ }
+ 
+@@ -344,8 +340,10 @@
+ }
+ 
+ function applyPump(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: boolean): void {
+-  if (!pumpEnabled || params.pumpRate <= 0) return;
+-  const radius = params.pumpCaptureRadius;
++  const strength = clamp(params.pumpStrength, 0, 2);
++  const rate = clamp(0.7 * strength, 0, 4);
++  const radius = clamp(7 * strength, 1, 20);
++  if (!pumpEnabled || rate <= 0) return;
+   const pumpY = ((state.naYMin + state.naYMax) * 0.5 + (state.kYMin + state.kYMax) * 0.5) * 0.5;
+   const naCandidates: number[] = [];
+   const kCandidates: number[] = [];
+@@ -358,8 +356,8 @@
+   shuffleInPlace(naCandidates, rng);
+   shuffleInPlace(kCandidates, rng);
+ 
+-  let cycles = Math.floor(params.pumpRate * state.dt);
+-  if (rng.next() < params.pumpRate * state.dt - cycles) cycles += 1;
++  let cycles = Math.floor(rate * state.dt);
++  if (rng.next() < rate * state.dt - cycles) cycles += 1;
+   cycles = clamp(cycles, 0, 20);
+ 
+   let naCursor = 0;
+@@ -416,24 +414,21 @@
+   trace.times.push(state.simTime);
+   trace.naInsideFrac.push(state.naLeft / Math.max(1, state.naLeft + state.naRight));
+   trace.kInsideFrac.push(state.kLeft / Math.max(1, state.kLeft + state.kRight));
+-  trace.vmProxy.push(state.vmProxy);
+   const minTime = Math.max(0, state.simTime - traceWindowMs);
+   while (trace.times.length > 1 && trace.times[0] < minTime) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+   while (trace.times.length > TRACE_HISTORY_MAX_POINTS) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+ }
+ 
+ function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
+-  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [], vmProxy: [] };
++  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [] };
+   pushTrace(trace, state, traceWindowMs);
+   return trace;
+ }
+@@ -536,12 +531,7 @@
+   const plotH = Math.max(1, h - padT - padB);
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(1, traceWindowMs)) * plotW;
+-  let vmMax = 1;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] >= startTime) vmMax = Math.max(vmMax, Math.abs(trace.vmProxy[i]));
+-  }
+   const yFrac = (v: number) => padT + (1 - v) * plotH;
+-  const yVm = (v: number) => padT + (1 - (v + vmMax) / Math.max(1e-6, 2 * vmMax)) * plotH;
+ 
+   ctx.strokeStyle = 'rgba(180,220,255,0.28)';
+   ctx.lineWidth = 1 * dpr;
+@@ -569,23 +559,9 @@
+     if (started) ctx.stroke();
+   }
+ 
+-  ctx.strokeStyle = SIM_COLORS.totalTrace;
+-  ctx.lineWidth = 1.8 * dpr;
+-  ctx.setLineDash([5 * dpr, 4 * dpr]);
+-  ctx.beginPath();
+-  let started = false;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] < startTime) continue;
+-    const px = xMap(trace.times[i]);
+-    const py = yVm(trace.vmProxy[i]);
+-    if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+-  }
+-  if (started) ctx.stroke();
+-  ctx.setLineDash([]);
+-
+   ctx.fillStyle = 'rgba(232,243,255,0.92)';
+   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+-  ctx.fillText('Inside fractions: Na (blue), K (orange); Vm proxy (dashed purple)', 12 * dpr, 14 * dpr);
++  ctx.fillText('Inside fractions: Na (blue), K (orange)', 12 * dpr, 14 * dpr);
+   ctx.fillStyle = 'rgba(232,243,255,0.78)';
+   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+   ctx.fillText('time (ms)', padL + plotW - 52 * dpr, h - 6 * dpr);
+@@ -593,7 +569,7 @@
+   ctx.translate(12 * dpr, padT + plotH / 2);
+   ctx.rotate(-Math.PI / 2);
+   ctx.textAlign = 'center';
+-  ctx.fillText('fraction (solid) and Vm proxy (mV-scaled, dashed)', 0, 0);
++  ctx.fillText('inside fraction', 0, 0);
+   ctx.restore();
+ }
+ 
+@@ -603,7 +579,7 @@
+     <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>inspect_nak_pump</code></span></div>
+     <header class="page-head">
+       <p class="eyebrow">Passive Selective Permeability vs Active Pumping</p>
+-      <h1>Na/K Pump Particle Simulation</h1>
++      <h1>Na/K Pump</h1>
+       <ul class="key-points">
+         <li>Convention: left = inside, right = outside.</li>
+         <li>Na+ and K+ diffuse through separate passive channels.</li>
+@@ -632,8 +608,7 @@
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="na-channel-width">Na+ channel width</label><input id="na-channel-width" type="number" min="0.5" step="0.5" /></div>
+               <div class="field"><label for="k-channel-width">K+ channel width</label><input id="k-channel-width" type="number" min="0.5" step="0.5" /></div>
+-              <div class="field"><label for="pump-rate">Pump cycles per step</label><input id="pump-rate" type="number" min="0" max="4" step="0.01" /></div>
+-              <div class="field"><label for="pump-capture-radius">Pump capture radius</label><input id="pump-capture-radius" type="number" min="1" max="20" step="0.5" /></div>
++              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
+             </div>
+           </div>
+         </div>
+@@ -645,7 +620,7 @@
+             <canvas id="particle-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Gradient + Voltage Traces</h3><span class="tiny">Inside fractions for Na+/K+ and Vm proxy</span></div>
++            <div class="subhead"><h3>Gradient Traces</h3><span class="tiny">Inside fractions for Na+/K+</span></div>
+             <canvas id="trace-canvas"></canvas>
+           </div>
+         </div>
+@@ -653,7 +628,6 @@
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Na+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>K+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionC}"></span>Na/K pump</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.totalTrace}"></span>Vm proxy (dashed, mV-scaled)</span>
+         </div>
+       </section>
+     </div>
+@@ -671,8 +645,7 @@
+   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+   naChannelWidth: getEl<HTMLInputElement>('#na-channel-width'),
+   kChannelWidth: getEl<HTMLInputElement>('#k-channel-width'),
+-  pumpRate: getEl<HTMLInputElement>('#pump-rate'),
+-  pumpCaptureRadius: getEl<HTMLInputElement>('#pump-capture-radius')
++  pumpStrength: getEl<HTMLInputElement>('#pump-strength')
+ };
+ const buttons = {
+   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
+@@ -701,8 +674,7 @@
+   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
+   setNumberInput(inputs.naChannelWidth, simParams.naChannelWidth, 2);
+   setNumberInput(inputs.kChannelWidth, simParams.kChannelWidth, 2);
+-  setNumberInput(inputs.pumpRate, simParams.pumpRate, 2);
+-  setNumberInput(inputs.pumpCaptureRadius, simParams.pumpCaptureRadius, 2);
++  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+ }
+ 
+@@ -724,8 +696,7 @@
+     kChannelWidth: clamp(Number(inputs.kChannelWidth.value) || defaultSim.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(Number(inputs.electricStrength.value) || 0, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(Number(inputs.pumpRate.value) || 0, 0, 4),
+-    pumpCaptureRadius: clamp(Number(inputs.pumpCaptureRadius.value) || defaultSim.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(Number(inputs.pumpStrength.value) || 0, 0, 2)
+   });
+ }
+ 
+
+exec
+/bin/zsh -lc "git diff -- src/pages/inspect_nak_pump.ts | sed -n '1,240p'" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+index 2f49cc6426fe5e78b48cfe24f69bed07791d92f3..e412f3742c75552763c618b4fc0e44634d2ecf56
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+@@ -28,8 +28,7 @@
+   kChannelWidth: number;
+   electricStrength: number;
+   chargeWallX: number;
+-  pumpRate: number;
+-  pumpCaptureRadius: number;
++  pumpStrength: number;
+ }
+ 
+ interface DisplayParams {
+@@ -66,7 +65,6 @@
+   times: number[];
+   naInsideFrac: number[];
+   kInsideFrac: number[];
+-  vmProxy: number[];
+ }
+ 
+ class Rng {
+@@ -123,8 +121,7 @@
+   kChannelWidth: 22,
+   electricStrength: -0.12,
+   chargeWallX: leftEdgeChargeWallX(100),
+-  pumpRate: 0.7,
+-  pumpCaptureRadius: 7
++  pumpStrength: 1
+ };
+ 
+ const defaultDisplay: DisplayParams = {
+@@ -180,8 +177,7 @@
+     kChannelWidth: clamp(params.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(params.electricStrength, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(params.pumpRate, 0, 4),
+-    pumpCaptureRadius: clamp(params.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(params.pumpStrength, 0, 2)
+   };
+ }
+ 
+@@ -344,8 +340,10 @@
+ }
+ 
+ function applyPump(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: boolean): void {
+-  if (!pumpEnabled || params.pumpRate <= 0) return;
+-  const radius = params.pumpCaptureRadius;
++  const strength = clamp(params.pumpStrength, 0, 2);
++  const rate = clamp(0.7 * strength, 0, 4);
++  const radius = clamp(7 * strength, 1, 20);
++  if (!pumpEnabled || rate <= 0) return;
+   const pumpY = ((state.naYMin + state.naYMax) * 0.5 + (state.kYMin + state.kYMax) * 0.5) * 0.5;
+   const naCandidates: number[] = [];
+   const kCandidates: number[] = [];
+@@ -358,8 +356,8 @@
+   shuffleInPlace(naCandidates, rng);
+   shuffleInPlace(kCandidates, rng);
+ 
+-  let cycles = Math.floor(params.pumpRate * state.dt);
+-  if (rng.next() < params.pumpRate * state.dt - cycles) cycles += 1;
++  let cycles = Math.floor(rate * state.dt);
++  if (rng.next() < rate * state.dt - cycles) cycles += 1;
+   cycles = clamp(cycles, 0, 20);
+ 
+   let naCursor = 0;
+@@ -416,24 +414,21 @@
+   trace.times.push(state.simTime);
+   trace.naInsideFrac.push(state.naLeft / Math.max(1, state.naLeft + state.naRight));
+   trace.kInsideFrac.push(state.kLeft / Math.max(1, state.kLeft + state.kRight));
+-  trace.vmProxy.push(state.vmProxy);
+   const minTime = Math.max(0, state.simTime - traceWindowMs);
+   while (trace.times.length > 1 && trace.times[0] < minTime) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+   while (trace.times.length > TRACE_HISTORY_MAX_POINTS) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+ }
+ 
+ function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
+-  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [], vmProxy: [] };
++  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [] };
+   pushTrace(trace, state, traceWindowMs);
+   return trace;
+ }
+@@ -536,12 +531,7 @@
+   const plotH = Math.max(1, h - padT - padB);
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(1, traceWindowMs)) * plotW;
+-  let vmMax = 1;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] >= startTime) vmMax = Math.max(vmMax, Math.abs(trace.vmProxy[i]));
+-  }
+   const yFrac = (v: number) => padT + (1 - v) * plotH;
+-  const yVm = (v: number) => padT + (1 - (v + vmMax) / Math.max(1e-6, 2 * vmMax)) * plotH;
+ 
+   ctx.strokeStyle = 'rgba(180,220,255,0.28)';
+   ctx.lineWidth = 1 * dpr;
+@@ -569,23 +559,9 @@
+     if (started) ctx.stroke();
+   }
+ 
+-  ctx.strokeStyle = SIM_COLORS.totalTrace;
+-  ctx.lineWidth = 1.8 * dpr;
+-  ctx.setLineDash([5 * dpr, 4 * dpr]);
+-  ctx.beginPath();
+-  let started = false;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] < startTime) continue;
+-    const px = xMap(trace.times[i]);
+-    const py = yVm(trace.vmProxy[i]);
+-    if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+-  }
+-  if (started) ctx.stroke();
+-  ctx.setLineDash([]);
+-
+   ctx.fillStyle = 'rgba(232,243,255,0.92)';
+   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+-  ctx.fillText('Inside fractions: Na (blue), K (orange); Vm proxy (dashed purple)', 12 * dpr, 14 * dpr);
++  ctx.fillText('Inside fractions: Na (blue), K (orange)', 12 * dpr, 14 * dpr);
+   ctx.fillStyle = 'rgba(232,243,255,0.78)';
+   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+   ctx.fillText('time (ms)', padL + plotW - 52 * dpr, h - 6 * dpr);
+@@ -593,7 +569,7 @@
+   ctx.translate(12 * dpr, padT + plotH / 2);
+   ctx.rotate(-Math.PI / 2);
+   ctx.textAlign = 'center';
+-  ctx.fillText('fraction (solid) and Vm proxy (mV-scaled, dashed)', 0, 0);
++  ctx.fillText('inside fraction', 0, 0);
+   ctx.restore();
+ }
+ 
+@@ -603,7 +579,7 @@
+     <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>inspect_nak_pump</code></span></div>
+     <header class="page-head">
+       <p class="eyebrow">Passive Selective Permeability vs Active Pumping</p>
+-      <h1>Na/K Pump Particle Simulation</h1>
++      <h1>Na/K Pump</h1>
+       <ul class="key-points">
+         <li>Convention: left = inside, right = outside.</li>
+         <li>Na+ and K+ diffuse through separate passive channels.</li>
+@@ -632,8 +608,7 @@
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="na-channel-width">Na+ channel width</label><input id="na-channel-width" type="number" min="0.5" step="0.5" /></div>
+               <div class="field"><label for="k-channel-width">K+ channel width</label><input id="k-channel-width" type="number" min="0.5" step="0.5" /></div>
+-              <div class="field"><label for="pump-rate">Pump cycles per step</label><input id="pump-rate" type="number" min="0" max="4" step="0.01" /></div>
+-              <div class="field"><label for="pump-capture-radius">Pump capture radius</label><input id="pump-capture-radius" type="number" min="1" max="20" step="0.5" /></div>
++              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
+             </div>
+           </div>
+         </div>
+@@ -645,7 +620,7 @@
+             <canvas id="particle-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Gradient + Voltage Traces</h3><span class="tiny">Inside fractions for Na+/K+ and Vm proxy</span></div>
++            <div class="subhead"><h3>Gradient Traces</h3><span class="tiny">Inside fractions for Na+/K+</span></div>
+             <canvas id="trace-canvas"></canvas>
+           </div>
+         </div>
+@@ -653,7 +628,6 @@
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Na+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>K+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionC}"></span>Na/K pump</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.totalTrace}"></span>Vm proxy (dashed, mV-scaled)</span>
+         </div>
+       </section>
+     </div>
+@@ -671,8 +645,7 @@
+   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+   naChannelWidth: getEl<HTMLInputElement>('#na-channel-width'),
+   kChannelWidth: getEl<HTMLInputElement>('#k-channel-width'),
+-  pumpRate: getEl<HTMLInputElement>('#pump-rate'),
+-  pumpCaptureRadius: getEl<HTMLInputElement>('#pump-capture-radius')
++  pumpStrength: getEl<HTMLInputElement>('#pump-strength')
+ };
+ const buttons = {
+   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
+@@ -701,8 +674,7 @@
+   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
+   setNumberInput(inputs.naChannelWidth, simParams.naChannelWidth, 2);
+   setNumberInput(inputs.kChannelWidth, simParams.kChannelWidth, 2);
+-  setNumberInput(inputs.pumpRate, simParams.pumpRate, 2);
+-  setNumberInput(inputs.pumpCaptureRadius, simParams.pumpCaptureRadius, 2);
++  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+ }
+ 
+@@ -724,8 +696,7 @@
+     kChannelWidth: clamp(Number(inputs.kChannelWidth.value) || defaultSim.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(Number(inputs.electricStrength.value) || 0, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(Number(inputs.pumpRate.value) || 0, 0, 4),
+-    pumpCaptureRadius: clamp(Number(inputs.pumpCaptureRadius.value) || defaultSim.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(Number(inputs.pumpStrength.value) || 0, 0, 2)
+   });
+ }
+ 
+
+exec
+/bin/zsh -lc 'git status --short' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+ M README.md
+ M inspect_diffusion_1.html
+ M inspect_diffusion_2.html
+ M inspect_diffusion_3.html
+ M inspect_diffusion_4.html
+ M inspect_electrochemical_1.html
+ D inspect_electrochemical_2.html
+ M inspect_electrochemical_3.html
+ M inspect_resting_potential_1.html
+ M inspect_resting_potential_2.html
+ M inspect_resting_potential_3.html
+ M inspect_resting_potential_4.html
+ M src/index.ts
+ M src/pages/inspect_diffusion_1.ts
+ M src/pages/inspect_diffusion_2.ts
+ M src/pages/inspect_diffusion_3.ts
+ M src/pages/inspect_diffusion_4.ts
+ M src/pages/inspect_electrochemical_1.ts
+ D src/pages/inspect_electrochemical_2.ts
+ M src/pages/inspect_electrochemical_3.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+index 2f49cc6426fe5e78b48cfe24f69bed07791d92f3..e412f3742c75552763c618b4fc0e44634d2ecf56
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+@@ -28,8 +28,7 @@
+   kChannelWidth: number;
+   electricStrength: number;
+   chargeWallX: number;
+-  pumpRate: number;
+-  pumpCaptureRadius: number;
++  pumpStrength: number;
+ }
+ 
+ interface DisplayParams {
+@@ -66,7 +65,6 @@
+   times: number[];
+   naInsideFrac: number[];
+   kInsideFrac: number[];
+-  vmProxy: number[];
+ }
+ 
+ class Rng {
+@@ -123,8 +121,7 @@
+   kChannelWidth: 22,
+   electricStrength: -0.12,
+   chargeWallX: leftEdgeChargeWallX(100),
+-  pumpRate: 0.7,
+-  pumpCaptureRadius: 7
++  pumpStrength: 1
+ };
+ 
+ const defaultDisplay: DisplayParams = {
+@@ -180,8 +177,7 @@
+     kChannelWidth: clamp(params.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(params.electricStrength, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(params.pumpRate, 0, 4),
+-    pumpCaptureRadius: clamp(params.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(params.pumpStrength, 0, 2)
+   };
+ }
+ 
+@@ -344,8 +340,10 @@
+ }
+ 
+ function applyPump(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: boolean): void {
+-  if (!pumpEnabled || params.pumpRate <= 0) return;
+-  const radius = params.pumpCaptureRadius;
++  const strength = clamp(params.pumpStrength, 0, 2);
++  const rate = clamp(0.7 * strength, 0, 4);
++  const radius = clamp(7 * strength, 1, 20);
++  if (!pumpEnabled || rate <= 0) return;
+   const pumpY = ((state.naYMin + state.naYMax) * 0.5 + (state.kYMin + state.kYMax) * 0.5) * 0.5;
+   const naCandidates: number[] = [];
+   const kCandidates: number[] = [];
+@@ -358,8 +356,8 @@
+   shuffleInPlace(naCandidates, rng);
+   shuffleInPlace(kCandidates, rng);
+ 
+-  let cycles = Math.floor(params.pumpRate * state.dt);
+-  if (rng.next() < params.pumpRate * state.dt - cycles) cycles += 1;
++  let cycles = Math.floor(rate * state.dt);
++  if (rng.next() < rate * state.dt - cycles) cycles += 1;
+   cycles = clamp(cycles, 0, 20);
+ 
+   let naCursor = 0;
+@@ -416,24 +414,21 @@
+   trace.times.push(state.simTime);
+   trace.naInsideFrac.push(state.naLeft / Math.max(1, state.naLeft + state.naRight));
+   trace.kInsideFrac.push(state.kLeft / Math.max(1, state.kLeft + state.kRight));
+-  trace.vmProxy.push(state.vmProxy);
+   const minTime = Math.max(0, state.simTime - traceWindowMs);
+   while (trace.times.length > 1 && trace.times[0] < minTime) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+   while (trace.times.length > TRACE_HISTORY_MAX_POINTS) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+ }
+ 
+ function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
+-  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [], vmProxy: [] };
++  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [] };
+   pushTrace(trace, state, traceWindowMs);
+   return trace;
+ }
+@@ -536,12 +531,7 @@
+   const plotH = Math.max(1, h - padT - padB);
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(1, traceWindowMs)) * plotW;
+-  let vmMax = 1;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] >= startTime) vmMax = Math.max(vmMax, Math.abs(trace.vmProxy[i]));
+-  }
+   const yFrac = (v: number) => padT + (1 - v) * plotH;
+-  const yVm = (v: number) => padT + (1 - (v + vmMax) / Math.max(1e-6, 2 * vmMax)) * plotH;
+ 
+   ctx.strokeStyle = 'rgba(180,220,255,0.28)';
+   ctx.lineWidth = 1 * dpr;
+@@ -569,23 +559,9 @@
+     if (started) ctx.stroke();
+   }
+ 
+-  ctx.strokeStyle = SIM_COLORS.totalTrace;
+-  ctx.lineWidth = 1.8 * dpr;
+-  ctx.setLineDash([5 * dpr, 4 * dpr]);
+-  ctx.beginPath();
+-  let started = false;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] < startTime) continue;
+-    const px = xMap(trace.times[i]);
+-    const py = yVm(trace.vmProxy[i]);
+-    if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+-  }
+-  if (started) ctx.stroke();
+-  ctx.setLineDash([]);
+-
+   ctx.fillStyle = 'rgba(232,243,255,0.92)';
+   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+-  ctx.fillText('Inside fractions: Na (blue), K (orange); Vm proxy (dashed purple)', 12 * dpr, 14 * dpr);
++  ctx.fillText('Inside fractions: Na (blue), K (orange)', 12 * dpr, 14 * dpr);
+   ctx.fillStyle = 'rgba(232,243,255,0.78)';
+   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+   ctx.fillText('time (ms)', padL + plotW - 52 * dpr, h - 6 * dpr);
+@@ -593,7 +569,7 @@
+   ctx.translate(12 * dpr, padT + plotH / 2);
+   ctx.rotate(-Math.PI / 2);
+   ctx.textAlign = 'center';
+-  ctx.fillText('fraction (solid) and Vm proxy (mV-scaled, dashed)', 0, 0);
++  ctx.fillText('inside fraction', 0, 0);
+   ctx.restore();
+ }
+ 
+@@ -603,7 +579,7 @@
+     <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>inspect_nak_pump</code></span></div>
+     <header class="page-head">
+       <p class="eyebrow">Passive Selective Permeability vs Active Pumping</p>
+-      <h1>Na/K Pump Particle Simulation</h1>
++      <h1>Na/K Pump</h1>
+       <ul class="key-points">
+         <li>Convention: left = inside, right = outside.</li>
+         <li>Na+ and K+ diffuse through separate passive channels.</li>
+@@ -632,8 +608,7 @@
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="na-channel-width">Na+ channel width</label><input id="na-channel-width" type="number" min="0.5" step="0.5" /></div>
+               <div class="field"><label for="k-channel-width">K+ channel width</label><input id="k-channel-width" type="number" min="0.5" step="0.5" /></div>
+-              <div class="field"><label for="pump-rate">Pump cycles per step</label><input id="pump-rate" type="number" min="0" max="4" step="0.01" /></div>
+-              <div class="field"><label for="pump-capture-radius">Pump capture radius</label><input id="pump-capture-radius" type="number" min="1" max="20" step="0.5" /></div>
++              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
+             </div>
+           </div>
+         </div>
+@@ -645,7 +620,7 @@
+             <canvas id="particle-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Gradient + Voltage Traces</h3><span class="tiny">Inside fractions for Na+/K+ and Vm proxy</span></div>
++            <div class="subhead"><h3>Gradient Traces</h3><span class="tiny">Inside fractions for Na+/K+</span></div>
+             <canvas id="trace-canvas"></canvas>
+           </div>
+         </div>
+@@ -653,7 +628,6 @@
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Na+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>K+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionC}"></span>Na/K pump</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.totalTrace}"></span>Vm proxy (dashed, mV-scaled)</span>
+         </div>
+       </section>
+     </div>
+@@ -671,8 +645,7 @@
+   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+   naChannelWidth: getEl<HTMLInputElement>('#na-channel-width'),
+   kChannelWidth: getEl<HTMLInputElement>('#k-channel-width'),
+-  pumpRate: getEl<HTMLInputElement>('#pump-rate'),
+-  pumpCaptureRadius: getEl<HTMLInputElement>('#pump-capture-radius')
++  pumpStrength: getEl<HTMLInputElement>('#pump-strength')
+ };
+ const buttons = {
+   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
+@@ -701,8 +674,7 @@
+   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
+   setNumberInput(inputs.naChannelWidth, simParams.naChannelWidth, 2);
+   setNumberInput(inputs.kChannelWidth, simParams.kChannelWidth, 2);
+-  setNumberInput(inputs.pumpRate, simParams.pumpRate, 2);
+-  setNumberInput(inputs.pumpCaptureRadius, simParams.pumpCaptureRadius, 2);
++  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+ }
+ 
+@@ -724,8 +696,7 @@
+     kChannelWidth: clamp(Number(inputs.kChannelWidth.value) || defaultSim.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(Number(inputs.electricStrength.value) || 0, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(Number(inputs.pumpRate.value) || 0, 0, 4),
+-    pumpCaptureRadius: clamp(Number(inputs.pumpCaptureRadius.value) || defaultSim.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(Number(inputs.pumpStrength.value) || 0, 0, 2)
+   });
+ }
+ 
+
+codex
+Build succeeds. I’m doing one quick pass over the modified Na/K pump page to confirm all requested text/control/trace changes are present before I summarize.
+exec
+/bin/zsh -lc "rg -n \"<h1>|Pump strength|Pump cycles per step|Pump capture radius|Gradient \\+ Voltage|Vm proxy|Inside fractions\" src/pages/inspect_nak_pump.ts -S && sed -n '580,760p' src/pages/inspect_nak_pump.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+213:  // mV-scaled Vm proxy from net cation imbalance (left = inside, right = outside)
+564:  ctx.fillText('Inside fractions: Na (blue), K (orange)', 12 * dpr, 14 * dpr);
+582:      <h1>Na/K Pump</h1>
+611:              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
+623:            <div class="subhead"><h3>Gradient Traces</h3><span class="tiny">Inside fractions for Na+/K+</span></div>
+    <header class="page-head">
+      <p class="eyebrow">Passive Selective Permeability vs Active Pumping</p>
+      <h1>Na/K Pump</h1>
+      <ul class="key-points">
+        <li>Convention: left = inside, right = outside.</li>
+        <li>Na+ and K+ diffuse through separate passive channels.</li>
+        <li>Pump mode applies 3 Na+ out / 2 K+ in transport bias.</li>
+      </ul>
+    </header>
+    <div class="sim-layout">
+      <aside class="controls">
+        <div class="panel">
+          <div class="group">
+            <p class="group-label">Classroom Controls</p>
+            <div class="button-row">
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+index 2f49cc6426fe5e78b48cfe24f69bed07791d92f3..e412f3742c75552763c618b4fc0e44634d2ecf56
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+@@ -28,8 +28,7 @@
+   kChannelWidth: number;
+   electricStrength: number;
+   chargeWallX: number;
+-  pumpRate: number;
+-  pumpCaptureRadius: number;
++  pumpStrength: number;
+ }
+ 
+ interface DisplayParams {
+@@ -66,7 +65,6 @@
+   times: number[];
+   naInsideFrac: number[];
+   kInsideFrac: number[];
+-  vmProxy: number[];
+ }
+ 
+ class Rng {
+@@ -123,8 +121,7 @@
+   kChannelWidth: 22,
+   electricStrength: -0.12,
+   chargeWallX: leftEdgeChargeWallX(100),
+-  pumpRate: 0.7,
+-  pumpCaptureRadius: 7
++  pumpStrength: 1
+ };
+ 
+ const defaultDisplay: DisplayParams = {
+@@ -180,8 +177,7 @@
+     kChannelWidth: clamp(params.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(params.electricStrength, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(params.pumpRate, 0, 4),
+-    pumpCaptureRadius: clamp(params.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(params.pumpStrength, 0, 2)
+   };
+ }
+ 
+@@ -344,8 +340,10 @@
+ }
+ 
+ function applyPump(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: boolean): void {
+-  if (!pumpEnabled || params.pumpRate <= 0) return;
+-  const radius = params.pumpCaptureRadius;
++  const strength = clamp(params.pumpStrength, 0, 2);
++  const rate = clamp(0.7 * strength, 0, 4);
++  const radius = clamp(7 * strength, 1, 20);
++  if (!pumpEnabled || rate <= 0) return;
+   const pumpY = ((state.naYMin + state.naYMax) * 0.5 + (state.kYMin + state.kYMax) * 0.5) * 0.5;
+   const naCandidates: number[] = [];
+   const kCandidates: number[] = [];
+@@ -358,8 +356,8 @@
+   shuffleInPlace(naCandidates, rng);
+   shuffleInPlace(kCandidates, rng);
+ 
+-  let cycles = Math.floor(params.pumpRate * state.dt);
+-  if (rng.next() < params.pumpRate * state.dt - cycles) cycles += 1;
++  let cycles = Math.floor(rate * state.dt);
++  if (rng.next() < rate * state.dt - cycles) cycles += 1;
+   cycles = clamp(cycles, 0, 20);
+ 
+   let naCursor = 0;
+@@ -416,24 +414,21 @@
+   trace.times.push(state.simTime);
+   trace.naInsideFrac.push(state.naLeft / Math.max(1, state.naLeft + state.naRight));
+   trace.kInsideFrac.push(state.kLeft / Math.max(1, state.kLeft + state.kRight));
+-  trace.vmProxy.push(state.vmProxy);
+   const minTime = Math.max(0, state.simTime - traceWindowMs);
+   while (trace.times.length > 1 && trace.times[0] < minTime) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+   while (trace.times.length > TRACE_HISTORY_MAX_POINTS) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+ }
+ 
+ function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
+-  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [], vmProxy: [] };
++  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [] };
+   pushTrace(trace, state, traceWindowMs);
+   return trace;
+ }
+@@ -536,12 +531,7 @@
+   const plotH = Math.max(1, h - padT - padB);
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(1, traceWindowMs)) * plotW;
+-  let vmMax = 1;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] >= startTime) vmMax = Math.max(vmMax, Math.abs(trace.vmProxy[i]));
+-  }
+   const yFrac = (v: number) => padT + (1 - v) * plotH;
+-  const yVm = (v: number) => padT + (1 - (v + vmMax) / Math.max(1e-6, 2 * vmMax)) * plotH;
+ 
+   ctx.strokeStyle = 'rgba(180,220,255,0.28)';
+   ctx.lineWidth = 1 * dpr;
+@@ -569,23 +559,9 @@
+     if (started) ctx.stroke();
+   }
+ 
+-  ctx.strokeStyle = SIM_COLORS.totalTrace;
+-  ctx.lineWidth = 1.8 * dpr;
+-  ctx.setLineDash([5 * dpr, 4 * dpr]);
+-  ctx.beginPath();
+-  let started = false;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] < startTime) continue;
+-    const px = xMap(trace.times[i]);
+-    const py = yVm(trace.vmProxy[i]);
+-    if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+-  }
+-  if (started) ctx.stroke();
+-  ctx.setLineDash([]);
+-
+   ctx.fillStyle = 'rgba(232,243,255,0.92)';
+   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+-  ctx.fillText('Inside fractions: Na (blue), K (orange); Vm proxy (dashed purple)', 12 * dpr, 14 * dpr);
++  ctx.fillText('Inside fractions: Na (blue), K (orange)', 12 * dpr, 14 * dpr);
+   ctx.fillStyle = 'rgba(232,243,255,0.78)';
+   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+   ctx.fillText('time (ms)', padL + plotW - 52 * dpr, h - 6 * dpr);
+@@ -593,7 +569,7 @@
+   ctx.translate(12 * dpr, padT + plotH / 2);
+   ctx.rotate(-Math.PI / 2);
+   ctx.textAlign = 'center';
+-  ctx.fillText('fraction (solid) and Vm proxy (mV-scaled, dashed)', 0, 0);
++  ctx.fillText('inside fraction', 0, 0);
+   ctx.restore();
+ }
+ 
+@@ -603,7 +579,7 @@
+     <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>inspect_nak_pump</code></span></div>
+     <header class="page-head">
+       <p class="eyebrow">Passive Selective Permeability vs Active Pumping</p>
+-      <h1>Na/K Pump Particle Simulation</h1>
++      <h1>Na/K Pump</h1>
+       <ul class="key-points">
+         <li>Convention: left = inside, right = outside.</li>
+         <li>Na+ and K+ diffuse through separate passive channels.</li>
+@@ -632,8 +608,7 @@
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="na-channel-width">Na+ channel width</label><input id="na-channel-width" type="number" min="0.5" step="0.5" /></div>
+               <div class="field"><label for="k-channel-width">K+ channel width</label><input id="k-channel-width" type="number" min="0.5" step="0.5" /></div>
+-              <div class="field"><label for="pump-rate">Pump cycles per step</label><input id="pump-rate" type="number" min="0" max="4" step="0.01" /></div>
+-              <div class="field"><label for="pump-capture-radius">Pump capture radius</label><input id="pump-capture-radius" type="number" min="1" max="20" step="0.5" /></div>
++              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
+             </div>
+           </div>
+         </div>
+@@ -645,7 +620,7 @@
+             <canvas id="particle-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Gradient + Voltage Traces</h3><span class="tiny">Inside fractions for Na+/K+ and Vm proxy</span></div>
++            <div class="subhead"><h3>Gradient Traces</h3><span class="tiny">Inside fractions for Na+/K+</span></div>
+             <canvas id="trace-canvas"></canvas>
+           </div>
+         </div>
+@@ -653,7 +628,6 @@
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Na+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>K+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionC}"></span>Na/K pump</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.totalTrace}"></span>Vm proxy (dashed, mV-scaled)</span>
+         </div>
+       </section>
+     </div>
+@@ -671,8 +645,7 @@
+   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+   naChannelWidth: getEl<HTMLInputElement>('#na-channel-width'),
+   kChannelWidth: getEl<HTMLInputElement>('#k-channel-width'),
+-  pumpRate: getEl<HTMLInputElement>('#pump-rate'),
+-  pumpCaptureRadius: getEl<HTMLInputElement>('#pump-capture-radius')
++  pumpStrength: getEl<HTMLInputElement>('#pump-strength')
+ };
+ const buttons = {
+   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
+@@ -701,8 +674,7 @@
+   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
+   setNumberInput(inputs.naChannelWidth, simParams.naChannelWidth, 2);
+   setNumberInput(inputs.kChannelWidth, simParams.kChannelWidth, 2);
+-  setNumberInput(inputs.pumpRate, simParams.pumpRate, 2);
+-  setNumberInput(inputs.pumpCaptureRadius, simParams.pumpCaptureRadius, 2);
++  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+ }
+ 
+@@ -724,8 +696,7 @@
+     kChannelWidth: clamp(Number(inputs.kChannelWidth.value) || defaultSim.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(Number(inputs.electricStrength.value) || 0, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(Number(inputs.pumpRate.value) || 0, 0, 4),
+-    pumpCaptureRadius: clamp(Number(inputs.pumpCaptureRadius.value) || defaultSim.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(Number(inputs.pumpStrength.value) || 0, 0, 2)
+   });
+ }
+ 
+
+codex
+Implemented only the **Na/K Pump Particle Simulation** requests in [src/pages/inspect_nak_pump.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts).
+
+Changes made:
+- Removed `"Particle Simulation"` from the page title:
+  - `<h1>` is now `Na/K Pump`.
+- Replaced the two pump controls with one control:
+  - Removed `Pump cycles per step` and `Pump capture radius` inputs.
+  - Added a single `Pump strength` range input.
+  - `Pump strength` now drives both internal pump parameters in `applyPump`:
+    - effective rate scales from strength
+    - effective capture radius scales from strength
+- Removed membrane potential from the trace UI:
+  - Removed Vm proxy series from trace history + drawing.
+  - Updated trace panel title/subtext and axis/caption text to Na/K inside fractions only.
+  - Removed Vm legend item.
+
+Check run:
+- `npm run build` passed (`tsc && vite build` successful).
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+index 2f49cc6426fe5e78b48cfe24f69bed07791d92f3..e412f3742c75552763c618b4fc0e44634d2ecf56
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts
+@@ -28,8 +28,7 @@
+   kChannelWidth: number;
+   electricStrength: number;
+   chargeWallX: number;
+-  pumpRate: number;
+-  pumpCaptureRadius: number;
++  pumpStrength: number;
+ }
+ 
+ interface DisplayParams {
+@@ -66,7 +65,6 @@
+   times: number[];
+   naInsideFrac: number[];
+   kInsideFrac: number[];
+-  vmProxy: number[];
+ }
+ 
+ class Rng {
+@@ -123,8 +121,7 @@
+   kChannelWidth: 22,
+   electricStrength: -0.12,
+   chargeWallX: leftEdgeChargeWallX(100),
+-  pumpRate: 0.7,
+-  pumpCaptureRadius: 7
++  pumpStrength: 1
+ };
+ 
+ const defaultDisplay: DisplayParams = {
+@@ -180,8 +177,7 @@
+     kChannelWidth: clamp(params.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(params.electricStrength, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(params.pumpRate, 0, 4),
+-    pumpCaptureRadius: clamp(params.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(params.pumpStrength, 0, 2)
+   };
+ }
+ 
+@@ -344,8 +340,10 @@
+ }
+ 
+ function applyPump(state: LiveState, params: SimParams, rng: Rng, pumpEnabled: boolean): void {
+-  if (!pumpEnabled || params.pumpRate <= 0) return;
+-  const radius = params.pumpCaptureRadius;
++  const strength = clamp(params.pumpStrength, 0, 2);
++  const rate = clamp(0.7 * strength, 0, 4);
++  const radius = clamp(7 * strength, 1, 20);
++  if (!pumpEnabled || rate <= 0) return;
+   const pumpY = ((state.naYMin + state.naYMax) * 0.5 + (state.kYMin + state.kYMax) * 0.5) * 0.5;
+   const naCandidates: number[] = [];
+   const kCandidates: number[] = [];
+@@ -358,8 +356,8 @@
+   shuffleInPlace(naCandidates, rng);
+   shuffleInPlace(kCandidates, rng);
+ 
+-  let cycles = Math.floor(params.pumpRate * state.dt);
+-  if (rng.next() < params.pumpRate * state.dt - cycles) cycles += 1;
++  let cycles = Math.floor(rate * state.dt);
++  if (rng.next() < rate * state.dt - cycles) cycles += 1;
+   cycles = clamp(cycles, 0, 20);
+ 
+   let naCursor = 0;
+@@ -416,24 +414,21 @@
+   trace.times.push(state.simTime);
+   trace.naInsideFrac.push(state.naLeft / Math.max(1, state.naLeft + state.naRight));
+   trace.kInsideFrac.push(state.kLeft / Math.max(1, state.kLeft + state.kRight));
+-  trace.vmProxy.push(state.vmProxy);
+   const minTime = Math.max(0, state.simTime - traceWindowMs);
+   while (trace.times.length > 1 && trace.times[0] < minTime) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+   while (trace.times.length > TRACE_HISTORY_MAX_POINTS) {
+     trace.times.shift();
+     trace.naInsideFrac.shift();
+     trace.kInsideFrac.shift();
+-    trace.vmProxy.shift();
+   }
+ }
+ 
+ function createTrace(state: LiveState, traceWindowMs: number): TraceHistory {
+-  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [], vmProxy: [] };
++  const trace: TraceHistory = { times: [], naInsideFrac: [], kInsideFrac: [] };
+   pushTrace(trace, state, traceWindowMs);
+   return trace;
+ }
+@@ -536,12 +531,7 @@
+   const plotH = Math.max(1, h - padT - padB);
+   const startTime = Math.max(0, currentTime - traceWindowMs);
+   const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(1, traceWindowMs)) * plotW;
+-  let vmMax = 1;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] >= startTime) vmMax = Math.max(vmMax, Math.abs(trace.vmProxy[i]));
+-  }
+   const yFrac = (v: number) => padT + (1 - v) * plotH;
+-  const yVm = (v: number) => padT + (1 - (v + vmMax) / Math.max(1e-6, 2 * vmMax)) * plotH;
+ 
+   ctx.strokeStyle = 'rgba(180,220,255,0.28)';
+   ctx.lineWidth = 1 * dpr;
+@@ -569,23 +559,9 @@
+     if (started) ctx.stroke();
+   }
+ 
+-  ctx.strokeStyle = SIM_COLORS.totalTrace;
+-  ctx.lineWidth = 1.8 * dpr;
+-  ctx.setLineDash([5 * dpr, 4 * dpr]);
+-  ctx.beginPath();
+-  let started = false;
+-  for (let i = 0; i < trace.times.length; i += 1) {
+-    if (trace.times[i] < startTime) continue;
+-    const px = xMap(trace.times[i]);
+-    const py = yVm(trace.vmProxy[i]);
+-    if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+-  }
+-  if (started) ctx.stroke();
+-  ctx.setLineDash([]);
+-
+   ctx.fillStyle = 'rgba(232,243,255,0.92)';
+   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+-  ctx.fillText('Inside fractions: Na (blue), K (orange); Vm proxy (dashed purple)', 12 * dpr, 14 * dpr);
++  ctx.fillText('Inside fractions: Na (blue), K (orange)', 12 * dpr, 14 * dpr);
+   ctx.fillStyle = 'rgba(232,243,255,0.78)';
+   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
+   ctx.fillText('time (ms)', padL + plotW - 52 * dpr, h - 6 * dpr);
+@@ -593,7 +569,7 @@
+   ctx.translate(12 * dpr, padT + plotH / 2);
+   ctx.rotate(-Math.PI / 2);
+   ctx.textAlign = 'center';
+-  ctx.fillText('fraction (solid) and Vm proxy (mV-scaled, dashed)', 0, 0);
++  ctx.fillText('inside fraction', 0, 0);
+   ctx.restore();
+ }
+ 
+@@ -603,7 +579,7 @@
+     <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>inspect_nak_pump</code></span></div>
+     <header class="page-head">
+       <p class="eyebrow">Passive Selective Permeability vs Active Pumping</p>
+-      <h1>Na/K Pump Particle Simulation</h1>
++      <h1>Na/K Pump</h1>
+       <ul class="key-points">
+         <li>Convention: left = inside, right = outside.</li>
+         <li>Na+ and K+ diffuse through separate passive channels.</li>
+@@ -632,8 +608,7 @@
+               <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="na-channel-width">Na+ channel width</label><input id="na-channel-width" type="number" min="0.5" step="0.5" /></div>
+               <div class="field"><label for="k-channel-width">K+ channel width</label><input id="k-channel-width" type="number" min="0.5" step="0.5" /></div>
+-              <div class="field"><label for="pump-rate">Pump cycles per step</label><input id="pump-rate" type="number" min="0" max="4" step="0.01" /></div>
+-              <div class="field"><label for="pump-capture-radius">Pump capture radius</label><input id="pump-capture-radius" type="number" min="1" max="20" step="0.5" /></div>
++              <div class="field"><label for="pump-strength">Pump strength</label><input id="pump-strength" type="range" min="0" max="2" step="0.05" /></div>
+             </div>
+           </div>
+         </div>
+@@ -645,7 +620,7 @@
+             <canvas id="particle-canvas"></canvas>
+           </div>
+           <div class="canvas-subpanel">
+-            <div class="subhead"><h3>Gradient + Voltage Traces</h3><span class="tiny">Inside fractions for Na+/K+ and Vm proxy</span></div>
++            <div class="subhead"><h3>Gradient Traces</h3><span class="tiny">Inside fractions for Na+/K+</span></div>
+             <canvas id="trace-canvas"></canvas>
+           </div>
+         </div>
+@@ -653,7 +628,6 @@
+           <span><span class="swatch" style="background:${SIM_COLORS.ionB}"></span>Na+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionA}"></span>K+</span>
+           <span><span class="swatch" style="background:${SIM_COLORS.ionC}"></span>Na/K pump</span>
+-          <span><span class="swatch" style="background:${SIM_COLORS.totalTrace}"></span>Vm proxy (dashed, mV-scaled)</span>
+         </div>
+       </section>
+     </div>
+@@ -671,8 +645,7 @@
+   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
+   naChannelWidth: getEl<HTMLInputElement>('#na-channel-width'),
+   kChannelWidth: getEl<HTMLInputElement>('#k-channel-width'),
+-  pumpRate: getEl<HTMLInputElement>('#pump-rate'),
+-  pumpCaptureRadius: getEl<HTMLInputElement>('#pump-capture-radius')
++  pumpStrength: getEl<HTMLInputElement>('#pump-strength')
+ };
+ const buttons = {
+   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
+@@ -701,8 +674,7 @@
+   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
+   setNumberInput(inputs.naChannelWidth, simParams.naChannelWidth, 2);
+   setNumberInput(inputs.kChannelWidth, simParams.kChannelWidth, 2);
+-  setNumberInput(inputs.pumpRate, simParams.pumpRate, 2);
+-  setNumberInput(inputs.pumpCaptureRadius, simParams.pumpCaptureRadius, 2);
++  inputs.pumpStrength.value = simParams.pumpStrength.toFixed(2);
+   buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
+ }
+ 
+@@ -724,8 +696,7 @@
+     kChannelWidth: clamp(Number(inputs.kChannelWidth.value) || defaultSim.kChannelWidth, 0.5, boxHeight - 8),
+     electricStrength: clamp(Number(inputs.electricStrength.value) || 0, -10, 10),
+     chargeWallX: leftEdgeChargeWallX(boxWidth),
+-    pumpRate: clamp(Number(inputs.pumpRate.value) || 0, 0, 4),
+-    pumpCaptureRadius: clamp(Number(inputs.pumpCaptureRadius.value) || defaultSim.pumpCaptureRadius, 1, 20)
++    pumpStrength: clamp(Number(inputs.pumpStrength.value) || 0, 0, 2)
+   });
+ }
+ 
+
+tokens used
+49,475
+Implemented only the **Na/K Pump Particle Simulation** requests in [src/pages/inspect_nak_pump.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nak_pump.ts).
+
+Changes made:
+- Removed `"Particle Simulation"` from the page title:
+  - `<h1>` is now `Na/K Pump`.
+- Replaced the two pump controls with one control:
+  - Removed `Pump cycles per step` and `Pump capture radius` inputs.
+  - Added a single `Pump strength` range input.
+  - `Pump strength` now drives both internal pump parameters in `applyPump`:
+    - effective rate scales from strength
+    - effective capture radius scales from strength
+- Removed membrane potential from the trace UI:
+  - Removed Vm proxy series from trace history + drawing.
+  - Updated trace panel title/subtext and axis/caption text to Na/K inside fractions only.
+  - Removed Vm legend item.
+
+Check run:
+- `npm run build` passed (`tsc && vite build` successful).

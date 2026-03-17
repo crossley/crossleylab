@@ -1,0 +1,584 @@
+OpenAI Codex v0.111.0 (research preview)
+--------
+workdir: /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /Users/mq20185996/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019ccc98-6746-7171-acd1-566f2791e267
+--------
+user
+Process only this section from change requests and make code changes in the current repository.
+Source file: change_requests.md
+Section title: Nernst Equilibrium for One Ion
+
+Requirements:
+- Implement all bullet requests in this section only.
+- Do not modify requests from other sections.
+- Run relevant checks/build before finishing if possible.
+- Provide a concise final summary of files changed and why.
+
+Section content:
+# Nernst Equilibrium for One Ion
+
+- Remove: Channel permeability is modeled as the probability that an in-channel crossing is accepted.
+
+- Remove all existing bullets and replace with the following:
+  - Electric force creates a concentration gradient (like charges repel and opposite charges attract).
+  - Diffusion tends to reduce concetration gradients (ions move from high to low concentration).
+  - The Nernst potential is the exact membrane voltage where those two forces cancel for that ion.
+  - At the Nernst potential, net movement of that ion is zero.
+
+- Change UI control Electric strength (inside charge wall) to Electric strength
+
+mcp startup: no servers
+codex
+I’ll locate the “Nernst Equilibrium for One Ion” content and update only that section’s bullets and UI label, then run the project’s relevant checks/build to verify nothing else regressed.
+exec
+/bin/zsh -lc "rg -n \"Nernst Equilibrium for One Ion|Electric strength \\(inside charge wall\\)|Channel permeability is modeled\" -S ." in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+./src/pages/inspect_nernst_one_ion.ts:412:      <h1>Nernst Equilibrium for One Ion</h1>
+./src/pages/inspect_nernst_one_ion.ts:415:        <li>Channel permeability is modeled as the probability that an in-channel crossing is accepted.</li>
+./src/pages/inspect_nernst_one_ion.ts:435:              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+./src/pages/inspect_nernst_one_ion.ts:606:    `Electric strength (inside charge wall) = ${simParams.electricStrength.toFixed(3)}`,
+./change_requests.md:5:# Nernst Equilibrium for One Ion
+./change_requests.md:7:- Remove: Channel permeability is modeled as the probability that an in-channel crossing is accepted.
+./change_requests.md:15:- Change UI control Electric strength (inside charge wall) to Electric strength
+./inspect_nernst_one_ion.html:6:    <title>Nernst Equilibrium for One Ion</title>
+./logs/codex_sections/20260308_112103/06_nernst_equilibrium_for_one_ion.log:15:Section title: Nernst Equilibrium for One Ion
+./logs/codex_sections/20260308_112103/06_nernst_equilibrium_for_one_ion.log:24:# Nernst Equilibrium for One Ion
+./logs/codex_sections/20260308_112103/06_nernst_equilibrium_for_one_ion.log:38:I’ll locate the “Nernst Equilibrium for One Ion” change-request section in the repo, then identify the corresponding simulation/UI files to implement only those bullets and run checks.
+./logs/codex_sections/20260308_112103/06_nernst_equilibrium_for_one_ion.log:41:/bin/zsh -lc "rg -n \"Nernst Equilibrium for One Ion|Nernst|one ion|charge wall|cell wall|MathJax|latex|ln\\(\" change_requests.md src ." in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+./logs/codex_sections/20260308_112103/06_nernst_equilibrium_for_one_ion.log:63:change_requests.md:27:# Nernst Equilibrium for One Ion
+./logs/codex_sections/20260308_112103/06_nernst_equilibrium_for_one_ion.log:1239:+              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+./logs/codex_sections/20260308_112103/06_nernst_equilibrium_for_one_ion.log:1362:       <h1>Nernst Equilibrium for One Ion</h1>
+./logs/codex_sections/20260308_112103/06_nernst_equilibrium_for_one_ion.log:1381:+              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+./logs/codex_sections/20260308_112103/06_nernst_equilibrium_for_one_ion.log:1512:       <h1>Nernst Equilibrium for One Ion</h1>
+./logs/codex_sections/20260308_112103/06_nernst_equilibrium_for_one_ion.log:1531:+              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+./logs/codex_sections/20260308_112103/06_nernst_equilibrium_for_one_ion.log:1662:       <h1>Nernst Equilibrium for One Ion</h1>
+./logs/codex_sections/20260308_112103/06_nernst_equilibrium_for_one_ion.log:1681:+              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+codex
+I found the exact targets in `src/pages/inspect_nernst_one_ion.ts` (bullet list plus label text, including a parameter readout string). I’ll patch only those strings now and then run the project check/build command.
+exec
+/bin/zsh -lc "sed -n '390,650p' src/pages/inspect_nernst_one_ion.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+  ctx.setLineDash([5 * dpr, 4 * dpr]);
+  ctx.beginPath();
+  ctx.moveTo(chargeWallX, 0);
+  ctx.lineTo(chargeWallX, h);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  const r = Math.max(0.8, pointSize) * dpr;
+  ctx.fillStyle = SIM_COLORS.ionA;
+  for (let i = 0; i < state.numParticles; i += 1) {
+    const [px, py] = toPx(state.x[i], state.y[i]);
+    ctx.beginPath();
+    ctx.arc(px, py, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = 'rgba(232,243,255,0.92)';
+}
+
+const app = getEl<HTMLDivElement>('#app');
+app.innerHTML = `
+  <div class="site-shell">
+exec
+/bin/zsh -lc 'cat package.json' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+{
+  "name": "electrochemical-signals-progression-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "lint": "tsc --noEmit",
+    "check-pages": "node scripts/check-pages.mjs",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.4.1"
+  }
+}
+exec
+/bin/zsh -lc "sed -n '1,120p' inspect_nernst_one_ion.html" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nernst Equilibrium for One Ion</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/pages/inspect_nernst_one_ion.ts"></script>
+  </body>
+</html>
+file update
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+@@ -413,11 +413,6 @@
+       <ul class="key-points">
+-        <li>Membrane potential is determined by relative ion concentration inside vs outside the cell.</li>
+-        <li>Channel permeability is modeled as the probability that an in-channel crossing is accepted.</li>
+-        <li>
+-          At equilibrium (no net flux), this simulation uses
+-          <math display="inline" aria-label="V equals S times natural log of C out over C in">
+-            <mi>V</mi><mo>=</mo><mi>S</mi><mo>ln</mo><mo>(</mo><mfrac><msub><mi>C</mi><mtext>out</mtext></msub><msub><mi>C</mi><mtext>in</mtext></msub></mfrac><mo>)</mo>
+-          </math>.
+-        </li>
+-        <li>Inside is the left compartment and outside is the right compartment; the charge wall is at the far-left inside boundary.</li>
++        <li>Electric force creates a concentration gradient (like charges repel and opposite charges attract).</li>
++        <li>Diffusion tends to reduce concetration gradients (ions move from high to low concentration).</li>
++        <li>The Nernst potential is the exact membrane voltage where those two forces cancel for that ion.</li>
++        <li>At the Nernst potential, net movement of that ion is zero.</li>
+       </ul>
+@@ -434,3 +429,3 @@
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.01" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="channel-permeability">Channel permeability</label><input id="channel-permeability" type="number" min="0" max="1" step="0.01" /></div>
+@@ -605,3 +600,3 @@
+     `Per-step Brownian displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`,
+-    `Electric strength (inside charge wall) = ${simParams.electricStrength.toFixed(3)}`,
++    `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
+     `Channel permeability p = ${simParams.channelPermeability.toFixed(2)}`,
+apply_patch(auto_approved=true) exited 0 in 51ms:
+Success. Updated the following files:
+M /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+index 758f774627c832605a99cafbc9306ba43c11e1d8..1706e845bfeedab78e92bd3dc3af0a6e71ee7871
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+@@ -411,15 +411,10 @@
+     <header class="page-head">
+       <h1>Nernst Equilibrium for One Ion</h1>
+       <ul class="key-points">
+-        <li>Membrane potential is determined by relative ion concentration inside vs outside the cell.</li>
+-        <li>Channel permeability is modeled as the probability that an in-channel crossing is accepted.</li>
+-        <li>
+-          At equilibrium (no net flux), this simulation uses
+-          <math display="inline" aria-label="V equals S times natural log of C out over C in">
+-            <mi>V</mi><mo>=</mo><mi>S</mi><mo>ln</mo><mo>(</mo><mfrac><msub><mi>C</mi><mtext>out</mtext></msub><msub><mi>C</mi><mtext>in</mtext></msub></mfrac><mo>)</mo>
+-          </math>.
+-        </li>
+-        <li>Inside is the left compartment and outside is the right compartment; the charge wall is at the far-left inside boundary.</li>
++        <li>Electric force creates a concentration gradient (like charges repel and opposite charges attract).</li>
++        <li>Diffusion tends to reduce concetration gradients (ions move from high to low concentration).</li>
++        <li>The Nernst potential is the exact membrane voltage where those two forces cancel for that ion.</li>
++        <li>At the Nernst potential, net movement of that ion is zero.</li>
+       </ul>
+     </header>
+     <div class="sim-layout">
+@@ -432,7 +427,7 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="10" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.01" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="channel-permeability">Channel permeability</label><input id="channel-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+@@ -603,7 +598,7 @@
+     'For a single positive ion, Nernst predicts the balance point for diffusion vs electrical drift',
+     '',
+     `Per-step Brownian displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`,
+-    `Electric strength (inside charge wall) = ${simParams.electricStrength.toFixed(3)}`,
++    `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
+     `Channel permeability p = ${simParams.channelPermeability.toFixed(2)}`,
+     `Trace window T = ${simParams.T.toFixed(0)} ms`
+   ].join('\n');
+
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+index 758f774627c832605a99cafbc9306ba43c11e1d8..1706e845bfeedab78e92bd3dc3af0a6e71ee7871
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+@@ -411,15 +411,10 @@
+     <header class="page-head">
+       <h1>Nernst Equilibrium for One Ion</h1>
+       <ul class="key-points">
+-        <li>Membrane potential is determined by relative ion concentration inside vs outside the cell.</li>
+-        <li>Channel permeability is modeled as the probability that an in-channel crossing is accepted.</li>
+-        <li>
+-          At equilibrium (no net flux), this simulation uses
+-          <math display="inline" aria-label="V equals S times natural log of C out over C in">
+-            <mi>V</mi><mo>=</mo><mi>S</mi><mo>ln</mo><mo>(</mo><mfrac><msub><mi>C</mi><mtext>out</mtext></msub><msub><mi>C</mi><mtext>in</mtext></msub></mfrac><mo>)</mo>
+-          </math>.
+-        </li>
+-        <li>Inside is the left compartment and outside is the right compartment; the charge wall is at the far-left inside boundary.</li>
++        <li>Electric force creates a concentration gradient (like charges repel and opposite charges attract).</li>
++        <li>Diffusion tends to reduce concetration gradients (ions move from high to low concentration).</li>
++        <li>The Nernst potential is the exact membrane voltage where those two forces cancel for that ion.</li>
++        <li>At the Nernst potential, net movement of that ion is zero.</li>
+       </ul>
+     </header>
+     <div class="sim-layout">
+@@ -432,7 +427,7 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="10" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.01" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="channel-permeability">Channel permeability</label><input id="channel-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+@@ -603,7 +598,7 @@
+     'For a single positive ion, Nernst predicts the balance point for diffusion vs electrical drift',
+     '',
+     `Per-step Brownian displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`,
+-    `Electric strength (inside charge wall) = ${simParams.electricStrength.toFixed(3)}`,
++    `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
+     `Channel permeability p = ${simParams.channelPermeability.toFixed(2)}`,
+     `Trace window T = ${simParams.T.toFixed(0)} ms`
+   ].join('\n');
+
+codex
+I’ve applied the text/UI updates in the page source and will now run `lint` and `build` to validate the change in this repo.
+exec
+/bin/zsh -lc 'npm run lint && npm run build' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 1.87s:
+
+> electrochemical-signals-progression-web@0.1.0 lint
+> tsc --noEmit
+
+
+> electrochemical-signals-progression-web@0.1.0 build
+> tsc && vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 37 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                         0.50 kB │ gzip: 0.31 kB
+dist/inspect_diffusion_free.html                                        0.58 kB │ gzip: 0.32 kB
+dist/inspect_diffusion_selective.html                                   0.59 kB │ gzip: 0.33 kB
+dist/inspect_nernst_one_ion.html                                        0.59 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_pore.html                                        0.60 kB │ gzip: 0.34 kB
+dist/inspect_nak_pump_gradients.html                                    0.60 kB │ gzip: 0.34 kB
+dist/inspect_diffusion_permeability.html                                0.60 kB │ gzip: 0.34 kB
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+index 758f774627c832605a99cafbc9306ba43c11e1d8..1706e845bfeedab78e92bd3dc3af0a6e71ee7871
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+@@ -411,15 +411,10 @@
+     <header class="page-head">
+       <h1>Nernst Equilibrium for One Ion</h1>
+       <ul class="key-points">
+-        <li>Membrane potential is determined by relative ion concentration inside vs outside the cell.</li>
+-        <li>Channel permeability is modeled as the probability that an in-channel crossing is accepted.</li>
+-        <li>
+-          At equilibrium (no net flux), this simulation uses
+-          <math display="inline" aria-label="V equals S times natural log of C out over C in">
+-            <mi>V</mi><mo>=</mo><mi>S</mi><mo>ln</mo><mo>(</mo><mfrac><msub><mi>C</mi><mtext>out</mtext></msub><msub><mi>C</mi><mtext>in</mtext></msub></mfrac><mo>)</mo>
+-          </math>.
+-        </li>
+-        <li>Inside is the left compartment and outside is the right compartment; the charge wall is at the far-left inside boundary.</li>
++        <li>Electric force creates a concentration gradient (like charges repel and opposite charges attract).</li>
++        <li>Diffusion tends to reduce concetration gradients (ions move from high to low concentration).</li>
++        <li>The Nernst potential is the exact membrane voltage where those two forces cancel for that ion.</li>
++        <li>At the Nernst potential, net movement of that ion is zero.</li>
+       </ul>
+     </header>
+     <div class="sim-layout">
+@@ -432,7 +427,7 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="10" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.01" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="channel-permeability">Channel permeability</label><input id="channel-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+@@ -603,7 +598,7 @@
+     'For a single positive ion, Nernst predicts the balance point for diffusion vs electrical drift',
+     '',
+     `Per-step Brownian displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`,
+-    `Electric strength (inside charge wall) = ${simParams.electricStrength.toFixed(3)}`,
++    `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
+     `Channel permeability p = ${simParams.channelPermeability.toFixed(2)}`,
+     `Trace window T = ${simParams.T.toFixed(0)} ms`
+   ].join('\n');
+
+exec
+/bin/zsh -lc 'git status --short' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 51ms:
+ M README.md
+ D inspect_diffusion_1.html
+ D inspect_diffusion_2.html
+ D inspect_diffusion_3.html
+ D inspect_diffusion_4.html
+ D inspect_electrochemical_1.html
+ D inspect_electrochemical_2.html
+ D inspect_electrochemical_3.html
+ D inspect_resting_potential_1.html
+ D inspect_resting_potential_2.html
+ D inspect_resting_potential_3.html
+ D inspect_resting_potential_4.html
+ M package.json
+ M src/index.ts
+ D src/pages/inspect_diffusion_1.ts
+ D src/pages/inspect_diffusion_2.ts
+ D src/pages/inspect_diffusion_3.ts
+ D src/pages/inspect_diffusion_4.ts
+ D src/pages/inspect_electrochemical_1.ts
+ D src/pages/inspect_electrochemical_2.ts
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+index 758f774627c832605a99cafbc9306ba43c11e1d8..1706e845bfeedab78e92bd3dc3af0a6e71ee7871
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+@@ -411,15 +411,10 @@
+     <header class="page-head">
+       <h1>Nernst Equilibrium for One Ion</h1>
+       <ul class="key-points">
+-        <li>Membrane potential is determined by relative ion concentration inside vs outside the cell.</li>
+-        <li>Channel permeability is modeled as the probability that an in-channel crossing is accepted.</li>
+-        <li>
+-          At equilibrium (no net flux), this simulation uses
+-          <math display="inline" aria-label="V equals S times natural log of C out over C in">
+-            <mi>V</mi><mo>=</mo><mi>S</mi><mo>ln</mo><mo>(</mo><mfrac><msub><mi>C</mi><mtext>out</mtext></msub><msub><mi>C</mi><mtext>in</mtext></msub></mfrac><mo>)</mo>
+-          </math>.
+-        </li>
+-        <li>Inside is the left compartment and outside is the right compartment; the charge wall is at the far-left inside boundary.</li>
++        <li>Electric force creates a concentration gradient (like charges repel and opposite charges attract).</li>
++        <li>Diffusion tends to reduce concetration gradients (ions move from high to low concentration).</li>
++        <li>The Nernst potential is the exact membrane voltage where those two forces cancel for that ion.</li>
++        <li>At the Nernst potential, net movement of that ion is zero.</li>
+       </ul>
+     </header>
+     <div class="sim-layout">
+@@ -432,7 +427,7 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="10" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.01" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="channel-permeability">Channel permeability</label><input id="channel-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+@@ -603,7 +598,7 @@
+     'For a single positive ion, Nernst predicts the balance point for diffusion vs electrical drift',
+     '',
+     `Per-step Brownian displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`,
+-    `Electric strength (inside charge wall) = ${simParams.electricStrength.toFixed(3)}`,
++    `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
+     `Channel permeability p = ${simParams.channelPermeability.toFixed(2)}`,
+     `Trace window T = ${simParams.T.toFixed(0)} ms`
+   ].join('\n');
+
+exec
+/bin/zsh -lc "rg -n \"Electric force creates|Diffusion tends to reduce concetration|The Nernst potential is the exact membrane voltage|At the Nernst potential, net movement|<label for=\\\"electric-strength\\\">Electric strength<|"'`Electric strength =" src/pages/inspect_nernst_one_ion.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web exited 1 in 52ms:
+zsh:1: unmatched "
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+index 758f774627c832605a99cafbc9306ba43c11e1d8..1706e845bfeedab78e92bd3dc3af0a6e71ee7871
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+@@ -411,15 +411,10 @@
+     <header class="page-head">
+       <h1>Nernst Equilibrium for One Ion</h1>
+       <ul class="key-points">
+-        <li>Membrane potential is determined by relative ion concentration inside vs outside the cell.</li>
+-        <li>Channel permeability is modeled as the probability that an in-channel crossing is accepted.</li>
+-        <li>
+-          At equilibrium (no net flux), this simulation uses
+-          <math display="inline" aria-label="V equals S times natural log of C out over C in">
+-            <mi>V</mi><mo>=</mo><mi>S</mi><mo>ln</mo><mo>(</mo><mfrac><msub><mi>C</mi><mtext>out</mtext></msub><msub><mi>C</mi><mtext>in</mtext></msub></mfrac><mo>)</mo>
+-          </math>.
+-        </li>
+-        <li>Inside is the left compartment and outside is the right compartment; the charge wall is at the far-left inside boundary.</li>
++        <li>Electric force creates a concentration gradient (like charges repel and opposite charges attract).</li>
++        <li>Diffusion tends to reduce concetration gradients (ions move from high to low concentration).</li>
++        <li>The Nernst potential is the exact membrane voltage where those two forces cancel for that ion.</li>
++        <li>At the Nernst potential, net movement of that ion is zero.</li>
+       </ul>
+     </header>
+     <div class="sim-layout">
+@@ -432,7 +427,7 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="10" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.01" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="channel-permeability">Channel permeability</label><input id="channel-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+@@ -603,7 +598,7 @@
+     'For a single positive ion, Nernst predicts the balance point for diffusion vs electrical drift',
+     '',
+     `Per-step Brownian displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`,
+-    `Electric strength (inside charge wall) = ${simParams.electricStrength.toFixed(3)}`,
++    `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
+     `Channel permeability p = ${simParams.channelPermeability.toFixed(2)}`,
+     `Trace window T = ${simParams.T.toFixed(0)} ms`
+   ].join('\n');
+
+exec
+/bin/zsh -lc "rg -n \"Electric force creates|Diffusion tends to reduce concetration|The Nernst potential is the exact membrane voltage|At the Nernst potential, net movement|<label for=\\\"electric-strength\\\">Electric strength</label>|Electric strength = \\"'$'"\\{simParams\\.electricStrength\" src/pages/inspect_nernst_one_ion.ts" in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+414:        <li>Electric force creates a concentration gradient (like charges repel and opposite charges attract).</li>
+415:        <li>Diffusion tends to reduce concetration gradients (ions move from high to low concentration).</li>
+416:        <li>The Nernst potential is the exact membrane voltage where those two forces cancel for that ion.</li>
+417:        <li>At the Nernst potential, net movement of that ion is zero.</li>
+430:              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+index 758f774627c832605a99cafbc9306ba43c11e1d8..1706e845bfeedab78e92bd3dc3af0a6e71ee7871
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+@@ -411,15 +411,10 @@
+     <header class="page-head">
+       <h1>Nernst Equilibrium for One Ion</h1>
+       <ul class="key-points">
+-        <li>Membrane potential is determined by relative ion concentration inside vs outside the cell.</li>
+-        <li>Channel permeability is modeled as the probability that an in-channel crossing is accepted.</li>
+-        <li>
+-          At equilibrium (no net flux), this simulation uses
+-          <math display="inline" aria-label="V equals S times natural log of C out over C in">
+-            <mi>V</mi><mo>=</mo><mi>S</mi><mo>ln</mo><mo>(</mo><mfrac><msub><mi>C</mi><mtext>out</mtext></msub><msub><mi>C</mi><mtext>in</mtext></msub></mfrac><mo>)</mo>
+-          </math>.
+-        </li>
+-        <li>Inside is the left compartment and outside is the right compartment; the charge wall is at the far-left inside boundary.</li>
++        <li>Electric force creates a concentration gradient (like charges repel and opposite charges attract).</li>
++        <li>Diffusion tends to reduce concetration gradients (ions move from high to low concentration).</li>
++        <li>The Nernst potential is the exact membrane voltage where those two forces cancel for that ion.</li>
++        <li>At the Nernst potential, net movement of that ion is zero.</li>
+       </ul>
+     </header>
+     <div class="sim-layout">
+@@ -432,7 +427,7 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="10" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.01" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="channel-permeability">Channel permeability</label><input id="channel-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+@@ -603,7 +598,7 @@
+     'For a single positive ion, Nernst predicts the balance point for diffusion vs electrical drift',
+     '',
+     `Per-step Brownian displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`,
+-    `Electric strength (inside charge wall) = ${simParams.electricStrength.toFixed(3)}`,
++    `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
+     `Channel permeability p = ${simParams.channelPermeability.toFixed(2)}`,
+     `Trace window T = ${simParams.T.toFixed(0)} ms`
+   ].join('\n');
+
+exec
+/bin/zsh -lc 'rg -n "Electric strength =" src/pages/inspect_nernst_one_ion.ts' in /Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web succeeded in 52ms:
+601:    `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+index 758f774627c832605a99cafbc9306ba43c11e1d8..1706e845bfeedab78e92bd3dc3af0a6e71ee7871
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+@@ -411,15 +411,10 @@
+     <header class="page-head">
+       <h1>Nernst Equilibrium for One Ion</h1>
+       <ul class="key-points">
+-        <li>Membrane potential is determined by relative ion concentration inside vs outside the cell.</li>
+-        <li>Channel permeability is modeled as the probability that an in-channel crossing is accepted.</li>
+-        <li>
+-          At equilibrium (no net flux), this simulation uses
+-          <math display="inline" aria-label="V equals S times natural log of C out over C in">
+-            <mi>V</mi><mo>=</mo><mi>S</mi><mo>ln</mo><mo>(</mo><mfrac><msub><mi>C</mi><mtext>out</mtext></msub><msub><mi>C</mi><mtext>in</mtext></msub></mfrac><mo>)</mo>
+-          </math>.
+-        </li>
+-        <li>Inside is the left compartment and outside is the right compartment; the charge wall is at the far-left inside boundary.</li>
++        <li>Electric force creates a concentration gradient (like charges repel and opposite charges attract).</li>
++        <li>Diffusion tends to reduce concetration gradients (ions move from high to low concentration).</li>
++        <li>The Nernst potential is the exact membrane voltage where those two forces cancel for that ion.</li>
++        <li>At the Nernst potential, net movement of that ion is zero.</li>
+       </ul>
+     </header>
+     <div class="sim-layout">
+@@ -432,7 +427,7 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="10" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.01" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="channel-permeability">Channel permeability</label><input id="channel-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+@@ -603,7 +598,7 @@
+     'For a single positive ion, Nernst predicts the balance point for diffusion vs electrical drift',
+     '',
+     `Per-step Brownian displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`,
+-    `Electric strength (inside charge wall) = ${simParams.electricStrength.toFixed(3)}`,
++    `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
+     `Channel permeability p = ${simParams.channelPermeability.toFixed(2)}`,
+     `Trace window T = ${simParams.T.toFixed(0)} ms`
+   ].join('\n');
+
+codex
+Implemented only the **Nernst Equilibrium for One Ion** requests in [src/pages/inspect_nernst_one_ion.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts).
+
+Changes made:
+- Replaced all intro bullets with the 4 requested bullets at [src/pages/inspect_nernst_one_ion.ts:414](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts:414).
+- Removed the old “Channel permeability is modeled…” bullet as part of that replacement.
+- Changed UI control label from `Electric strength (inside charge wall)` to `Electric strength` at [src/pages/inspect_nernst_one_ion.ts:430](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts:430).
+- Updated matching live equation/readout text to `Electric strength = ...` at [src/pages/inspect_nernst_one_ion.ts:601](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts:601).
+
+Validation run:
+- `npm run lint` passed.
+- `npm run build` passed.
+file update:
+diff --git a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+index 758f774627c832605a99cafbc9306ba43c11e1d8..1706e845bfeedab78e92bd3dc3af0a6e71ee7871
+--- a/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
++++ b/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts
+@@ -411,15 +411,10 @@
+     <header class="page-head">
+       <h1>Nernst Equilibrium for One Ion</h1>
+       <ul class="key-points">
+-        <li>Membrane potential is determined by relative ion concentration inside vs outside the cell.</li>
+-        <li>Channel permeability is modeled as the probability that an in-channel crossing is accepted.</li>
+-        <li>
+-          At equilibrium (no net flux), this simulation uses
+-          <math display="inline" aria-label="V equals S times natural log of C out over C in">
+-            <mi>V</mi><mo>=</mo><mi>S</mi><mo>ln</mo><mo>(</mo><mfrac><msub><mi>C</mi><mtext>out</mtext></msub><msub><mi>C</mi><mtext>in</mtext></msub></mfrac><mo>)</mo>
+-          </math>.
+-        </li>
+-        <li>Inside is the left compartment and outside is the right compartment; the charge wall is at the far-left inside boundary.</li>
++        <li>Electric force creates a concentration gradient (like charges repel and opposite charges attract).</li>
++        <li>Diffusion tends to reduce concetration gradients (ions move from high to low concentration).</li>
++        <li>The Nernst potential is the exact membrane voltage where those two forces cancel for that ion.</li>
++        <li>At the Nernst potential, net movement of that ion is zero.</li>
+       </ul>
+     </header>
+     <div class="sim-layout">
+@@ -432,7 +427,7 @@
+             <div class="control-grid">
+               <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="10" max="5000" step="1" /></div>
+               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.01" /></div>
+-              <div class="field"><label for="electric-strength">Electric strength (inside charge wall)</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
++              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" min="-10" max="10" step="0.01" /></div>
+               <div class="field"><label for="channel-permeability">Channel permeability</label><input id="channel-permeability" type="number" min="0" max="1" step="0.01" /></div>
+               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="8" step="0.1" /></div>
+               <div class="field"><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" /></div>
+@@ -603,7 +598,7 @@
+     'For a single positive ion, Nernst predicts the balance point for diffusion vs electrical drift',
+     '',
+     `Per-step Brownian displacement SD = diffusionSd × dt = ${stepSd.toFixed(3)}`,
+-    `Electric strength (inside charge wall) = ${simParams.electricStrength.toFixed(3)}`,
++    `Electric strength = ${simParams.electricStrength.toFixed(3)}`,
+     `Channel permeability p = ${simParams.channelPermeability.toFixed(2)}`,
+     `Trace window T = ${simParams.T.toFixed(0)} ms`
+   ].join('\n');
+
+tokens used
+17,769
+Implemented only the **Nernst Equilibrium for One Ion** requests in [src/pages/inspect_nernst_one_ion.ts](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts).
+
+Changes made:
+- Replaced all intro bullets with the 4 requested bullets at [src/pages/inspect_nernst_one_ion.ts:414](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts:414).
+- Removed the old “Channel permeability is modeled…” bullet as part of that replacement.
+- Changed UI control label from `Electric strength (inside charge wall)` to `Electric strength` at [src/pages/inspect_nernst_one_ion.ts:430](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts:430).
+- Updated matching live equation/readout text to `Electric strength = ...` at [src/pages/inspect_nernst_one_ion.ts:601](/Users/mq20185996/Dropbox/crossleylab/code/electrochemical_signals_progression_web/src/pages/inspect_nernst_one_ion.ts:601).
+
+Validation run:
+- `npm run lint` passed.
+- `npm run build` passed.

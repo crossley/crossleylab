@@ -14,6 +14,7 @@ interface SimParams {
   T: number;
   dt: number;
   numParticles: number;
+  numChannels: number;
   naFraction: number;
   naInsideInitFrac: number;
   kInsideInitFrac: number;
@@ -124,6 +125,7 @@ const defaultSim: SimParams = {
   T: 2800,
   dt: 1,
   numParticles: DEFAULT_NUM_PARTICLES,
+  numChannels: CHANNELS_PER_TYPE,
   naFraction: 0.5,
   naInsideInitFrac: 0.5,
   kInsideInitFrac: 0.5,
@@ -249,6 +251,7 @@ function normalizeSimParams(params: SimParams): SimParams {
     T: clamp(Math.round(params.T), 200, 20000),
     dt: clamp(params.dt, 0.05, 20),
     numParticles: clamp(Math.round(params.numParticles), 20, MAX_PARTICLES),
+    numChannels: clamp(Math.round(params.numChannels), 1, 100),
     naFraction: clamp(params.naFraction, 0.05, 0.95),
     naInsideInitFrac: clamp(params.naInsideInitFrac, 0, 1),
     kInsideInitFrac: clamp(params.kInsideInitFrac, 0, 1),
@@ -355,15 +358,15 @@ function createState(params: SimParams, seed: number): LiveState {
   placeType(kIndices, p.kInsideInitFrac);
   layoutFixedAnions(fixedX, fixedY, fixedCount, p.boxWidth, p.boxHeight, leftWall, rng);
 
-  const naChannelY = new Float32Array(CHANNELS_PER_TYPE);
-  const kChannelY = new Float32Array(CHANNELS_PER_TYPE);
+  const naChannelY = new Float32Array(p.numChannels);
+  const kChannelY = new Float32Array(p.numChannels);
   const pumpY = new Float32Array(PUMP_SITES);
   layoutInterleavedChannels(naChannelY, kChannelY, p.boxHeight, rng);
   layoutPumpSites(pumpY, p.boxHeight, rng);
 
-  const naOpen = new Uint8Array(CHANNELS_PER_TYPE);
-  const kOpen = new Uint8Array(CHANNELS_PER_TYPE);
-  for (let i = 0; i < CHANNELS_PER_TYPE; i += 1) {
+  const naOpen = new Uint8Array(p.numChannels);
+  const kOpen = new Uint8Array(p.numChannels);
+  for (let i = 0; i < p.numChannels; i += 1) {
     naOpen[i] = rng.next() < p.naOpenTarget ? 1 : 0;
     kOpen[i] = rng.next() < p.kOpenTarget ? 1 : 0;
   }
@@ -831,40 +834,45 @@ function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: 
 const app = getEl<HTMLDivElement>('#app');
 app.innerHTML = `
   <div class="site-shell">
-    <div class="nav-line"><a href="./index.html">Back to index</a><span>•</span><span>Page: <code>inspect_emergent_nak_discrete_markov_channels</code></span></div>
+    <div class="nav-line">
+      <a href="./index.html">← Back</a>
+      <div class="spacer"></div>
+      <button id="theme-toggle" class="theme-btn">☀</button>
+    </div>
     <header class="page-head">
-      <p class="eyebrow">Discrete Channels with Stochastic Gating</p>
-      <h1>Na/K Pump with Many Stochastic Channels</h1>
+      <p class="eyebrow">Lesson 15</p>
+      <h1>Macro vs Micro Currents</h1>
+      <p class="teaching-label">Key concepts</p>
       <ul class="key-points">
-        <li>Real neurons have many channels distributed across their membranes.</li>
-        <li>Each channel stochastically switches between open and closed states.</li>
-        <li>Average open probability sets overall permeability for each ion species.</li>
-        <li>Diffusion governs how often ions encounter open channels.</li>
-        <li>Vary open probabilities and observe how permeability controls equilibration speed.</li>
+        <li>Real membranes have many ion channels — each independently switches between open and closed (Markov gating).</li>
+        <li>Each open channel passes a small, fixed current; each closed channel passes none.</li>
+        <li>Macroscopic current = sum of many microscopic single-channel events.</li>
+        <li>More channels → smoother, larger current; fewer channels → noisy, variable current.</li>
+      </ul>
+      <p class="teaching-label questions">Questions to explore</p>
+      <ul class="guided-questions">
+        <li>Set N = 2 channels — how noisy is the total current trace?</li>
+        <li>Increase to N = 20 — does the trace become smoother?</li>
+        <li>Try setting the voltage above then below the reversal potential — which way does the current flow in each case?</li>
       </ul>
     </header>
     <div class="sim-layout">
       <aside class="controls">
         <div class="panel">
           <div class="group">
-            <p class="group-label">Classroom Controls</p>
             <div class="button-row">
               <button id="toggle-play" class="primary">Pause</button>
               <button id="rerun">Rerun</button>
               <button id="reset-defaults" class="warn">Reset Defaults</button>
             </div>
-            <div class="button-row">
-              <button id="pump-toggle" class="primary">Pump ON</button>
-            </div>
             <div class="control-grid">
-              <div class="field"><label for="num-particles">Particles</label><input id="num-particles" type="number" min="20" max="5000" step="1" /></div>
+              <div class="field"><label for="num-channels">Channels per type (N)</label><input id="num-channels" type="number" min="1" max="100" step="1" /></div>
               <div class="field"><label for="diffusion-sd">Diffusion SD</label><input id="diffusion-sd" type="number" min="0" max="20" step="0.05" /></div>
               <div class="field"><label for="playback-speed">Playback speed</label><input id="playback-speed" type="number" min="0.1" max="12" step="0.05" /></div>
-              <div class="field"><label for="electric-strength">Electric strength</label><input id="electric-strength" type="number" step="0.01" /></div>
-              <div class="field"><label for="na-open-target">NA+ open probability target</label><input id="na-open-target" type="number" min="0" max="1" step="0.01" /></div>
-              <div class="field"><label for="k-open-target">K+ open probability target</label><input id="k-open-target" type="number" min="0" max="1" step="0.01" /></div>
-              <div class="field"><label for="gate-tau">Gate switching timescale (ms)</label><input id="gate-tau" type="number" min="1" max="200" step="1" /></div>
-              <div class="field"><label for="pump-strength">NA+/K+ pump strength</label><input id="pump-strength" type="number" min="0" max="2" step="0.05" /></div>
+              <div class="field"><label for="electric-strength">Electrode charge / voltage offset</label><input id="electric-strength" type="number" step="0.01" /></div>
+              <div class="field"><label for="na-open-target">Na⁺ open probability</label><input id="na-open-target" type="number" min="0" max="1" step="0.01" /></div>
+              <div class="field"><label for="k-open-target">K⁺ open probability</label><input id="k-open-target" type="number" min="0" max="1" step="0.01" /></div>
+              <div class="field"><label for="gate-tau">Mean open/close time (ms)</label><input id="gate-tau" type="number" min="1" max="200" step="1" /></div>
             </div>
           </div>
         </div>
@@ -886,13 +894,12 @@ app.innerHTML = `
 const particleCanvas = getEl<HTMLCanvasElement>('#particle-canvas');
 const traceCanvas = getEl<HTMLCanvasElement>('#trace-canvas');
 const inputs = {
-  numParticles: getEl<HTMLInputElement>('#num-particles'),
+  numChannels: getEl<HTMLInputElement>('#num-channels'),
   diffusionSd: getEl<HTMLInputElement>('#diffusion-sd'),
   electricStrength: getEl<HTMLInputElement>('#electric-strength'),
   naOpenTarget: getEl<HTMLInputElement>('#na-open-target'),
   kOpenTarget: getEl<HTMLInputElement>('#k-open-target'),
-  gateTauMs: getEl<HTMLInputElement>('#gate-tau'),
-  pumpStrength: getEl<HTMLInputElement>('#pump-strength')
+  gateTauMs: getEl<HTMLInputElement>('#gate-tau')
 };
 const displayInputs = {
   playbackSpeed: getEl<HTMLInputElement>('#playback-speed')
@@ -900,8 +907,7 @@ const displayInputs = {
 const buttons = {
   togglePlay: getEl<HTMLButtonElement>('#toggle-play'),
   rerun: getEl<HTMLButtonElement>('#rerun'),
-  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults'),
-  pumpToggle: getEl<HTMLButtonElement>('#pump-toggle')
+  resetDefaults: getEl<HTMLButtonElement>('#reset-defaults')
 };
 
 let simParams: SimParams = { ...defaultSim };
@@ -911,20 +917,18 @@ let rng = new Rng(currentSeed);
 let state = createState(simParams, currentSeed);
 let trace = createTrace(state, simParams.T);
 let isPlaying = true;
-let pumpEnabled = true;
+const pumpEnabled = true;
 let lastTs = performance.now();
 let stepAccumulator = 0;
 
 function writeInputs(): void {
-  setNumberInput(inputs.numParticles, simParams.numParticles, 0);
+  setNumberInput(inputs.numChannels, simParams.numChannels, 0);
   setNumberInput(inputs.diffusionSd, simParams.diffusionSd, 3);
   setNumberInput(inputs.electricStrength, simParams.electricStrength, 3);
   setNumberInput(inputs.naOpenTarget, simParams.naOpenTarget, 2);
   setNumberInput(inputs.kOpenTarget, simParams.kOpenTarget, 2);
   setNumberInput(inputs.gateTauMs, simParams.gateTauMs, 0);
-  setNumberInput(inputs.pumpStrength, simParams.pumpStrength, 2);
   setNumberInput(displayInputs.playbackSpeed, displayParams.playbackSpeed, 2);
-  buttons.pumpToggle.textContent = pumpEnabled ? 'Pump ON' : 'Pump OFF';
 }
 
 function readSimInputs(): SimParams {
@@ -934,7 +938,8 @@ function readSimInputs(): SimParams {
   return normalizeSimParams({
     T: clamp(defaultSim.T, 200, 20000),
     dt: defaultSim.dt,
-    numParticles: clamp(Math.round(Number(inputs.numParticles.value) || defaultSim.numParticles), 20, MAX_PARTICLES),
+    numParticles: defaultSim.numParticles,
+    numChannels: clamp(Math.round(Number(inputs.numChannels.value) || defaultSim.numChannels), 1, 100),
     naFraction: 0.5,
     naInsideInitFrac: 0.5,
     kInsideInitFrac: 0.5,
@@ -947,7 +952,7 @@ function readSimInputs(): SimParams {
     gateTauMs: clamp(Number(inputs.gateTauMs.value) || defaultSim.gateTauMs, 1, 200),
     electricStrength: Number.isNaN(electricStrengthRaw) ? defaultSim.electricStrength : electricStrengthRaw,
     fixedAnionLayerX: fixedAnionLayerXNearMembrane(boxWidth, defaultSim.wallThickness),
-    pumpStrength: clamp(Number(inputs.pumpStrength.value) || 0, 0, 2)
+    pumpStrength: defaultSim.pumpStrength
   });
 }
 
@@ -993,23 +998,25 @@ function render(): void {
 writeInputs();
 render();
 
+getEl<HTMLButtonElement>('#theme-toggle').addEventListener('click', () => {
+  const isLight = document.documentElement.classList.toggle('light');
+  getEl<HTMLButtonElement>('#theme-toggle').textContent = isLight ? '☽' : '☀';
+});
+
 buttons.togglePlay.addEventListener('click', () => {
   isPlaying = !isPlaying;
   buttons.togglePlay.textContent = isPlaying ? 'Pause' : 'Play';
 });
-buttons.pumpToggle.addEventListener('click', () => {
-  pumpEnabled = !pumpEnabled;
-  writeInputs();
-  render();
-});
 buttons.rerun.addEventListener('click', () => {
+  currentSeed = randomSeed();
   rebuild();
+  isPlaying = true;
+  buttons.togglePlay.textContent = 'Pause';
   render();
 });
 buttons.resetDefaults.addEventListener('click', () => {
   simParams = { ...defaultSim };
   displayParams = { ...defaultDisplay };
-  pumpEnabled = true;
   rebuild();
   isPlaying = true;
   buttons.togglePlay.textContent = 'Pause';
