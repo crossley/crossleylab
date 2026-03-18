@@ -99,6 +99,10 @@ app.innerHTML = `
           <strong>Lesson 3 — Permeability as Probability</strong>
           <span>Real channels are open or closed, not partially open — model permeability as a crossing probability and write your first function</span>
         </a>
+        <a class="link-card ready" href="./guide_lesson_04.html">
+          <strong>Lesson 4 — Selective Permeability</strong>
+          <span>Two ion types, two dedicated channels — only Na⁺ can use the Na⁺ gap; introduce type arrays and per-type boolean indexing</span>
+        </a>
       </div>
     </section>
   </div>
