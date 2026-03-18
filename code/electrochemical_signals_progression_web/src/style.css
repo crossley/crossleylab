@@ -618,6 +618,19 @@ details,
   max-width: 80ch;
 }
 
+/* Inline code in guide text: lighter/subtler than the global code rule
+   so that code-heavy questions in Steps 9 & 10 don't look like a wall of black boxes */
+.guide-step code {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(160, 190, 255, 0.14);
+}
+
+html.light .guide-step code {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.10);
+  color: var(--ink);
+}
+
 .guide-step p {
   margin: 0;
   line-height: 1.55;
@@ -724,9 +737,6 @@ details.question-block > summary:hover {
 details.question-block > summary code {
   font-weight: normal;
   word-break: break-word;
-  white-space: normal;
-  background: var(--panel);
-  border-color: var(--panel-border);
 }
 
 details.question-block > .answer-body {
