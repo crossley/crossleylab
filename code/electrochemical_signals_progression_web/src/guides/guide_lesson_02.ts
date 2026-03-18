@@ -592,6 +592,16 @@ plt.show()</pre>
             </details>
           </li>
         </ul>
+        <p style="margin-top: 16px;">
+          When you are done, compare your simulation to the interactive web version —
+          which lets you adjust channel width and particle count in real time and watch
+          the equilibration play out across thousands of steps.
+        </p>
+        <p>
+          <a href="../inspect_diffusion_pore.html" class="inline-link">
+            Open the Diffusion Through a Pore web simulation →
+          </a>
+        </p>
       </div>
     </section>
 
