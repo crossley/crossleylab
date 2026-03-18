@@ -1,4 +1,8 @@
 import '../style.css';
+import { applyStoredTheme, initThemeToggle } from '../theme';
+
+applyStoredTheme();
+
 
 const app = document.querySelector<HTMLDivElement>('#app');
 if (!app) throw new Error('Missing #app root');
@@ -608,10 +612,7 @@ plt.show()</pre>
   </div>
 `;
 
-document.querySelector<HTMLButtonElement>('#theme-toggle')!.addEventListener('click', () => {
-  const isLight = document.documentElement.classList.toggle('light');
-  document.querySelector<HTMLButtonElement>('#theme-toggle')!.textContent = isLight ? '☽' : '☀';
-});
+initThemeToggle(document.querySelector<HTMLButtonElement>('#theme-toggle')!);
 
 // Copy buttons for code blocks
 document.querySelectorAll<HTMLElement>('.code-block-wrap').forEach((wrap) => {

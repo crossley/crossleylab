@@ -1,4 +1,8 @@
 import '../style.css';
+import { applyStoredTheme, initThemeToggle } from '../theme';
+
+applyStoredTheme();
+
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
 
@@ -502,10 +506,7 @@ plt.show()</pre>
 `;
 
 // Theme toggle
-document.querySelector<HTMLButtonElement>('#theme-toggle')!.addEventListener('click', () => {
-  const isLight = document.documentElement.classList.toggle('light');
-  document.querySelector<HTMLButtonElement>('#theme-toggle')!.textContent = isLight ? '☽' : '☀';
-});
+initThemeToggle(document.querySelector<HTMLButtonElement>('#theme-toggle')!);
 
 // Copy buttons on code blocks
 document.querySelectorAll<HTMLPreElement>('.code-block').forEach((pre) => {

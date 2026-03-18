@@ -1,4 +1,8 @@
 import '../style.css';
+import { applyStoredTheme, initThemeToggle } from '../theme';
+
+applyStoredTheme();
+
 import {
   DEFAULT_DIFFUSION_SD,
   DEFAULT_NUM_PARTICLES,
@@ -738,10 +742,7 @@ inputs.playbackSpeed.addEventListener('change', () => {
 
 window.addEventListener('resize', () => render());
 
-getEl<HTMLButtonElement>('#theme-toggle').addEventListener('click', () => {
-  const isLight = document.documentElement.classList.toggle('light');
-  getEl<HTMLButtonElement>('#theme-toggle').textContent = isLight ? '☽' : '☀';
-});
+initThemeToggle(getEl<HTMLButtonElement>('#theme-toggle'));
 
 function animate(ts: number): void {
   const dtSec = Math.max(0, (ts - lastTs) / 1000);

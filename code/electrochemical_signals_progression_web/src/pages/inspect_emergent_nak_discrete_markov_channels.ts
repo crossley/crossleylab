@@ -1,4 +1,8 @@
 import '../style.css';
+import { applyStoredTheme, initThemeToggle } from '../theme';
+
+applyStoredTheme();
+
 import {
   DEFAULT_DIFFUSION_SD,
   DEFAULT_NUM_PARTICLES,
@@ -998,10 +1002,7 @@ function render(): void {
 writeInputs();
 render();
 
-getEl<HTMLButtonElement>('#theme-toggle').addEventListener('click', () => {
-  const isLight = document.documentElement.classList.toggle('light');
-  getEl<HTMLButtonElement>('#theme-toggle').textContent = isLight ? '☽' : '☀';
-});
+initThemeToggle(getEl<HTMLButtonElement>('#theme-toggle'));
 
 buttons.togglePlay.addEventListener('click', () => {
   isPlaying = !isPlaying;

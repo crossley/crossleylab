@@ -1,4 +1,8 @@
 import '../style.css';
+import { applyStoredTheme, initThemeToggle } from '../theme';
+
+applyStoredTheme();
+
 import {
   DEFAULT_DIFFUSION_SD,
   DEFAULT_POTENTIAL_SCALE,
@@ -1003,10 +1007,7 @@ export function mountTwoIonRestingPage(variant: VariantConfig): void {
   inputs.playbackSpeed.addEventListener('change', () => { refreshDisplayFromInputs(); render(); });
   window.addEventListener('resize', () => render());
 
-  getEl<HTMLButtonElement>('#theme-toggle').addEventListener('click', () => {
-    const isLight = document.documentElement.classList.toggle('light');
-    getEl<HTMLButtonElement>('#theme-toggle').textContent = isLight ? '☽' : '☀';
-  });
+  initThemeToggle(getEl<HTMLButtonElement>('#theme-toggle'));
 
   function animate(ts: number): void {
     const dtSec = Math.max(0, (ts - lastTs) / 1000);

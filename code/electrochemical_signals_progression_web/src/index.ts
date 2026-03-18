@@ -1,6 +1,10 @@
 import './style.css';
+import { applyStoredTheme, initThemeToggle } from './theme';
 import { lessons } from './lessons';
 import type { LessonArc } from './lessons';
+
+applyStoredTheme();
+
 
 const app = document.querySelector<HTMLDivElement>('#app');
 if (!app) {
@@ -96,7 +100,4 @@ app.innerHTML = `
   </div>
 `;
 
-document.querySelector<HTMLButtonElement>('#theme-toggle')!.addEventListener('click', () => {
-  const isLight = document.documentElement.classList.toggle('light');
-  document.querySelector<HTMLButtonElement>('#theme-toggle')!.textContent = isLight ? '☽' : '☀';
-});
+initThemeToggle(document.querySelector<HTMLButtonElement>('#theme-toggle')!);
