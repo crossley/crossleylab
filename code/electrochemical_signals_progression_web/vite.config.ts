@@ -13,7 +13,8 @@ const guideInputs = {
   guide_lesson_01: resolve(__dirname, 'guide_lesson_01.html'),
   guide_lesson_02: resolve(__dirname, 'guide_lesson_02.html'),
   guide_lesson_03: resolve(__dirname, 'guide_lesson_03.html'),
-  guide_lesson_04: resolve(__dirname, 'guide_lesson_04.html')
+  guide_lesson_04: resolve(__dirname, 'guide_lesson_04.html'),
+  guide_lesson_05: resolve(__dirname, 'guide_lesson_05.html')
 };
 
 export default defineConfig({

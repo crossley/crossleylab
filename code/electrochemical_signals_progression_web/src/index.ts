@@ -103,6 +103,10 @@ app.innerHTML = `
           <strong>Lesson 4 — Selective Permeability</strong>
           <span>Two ion types, two dedicated channels — only Na⁺ can use the Na⁺ gap; introduce type arrays and per-type boolean indexing</span>
         </a>
+        <a class="link-card ready" href="./guide_lesson_05.html">
+          <strong>Lesson 5 — Electrical Field Attraction</strong>
+          <span>Add a deterministic drift term to the random walk and watch diffusion compete with electrical attraction around a fixed charge source</span>
+        </a>
       </div>
     </section>
   </div>
