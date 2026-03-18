@@ -30,7 +30,7 @@ app.innerHTML = `
   <!-- STEP 1 -->
   <section class="panel lesson-group">
     <h2 class="section-title">Step 1 — What is Brownian motion?</h2>
-    <p class="arc-description">Before writing any code, make sure you understand what we are trying to model.</p>
+    <p class="arc-description">Before writing any code, make sure you understand what you are trying to model.</p>
     <div class="guide-step">
       <p>
         A small particle suspended in a fluid is constantly being bumped by
@@ -45,7 +45,7 @@ app.innerHTML = `
           but there is no drift — on average it stays put.
         </li>
         <li>
-          The further it can wander in a given time is set by the
+          How far it can wander in a given time is set by the
           <strong>temperature</strong> of the fluid and the <strong>size</strong>
           of the particle.
         </li>
@@ -59,11 +59,23 @@ app.innerHTML = `
         <li>
           If you increase the temperature of the fluid, what do you predict
           happens to how far the particle wanders?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>Higher temperature → more energetic collisions from surrounding molecules → larger random kicks → the particle wanders further in the same amount of time. Temperature is the energy source driving diffusion.</p>
+            </div>
+          </details>
         </li>
         <li>
           If you watch two particles starting from the same spot, do you
           expect them to end up in the same place after 10 seconds? Why or
           why not?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>No. Each particle receives independent random kicks at every moment. Even starting from the same position, their paths immediately diverge. After 10 seconds they will almost certainly be in different places — and if you repeat the experiment, neither particle will end up in the same place twice.</p>
+            </div>
+          </details>
         </li>
       </ul>
     </div>
@@ -71,12 +83,11 @@ app.innerHTML = `
 
   <!-- STEP 2 -->
   <section class="panel lesson-group">
-    <h2 class="section-title">Step 2 — What do we need to simulate it?</h2>
+    <h2 class="section-title">Step 2 — What do you need to simulate it?</h2>
     <p class="arc-description">Think about what the simulation must keep track of before writing a single line of code.</p>
     <div class="guide-step">
       <p>
-        We want to watch a particle move through 2D space over time. Ask
-        yourself: what information do we need?
+        To watch a particle move through 2D space over time, you need:
       </p>
       <ul>
         <li>
@@ -84,18 +95,18 @@ app.innerHTML = `
           y-coordinate at every moment in time.
         </li>
         <li>
-          <strong>History</strong> — we want to see the whole path, not just
-          where it is right now. So we need to <em>store</em> positions at
+          <strong>History</strong> — you want to see the whole path, not just
+          where it is right now. So you need to <em>store</em> positions at
           every time step. That is a natural job for <strong>arrays</strong>.
         </li>
         <li>
-          <strong>Time passing</strong> — positions change step by step. We
+          <strong>Time passing</strong> — positions change step by step. You
           need a <strong>loop</strong> that runs once per time step and updates
           the position each time through.
         </li>
       </ul>
       <p>
-        We will use two Python libraries:
+        You will use two Python libraries:
       </p>
       <ul>
         <li><strong>NumPy</strong> (<code>numpy</code>) — for creating and working with arrays.</li>
@@ -118,9 +129,9 @@ sigma = 0.5   # step size (controls how fast the particle wanders)</pre>
     <p class="arc-description">Allocate storage for the particle's entire path before the loop runs.</p>
     <div class="guide-step">
       <p>
-        We need two arrays — one for x-positions, one for y-positions — each
-        with <code>N</code> entries (one per time step). We fill them with
-        zeros to start, then we will overwrite them inside the loop.
+        You need two arrays — one for x-positions, one for y-positions — each
+        with <code>N</code> entries (one per time step). Fill them with
+        zeros to start; the loop will overwrite them.
       </p>
       <p>
         Add this to your file:
@@ -139,14 +150,24 @@ y[0] = 0.0</pre>
       <p class="teaching-label questions">Questions</p>
       <ul class="guided-questions">
         <li>
-          Why do we set <code>x[0] = 0.0</code> separately, outside the loop?
-          What would happen if we forgot to set an initial condition?
+          Why do you set <code>x[0] = 0.0</code> separately, outside the loop?
+          What would happen if you forgot to set an initial condition?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>The loop starts at index 1 and computes each new position from the previous one (<code>x[i-1]</code>). If <code>x[0]</code> is not set explicitly, it remains 0 (from <code>np.zeros</code>) — which is fine here, but in general a simulation with an uninitialised starting state will produce meaningless output. Setting the initial condition explicitly makes the choice deliberate and clear.</p>
+            </div>
+          </details>
         </li>
         <li>
-          We allocated the full array <em>before</em> the loop rather than
+          You allocated the full array <em>before</em> the loop rather than
           building it up step by step. Why might that be a good habit?
-          (Hint: think about what NumPy has to do each time an array changes
-          size.)
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>When you append to a list or grow an array one element at a time, Python must repeatedly allocate new memory and copy the data. Pre-allocating a fixed-size array once means memory is claimed up front and no copying happens during the loop — this is much faster for large simulations. It also makes the array's size explicit and visible at the top of the code.</p>
+            </div>
+          </details>
         </li>
       </ul>
     </div>
@@ -158,16 +179,16 @@ y[0] = 0.0</pre>
     <p class="arc-description">Write a loop that looks plausible. Run it. Something will be wrong — that is the point.</p>
     <div class="guide-step">
       <p>
-        At each step we want to move the particle by a small random amount.
-        The random displacement at each step is drawn from a Normal
-        distribution with mean 0 (no preferred direction) and standard
-        deviation <code>sigma</code>. Add this loop:
+        At each step you want to move the particle by a small random amount.
+        A random displacement drawn from a Normal distribution with mean 0
+        and standard deviation <code>sigma</code> captures the unpredictable
+        nature of the molecular collisions. Add this loop:
       </p>
       <pre class="code-block">for i in range(1, N):
     x[i] = np.random.normal(0, sigma)
     y[i] = np.random.normal(0, sigma)</pre>
       <p>
-        Now add a quick plot so you can see the path, then run the script:
+        Add a plot so you can see the path, then run:
       </p>
       <pre class="code-block">plt.plot(x, y, lw=0.5)
 plt.scatter(x[0], y[0], color='green', zorder=5, label='start')
@@ -181,13 +202,31 @@ plt.show()</pre>
         <li>
           Describe what the plot looks like. Does it resemble the wandering
           path of a particle in a fluid?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>The plot will show a dense cloud of points clustered near the origin — the "path" repeatedly passes through the same region rather than wandering away. It does not look like diffusion; there is no sense of the particle going anywhere.</p>
+            </div>
+          </details>
         </li>
         <li>
           Where does the path appear to be centred, regardless of how many
           steps you run? Why?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>It stays centred near (0, 0). Each step draws from <code>Normal(0, sigma)</code> independently — the mean is 0, so every position is drawn from a distribution centred on 0. The particle has no memory of where it was, so it resets to roughly the origin at every step.</p>
+            </div>
+          </details>
         </li>
         <li>
           What is the particle "forgetting" between each step?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>It is forgetting where it was. The update <code>x[i] = random</code> replaces the position entirely with a fresh random draw. There is no connection between step <em>i</em> and step <em>i−1</em> — each position is chosen independently from zero.</p>
+            </div>
+          </details>
         </li>
       </ul>
     </div>
@@ -207,23 +246,40 @@ plt.show()</pre>
     y[i] = y[i-1] + np.random.normal(0, sigma)</pre>
       <p>
         Run it again. The path should now look like a random walk — the
-        particle wanders outward from the origin, with no tendency to snap
-        back.
+        particle wanders outward from the origin, with no tendency to snap back.
       </p>
       <p class="teaching-label questions">Questions</p>
       <ul class="guided-questions">
         <li>
           What does <code>x[i-1]</code> contribute? In plain language, what
           is it doing for the simulation?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>It is the particle's current position — the anchor. The new position is the old position <em>plus</em> a small random step. The particle remembers where it was and moves <em>relative to that</em>, so the path is continuous and cumulative rather than resetting each step.</p>
+            </div>
+          </details>
         </li>
         <li>
           Run the script a few times without changing anything. Does the
           path look the same each time? Why or why not?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>No, it looks different every time. The random steps are drawn fresh from <code>numpy.random</code> on each run, with a different random seed. This is correct — real Brownian motion is stochastic, so no two paths should be identical.</p>
+            </div>
+          </details>
         </li>
         <li>
           The particle starts at (0, 0). After 1000 steps, roughly how far
           from the origin does it end up? Run it five times and note the
           distances.
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>With <code>sigma = 0.5</code> and <code>N = 1000</code>, the expected root-mean-square displacement is <code>sigma × √N ≈ 0.5 × 31.6 ≈ 15.8</code> units. Individual runs will vary — some shorter, some longer — but most endpoints should be roughly in that ballpark. This formula comes from the statistics of random walks.</p>
+            </div>
+          </details>
         </li>
       </ul>
     </div>
@@ -239,16 +295,15 @@ plt.show()</pre>
       </p>
       <pre class="code-block">x[i] = x[i-1] + np.random.normal(0, sigma)</pre>
       <p>
-        This follows a pattern:
+        This follows the pattern:
       </p>
       <pre class="code-block">new_value = old_value + change</pre>
       <p>
-        This is called <strong>Euler's method</strong>. It is how we turn a
-        continuous differential equation into a discrete loop a computer can
-        execute. For Brownian motion the "change" is a random kick. In later
-        lessons the "change" will be driven by voltage gradients, ion
-        concentrations, and channel gating — but the loop structure will be
-        identical.
+        This is called <strong>Euler's method</strong>. It turns a continuous
+        differential equation into a discrete update a computer can execute.
+        For Brownian motion the "change" is a random kick. In later lessons
+        the "change" will be driven by voltage gradients, ion concentrations,
+        and channel gating — but the loop structure will be identical.
       </p>
       <p class="teaching-label questions">Questions</p>
       <ul class="guided-questions">
@@ -256,6 +311,12 @@ plt.show()</pre>
           Every simulation in this series uses Euler's method. Based on what
           you have seen so far, what two things do you need to know to apply
           it to any system?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>You need: (1) an <strong>initial condition</strong> — where does the system start? (2) a <strong>rate of change</strong> — how does the state update at each step? Given those two things, Euler's method can simulate any system that evolves over time.</p>
+            </div>
+          </details>
         </li>
       </ul>
     </div>
@@ -267,9 +328,9 @@ plt.show()</pre>
     <p class="arc-description">Extend the simulation to track a second particle. Write everything out long-form.</p>
     <div class="guide-step">
       <p>
-        Add a second particle. Give it its own arrays and its own initial
-        conditions. Extend the loop to update both. Your script should now
-        look like this in full:
+        Give a second particle its own arrays and initial conditions, and
+        extend the loop to update both. Your full script should now look like
+        this:
       </p>
       <pre class="code-block">import numpy as np
 import matplotlib.pyplot as plt
@@ -309,10 +370,22 @@ plt.show()</pre>
         <li>
           Do the two particles ever end up in the same place at the end of
           the simulation? Would you expect them to?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>Almost certainly not — they take independent random paths from the same starting point, so it is extremely unlikely they converge to the same endpoint. Occasionally (with a very small number of steps or a very small <code>sigma</code>) they might land close together by chance, but in general their paths diverge immediately.</p>
+            </div>
+          </details>
         </li>
         <li>
           Now imagine doing this for 10 particles. How many arrays would you
           need to declare? How many lines would the loop body have?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>For 10 particles you would need 20 arrays (<code>x1, y1, x2, y2, ..., x10, y10</code>), 20 initial condition assignments, and 20 lines inside the loop body. For 100 particles that becomes 200 arrays and 200 loop lines. This approach does not scale.</p>
+            </div>
+          </details>
         </li>
       </ul>
     </div>
@@ -330,17 +403,29 @@ plt.show()</pre>
       </p>
       <p>
         Once you have done that (or convinced yourself you could), count the
-        lines you added. Then ask: what if we needed 100 particles? 10,000?
+        lines you added. Then ask: what if you needed 100 particles? 10,000?
       </p>
       <p class="teaching-label questions">Questions</p>
       <ul class="guided-questions">
         <li>
           For 10 particles written long-form, how many lines does the loop
           body contain?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>20 lines — two per particle (one for x, one for y). Plus 20 array declarations and 20 initial condition lines outside the loop. Total: 60 new lines just to add 8 more particles.</p>
+            </div>
+          </details>
         </li>
         <li>
           What would you have to change in the script to go from 10 particles
           to 11? Is there a better way?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>You would have to add two more arrays (<code>x11</code>, <code>y11</code>), set their initial conditions, and add two more lines to the loop body. Every new particle requires manual edits in three separate places. A better way is to use a 2D array where one dimension is particles — then changing the particle count only requires changing one number.</p>
+            </div>
+          </details>
         </li>
       </ul>
     </div>
@@ -382,8 +467,8 @@ plt.legend()
 plt.axis('equal')
 plt.show()</pre>
       <p>
-        Run it. Then change <code>n_particles</code> to 100 and run it again.
-        Notice that <strong>the loop body did not change at all</strong>.
+        Run it. Then change <code>n_particles</code> to 100 and run again.
+        The loop body did not change at all.
       </p>
       <p class="teaching-label questions">Questions</p>
       <ul class="guided-questions">
@@ -391,20 +476,44 @@ plt.show()</pre>
           <code>x</code> now has shape <code>(N, n_particles)</code>. What
           does <code>x[i]</code> refer to? What does <code>x[:, p]</code>
           refer to?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p><code>x[i]</code> is a 1D array of length <code>n_particles</code> — the x-positions of all particles at time step <em>i</em>. <code>x[:, p]</code> is a 1D array of length <code>N</code> — the full x-history of particle <em>p</em> across all time steps.</p>
+            </div>
+          </details>
         </li>
         <li>
           <code>np.random.normal(0, sigma, n_particles)</code> draws
           <code>n_particles</code> random numbers at once. Why is that
           important here?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>Each particle needs its own independent random kick. Passing <code>n_particles</code> as the size argument generates all of them in one call and returns an array of that length. This lets the single line <code>x[i] = x[i-1] + ...</code> update all particles simultaneously, without a nested loop over particles.</p>
+            </div>
+          </details>
         </li>
         <li>
           Change <code>n_particles</code> to 500. How does the cloud of
           end-points look compared to 10 particles? What shape does it
           approach?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>With 500 particles the cloud of red end-points becomes clearly circular and roughly Gaussian — dense in the centre, thinning out toward the edges. With only 10 particles the shape is too sparse to see this. This circular spread is the 2D signature of diffusion: the distribution of end-points approaches a 2D Gaussian centred on the origin.</p>
+            </div>
+          </details>
         </li>
         <li>
           Change <code>sigma</code> from <code>0.5</code> to <code>0.1</code>.
           How does the spread of end-points change? Try <code>sigma = 2.0</code>.
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>Smaller <code>sigma</code> → smaller steps → particles wander less → the cloud is tighter. Larger <code>sigma</code> → larger steps → the cloud spreads much more. The radius of the cloud scales as <code>sigma × √N</code>, so with <code>sigma = 0.1</code> the expected spread is about 3.2 units; with <code>sigma = 2.0</code> it is about 63 units.</p>
+            </div>
+          </details>
         </li>
       </ul>
     </div>
@@ -421,20 +530,44 @@ plt.show()</pre>
           <code>x[i] = np.random.normal(0, sigma)</code> does not produce
           Brownian motion, but
           <code>x[i] = x[i-1] + np.random.normal(0, sigma)</code> does.
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>The first version sets the position to a fresh random draw centred on zero at every step. The particle has no memory — it resets each time rather than accumulating displacement. The second version adds the random step to wherever the particle currently is, so displacement accumulates over time. The <code>x[i-1]</code> term is what gives the particle its history.</p>
+            </div>
+          </details>
         </li>
         <li>
           What are the two ingredients of Euler's method? Write the general
           update rule in words (not code).
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>The two ingredients are an <strong>initial condition</strong> and a <strong>rule for how the state changes</strong>. In words: <em>new state = old state + change</em>. The "change" encodes the physics or dynamics of the system being modelled.</p>
+            </div>
+          </details>
         </li>
         <li>
           In the final script, the loop body is two lines regardless of how
           many particles you simulate. Why? What feature of NumPy makes this
           possible?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>NumPy operations act on entire arrays at once (vectorisation). When <code>x[i-1]</code> is a 1D array of length <code>n_particles</code> and <code>np.random.normal(0, sigma, n_particles)</code> produces another array of the same length, their sum is computed element-wise in a single statement — updating all particles simultaneously without a Python-level loop over particles.</p>
+            </div>
+          </details>
         </li>
         <li>
           A classmate argues: "We should set <code>x[0, :] = 0</code> inside
           the loop at <code>i = 0</code> rather than outside it." What is
           wrong with this argument?
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>The loop runs <code>for i in range(1, N)</code> — it starts at index 1, not 0. Index 0 is never visited by the loop. If you set <code>x[0]</code> inside the loop, it would never execute. Initial conditions must be set before the loop starts so that <code>x[i-1]</code> is valid on the very first iteration (<code>i = 1</code>).</p>
+            </div>
+          </details>
         </li>
         <li>
           In theory, the root-mean-square distance a particle travels from the
@@ -442,6 +575,12 @@ plt.show()</pre>
           approximately <code>sigma × √N</code>. With
           <code>sigma = 0.5</code> and <code>N = 1000</code>, what does this
           predict? Check it roughly by eye using your 500-particle simulation.
+          <details>
+            <summary>Show answer</summary>
+            <div class="answer-body">
+              <p>Predicted RMS displacement: <code>0.5 × √1000 ≈ 0.5 × 31.6 ≈ 15.8</code> units. With 500 particles the bulk of the red endpoint cloud should be roughly within 15–20 units of the origin, consistent with this prediction. Most particles will land somewhere in that band, with a few outliers further out.</p>
+            </div>
+          </details>
         </li>
       </ol>
       <p>

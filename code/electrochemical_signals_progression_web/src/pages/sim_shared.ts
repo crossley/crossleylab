@@ -15,13 +15,24 @@ export const SIM_COLORS = {
   ionBTrace: '#42c8ff',
   ionCTrace: '#72ffb2',
   totalTrace: '#c68dff',
-  predictionTrace: '#f2f5fb',
+  predictionTrace: '#8899cc',
   channelFill: 'rgba(159, 255, 106, 0.12)',
   membraneFill: 'rgba(200, 220, 255, 0.08)',
-  membraneStroke: 'rgba(190, 225, 255, 0.48)',
+  membraneStroke: 'rgba(140, 180, 240, 0.65)',
   fieldNegative: 'rgba(255, 111, 143, 0.92)',
   fieldPositive: 'rgba(143, 178, 255, 0.92)'
 } as const;
+
+export function getCanvasColors() {
+  const s = getComputedStyle(document.documentElement);
+  return {
+    ink:    s.getPropertyValue('--canvas-ink').trim(),
+    inkDim: s.getPropertyValue('--canvas-ink-dim').trim(),
+    gridA:  s.getPropertyValue('--canvas-grid-a').trim(),
+    gridB:  s.getPropertyValue('--canvas-grid-b').trim(),
+    gridC:  s.getPropertyValue('--canvas-grid-c').trim(),
+  };
+}
 
 type ChannelBandPx = {
   top: number;
