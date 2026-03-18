@@ -683,6 +683,8 @@ details.question-block {
   border: 1px solid var(--panel-border);
   border-radius: 10px;
   overflow: hidden;
+  background: transparent;  /* override global details dark bg */
+  padding: 0;               /* override global details padding */
 }
 
 details.question-block > summary {
@@ -690,6 +692,7 @@ details.question-block > summary {
   padding: 12px 16px;
   font-size: 0.9rem;
   line-height: 1.5;
+  font-weight: normal;      /* override global details>summary bold */
   color: var(--ink);
   list-style: none;
   display: flex;
@@ -715,6 +718,15 @@ details.question-block[open] > summary::before {
 
 details.question-block > summary:hover {
   background: var(--panel);
+}
+
+/* inline code inside a question summary — allow graceful wrapping */
+details.question-block > summary code {
+  font-weight: normal;
+  word-break: break-word;
+  white-space: normal;
+  background: var(--panel);
+  border-color: var(--panel-border);
 }
 
 details.question-block > .answer-body {
