@@ -107,6 +107,30 @@ app.innerHTML = `
           <strong>Lesson 5 — Electrical Field Attraction</strong>
           <span>Add a deterministic drift term to the random walk and watch diffusion compete with electrical attraction around a fixed charge source</span>
         </a>
+        <a class="link-card ready" href="./guide_lesson_06.html">
+          <strong>Lesson 6 — Na⁺ and K⁺ with Anions</strong>
+          <span>Fixed negative anions attract both ion types inward — explore why anions alone cannot explain the biological concentration gradient</span>
+        </a>
+        <a class="link-card ready" href="./guide_lesson_07.html">
+          <strong>Lesson 7 — Na/K Pump</strong>
+          <span>Add active transport to the simulation — the pump moves Na⁺ out and K⁺ in against concentration gradients, maintaining the biological distribution</span>
+        </a>
+        <a class="link-card ready" href="./guide_lesson_08.html">
+          <strong>Lesson 8 — Voltage as Charge Separation</strong>
+          <span>Membrane potential is just a charge imbalance — explore the static relationship between ion counts and voltage before adding dynamics</span>
+        </a>
+        <a class="link-card ready" href="./guide_lesson_09.html">
+          <strong>Lesson 9 — Nernst Equation</strong>
+          <span>Derive E_K = (RT/zF) ln([K⁺]_out/[K⁺]_in) — the voltage at which diffusion and electrical attraction exactly balance for one ion</span>
+        </a>
+        <a class="link-card ready" href="./guide_lesson_10.html">
+          <strong>Lesson 10 — Goldman Equation</strong>
+          <span>With two ions, V_m settles between their Nernst potentials — the most permeable ion wins; derive the Goldman equation and connect it to the action potential</span>
+        </a>
+        <a class="link-card ready" href="./guide_lesson_11.html">
+          <strong>Lesson 11 — Macro vs Micro Currents</strong>
+          <span>Individual channels gate stochastically (Markov); smooth macroscopic currents emerge from summing many independent binary switches</span>
+        </a>
       </div>
     </section>
   </div>
