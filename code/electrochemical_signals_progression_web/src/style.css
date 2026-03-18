@@ -685,74 +685,59 @@ html.light .page-head code {
 }
 
 .guide-step .question-list {
-  display: grid;
-  gap: 10px;
-  margin-top: 10px;
+  display: none; /* not used in current structure */
 }
 
-/* details.question-block — each Q&A card is the <details> element itself */
-details.question-block {
-  display: block !important;  /* override the sim-page hide rule */
-  border: 1px solid var(--panel-border);
-  border-radius: 10px;
-  overflow: hidden;
-  background: transparent;  /* override global details dark bg */
-  padding: 0;               /* override global details padding */
+/* Override the sim-page global 'details { display:none !important }' rule.
+   Guide questions use <ul class="guided-questions"><li>Q<details>A</details></li></ul>
+   so the <details> elements are inside .guide-step — show them only here. */
+.guide-step details {
+  display: block !important;
+  margin-top: 8px;
 }
 
-details.question-block > summary {
+.guide-step details summary {
   cursor: pointer;
-  padding: 12px 16px;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  font-weight: normal;      /* override global details>summary bold */
-  color: var(--ink);
-  list-style: none;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  display: inline-block;
+  padding: 3px 10px 3px 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
   user-select: none;
+  list-style: none;
 }
 
-details.question-block > summary::-webkit-details-marker { display: none; }
+.guide-step details summary::-webkit-details-marker { display: none; }
 
-details.question-block > summary::before {
-  content: '▸';
-  flex-shrink: 0;
-  margin-top: 3px;
-  color: var(--accent);
+.guide-step details summary::before {
+  content: '▸ ';
+  display: inline-block;
   transition: transform 0.18s;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 }
 
-details.question-block[open] > summary::before {
+.guide-step details[open] summary::before {
   transform: rotate(90deg);
 }
 
-details.question-block > summary:hover {
-  background: var(--panel);
-}
-
-/* inline code inside a question summary — allow graceful wrapping */
-details.question-block > summary code {
-  font-weight: normal;
-  word-break: break-word;
-}
-
-details.question-block > .answer-body {
-  padding: 10px 16px 14px;
-  border-top: 1px solid var(--panel-border);
+.guide-step details .answer-body {
+  margin-top: 8px;
+  padding: 10px 14px 12px;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
   background: var(--panel);
   font-size: 0.9rem;
   line-height: 1.55;
   color: var(--ink);
 }
 
-details.question-block > .answer-body p {
+.guide-step details .answer-body p {
   margin: 0 0 6px;
 }
 
-details.question-block > .answer-body p:last-child {
+.guide-step details .answer-body p:last-child {
   margin-bottom: 0;
 }
 
