@@ -694,6 +694,9 @@ html.light .page-head code {
 .guide-step details {
   display: block !important;
   margin-top: 8px;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .guide-step details summary {
