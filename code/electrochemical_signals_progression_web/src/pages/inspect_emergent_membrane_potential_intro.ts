@@ -305,7 +305,7 @@ function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: 
   ctx.stroke();
 
   ctx.save();
-  ctx.fillStyle = 'rgba(232,243,255,0.85)';
+  ctx.fillStyle = cc.ink;
   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
   ctx.translate(12 * dpr, padT + plotH / 2);
   ctx.rotate(-Math.PI / 2);

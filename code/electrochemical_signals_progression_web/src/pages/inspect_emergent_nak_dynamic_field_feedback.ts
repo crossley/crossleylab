@@ -681,6 +681,7 @@ function drawDiscreteChannels(
   h: number,
   dpr: number
 ): void {
+  const cc = getCanvasColors();
   const [wl] = worldToCanvas(state.leftWall, 0, state, w, h);
   const [wr] = worldToCanvas(state.rightWall, 0, state, w, h);
   const membraneWidth = Math.max(1, wr - wl);
@@ -691,7 +692,7 @@ function drawDiscreteChannels(
       const [, yPx] = worldToCanvas(0, yList[i], state, w, h);
       const top = yPx - aperturePx;
       const height = 2 * aperturePx;
-      ctx.fillStyle = 'rgba(8,16,26,0.90)';
+      ctx.fillStyle = cc.channelBody;
       ctx.fillRect(wl, top, membraneWidth, height);
       if (open[i] === 1) {
         ctx.save();
@@ -704,7 +705,7 @@ function drawDiscreteChannels(
         ctx.strokeRect(wl, top, membraneWidth, height);
         ctx.restore();
       } else {
-        ctx.strokeStyle = 'rgba(230,240,255,0.50)';
+        ctx.strokeStyle = cc.closedStroke;
         ctx.lineWidth = 1 * dpr;
         ctx.beginPath();
         ctx.moveTo(wl + 1 * dpr, yPx);
@@ -778,7 +779,7 @@ function drawParticles(canvas: HTMLCanvasElement, state: LiveState, pointSize: n
   ctx.fillText(`Na open: ${naOpenN}/${state.naOpen.length}`, 12 * dpr, 33 * dpr);
   ctx.fillStyle = 'rgba(245,178,72,0.90)';
   ctx.fillText(`K open: ${kOpenN}/${state.kOpen.length}`, 12 * dpr, 51 * dpr);
-  ctx.fillStyle = 'rgba(232,243,255,0.75)';
+  ctx.fillStyle = cc.ink;
   ctx.fillText('inside (cell)', 12 * dpr, h - 10 * dpr);
   ctx.fillText('outside', w - 58 * dpr, h - 10 * dpr);
 }

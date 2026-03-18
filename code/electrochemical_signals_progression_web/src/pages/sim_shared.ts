@@ -26,11 +26,13 @@ export const SIM_COLORS = {
 export function getCanvasColors() {
   const s = getComputedStyle(document.documentElement);
   return {
-    ink:    s.getPropertyValue('--canvas-ink').trim(),
-    inkDim: s.getPropertyValue('--canvas-ink-dim').trim(),
-    gridA:  s.getPropertyValue('--canvas-grid-a').trim(),
-    gridB:  s.getPropertyValue('--canvas-grid-b').trim(),
-    gridC:  s.getPropertyValue('--canvas-grid-c').trim(),
+    ink:          s.getPropertyValue('--canvas-ink').trim(),
+    inkDim:       s.getPropertyValue('--canvas-ink-dim').trim(),
+    gridA:        s.getPropertyValue('--canvas-grid-a').trim(),
+    gridB:        s.getPropertyValue('--canvas-grid-b').trim(),
+    gridC:        s.getPropertyValue('--canvas-grid-c').trim(),
+    channelBody:  s.getPropertyValue('--canvas-channel-body').trim(),
+    closedStroke: s.getPropertyValue('--canvas-closed-stroke').trim(),
   };
 }
 

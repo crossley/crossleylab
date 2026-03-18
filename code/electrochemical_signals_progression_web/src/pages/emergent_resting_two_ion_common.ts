@@ -651,7 +651,7 @@ function drawParticleCanvas(canvas: HTMLCanvasElement, state: LiveState, pointSi
     const bandHeight = Math.max(1, yBottom - yTop);
     const openHeight = Math.max(1 * dpr, bandHeight * clamp(permeability, 0, 1));
     const openY = yTop + (bandHeight - openHeight) / 2;
-    ctx.fillStyle = 'rgba(8, 16, 26, 0.85)';
+    ctx.fillStyle = cc.channelBody;
     ctx.fillRect(wl, yTop, membraneWidth, bandHeight);
     ctx.fillStyle = color;
     ctx.globalAlpha = 0.15 + 0.55 * clamp(permeability, 0, 1);
