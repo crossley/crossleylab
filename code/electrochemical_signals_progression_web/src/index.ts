@@ -87,6 +87,10 @@ app.innerHTML = `
           <strong>Lesson 1 — Free Diffusion and Euler's Method</strong>
           <span>Write the core position-update rule, discover why the anchor matters, and meet Euler's method</span>
         </a>
+        <a class="link-card ready" href="./guide_lesson_02.html">
+          <strong>Lesson 2 — Diffusion Through a Membrane Channel</strong>
+          <span>Add a wall and a gap; learn boolean arrays and logical indexing to enforce who may cross</span>
+        </a>
       </div>
     </section>
   </div>
