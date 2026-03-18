@@ -95,6 +95,10 @@ app.innerHTML = `
           <strong>Lesson 2 — Diffusion Through a Membrane Channel</strong>
           <span>Add a wall and a gap; learn boolean arrays and logical indexing to enforce who may cross</span>
         </a>
+        <a class="link-card ready" href="./guide_lesson_03.html">
+          <strong>Lesson 3 — Permeability as Probability</strong>
+          <span>Real channels are open or closed, not partially open — model permeability as a crossing probability and write your first function</span>
+        </a>
       </div>
     </section>
   </div>

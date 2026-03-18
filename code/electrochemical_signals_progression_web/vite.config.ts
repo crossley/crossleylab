@@ -11,7 +11,8 @@ const lessonInputs = Object.fromEntries(
 
 const guideInputs = {
   guide_lesson_01: resolve(__dirname, 'guide_lesson_01.html'),
-  guide_lesson_02: resolve(__dirname, 'guide_lesson_02.html')
+  guide_lesson_02: resolve(__dirname, 'guide_lesson_02.html'),
+  guide_lesson_03: resolve(__dirname, 'guide_lesson_03.html')
 };
 
 export default defineConfig({
