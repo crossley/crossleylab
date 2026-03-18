@@ -5,7 +5,8 @@ import {
   drawMembraneWall,
   MAX_PARTICLES,
   SIM_COLORS,
-  pointFieldDrift
+  pointFieldDrift,
+  getCanvasColors,
 } from './sim_shared';
 
 type IonType = 0 | 1; // 0 = Na+, 1 = K+
@@ -718,6 +719,7 @@ function drawDiscreteChannels(
 }
 
 function drawParticles(canvas: HTMLCanvasElement, state: LiveState, pointSize: number, pumpEnabled: boolean): void {
+  const cc = getCanvasColors();
   syncCanvasSize(canvas);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -726,9 +728,7 @@ function drawParticles(canvas: HTMLCanvasElement, state: LiveState, pointSize: n
   const dpr = window.devicePixelRatio || 1;
 
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#03060b';
-  ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = 'rgba(120,170,255,0.10)';
+  ctx.strokeStyle = cc.gridA;
   ctx.lineWidth = 1;
   for (let i = 1; i < 10; i += 1) {
     const gx = (w * i) / 10;
@@ -770,7 +770,7 @@ function drawParticles(canvas: HTMLCanvasElement, state: LiveState, pointSize: n
   const naOpenN = Math.round(openFraction(state.naOpen) * state.naOpen.length);
   const kOpenN = Math.round(openFraction(state.kOpen) * state.kOpen.length);
 
-  ctx.fillStyle = 'rgba(232,243,255,0.92)';
+  ctx.fillStyle = cc.ink;
   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
   ctx.fillText(`Vm proxy = ${state.vmProxy.toFixed(1)} mV`, 12 * dpr, 15 * dpr);
   ctx.fillText(`E_eff = ${state.effectiveElectricStrength.toFixed(3)}`, 12 * dpr, 69 * dpr);
@@ -784,6 +784,7 @@ function drawParticles(canvas: HTMLCanvasElement, state: LiveState, pointSize: n
 }
 
 function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: number, traceWindowMs: number): void {
+  const cc = getCanvasColors();
   syncCanvasSize(canvas);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -791,8 +792,6 @@ function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: 
   const h = canvas.height;
   const dpr = window.devicePixelRatio || 1;
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#03060b';
-  ctx.fillRect(0, 0, w, h);
 
   const padL = 64 * dpr;
   const padR = 12 * dpr;
@@ -804,7 +803,7 @@ function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: 
   const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(1, traceWindowMs)) * plotW;
   const yFrac = (v: number) => padT + (1 - v) * plotH;
 
-  ctx.strokeStyle = 'rgba(180,220,255,0.28)';
+  ctx.strokeStyle = cc.gridB;
   ctx.lineWidth = 1 * dpr;
   ctx.strokeRect(padL, padT, plotW, plotH);
   ctx.beginPath();
@@ -832,7 +831,7 @@ function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: 
   drawSeries(trace.naInsideFrac, SIM_COLORS.ionBTrace, false);
   drawSeries(trace.kInsideFrac, SIM_COLORS.ionATrace, false);
 
-  ctx.fillStyle = 'rgba(232,243,255,0.78)';
+  ctx.fillStyle = cc.inkDim;
   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
   ctx.save();
   ctx.translate(padL - 42 * dpr, padT + plotH / 2);

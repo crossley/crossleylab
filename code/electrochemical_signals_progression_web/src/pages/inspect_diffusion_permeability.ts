@@ -5,7 +5,8 @@ import {
   MAX_PARTICLES,
   SIM_COLORS,
   centeredChannelBounds,
-  drawMembraneWall
+  drawMembraneWall,
+  getCanvasColors,
 } from './sim_shared';
 
 interface SimParams {
@@ -304,6 +305,7 @@ function worldToCanvas(x: number, y: number, state: LiveState, w: number, h: num
 }
 
 function drawState(canvas: HTMLCanvasElement, state: LiveState, pointSize: number): void {
+  const cc = getCanvasColors();
   syncCanvasSize(canvas);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -312,10 +314,8 @@ function drawState(canvas: HTMLCanvasElement, state: LiveState, pointSize: numbe
   const dpr = window.devicePixelRatio || 1;
 
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#03060b';
-  ctx.fillRect(0, 0, w, h);
 
-  ctx.strokeStyle = 'rgba(120, 170, 255, 0.10)';
+  ctx.strokeStyle = cc.gridA;
   ctx.lineWidth = 1;
   for (let i = 1; i < 10; i += 1) {
     const gx = (w * i) / 10;
@@ -342,7 +342,7 @@ function drawState(canvas: HTMLCanvasElement, state: LiveState, pointSize: numbe
     channels: [{ top: yTop, bottom: yBottom }]
   });
 
-  ctx.strokeStyle = 'rgba(120, 170, 255, 0.2)';
+  ctx.strokeStyle = cc.gridB;
   ctx.lineWidth = 1 * dpr;
   ctx.strokeRect(0.5 * dpr, 0.5 * dpr, w - dpr, h - dpr);
 
@@ -358,6 +358,7 @@ function drawState(canvas: HTMLCanvasElement, state: LiveState, pointSize: numbe
 }
 
 function drawSideTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: number, traceWindowMs: number, title: string): void {
+  const cc = getCanvasColors();
   syncCanvasSize(canvas);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -365,10 +366,8 @@ function drawSideTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTi
   const h = canvas.height;
   const dpr = window.devicePixelRatio || 1;
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#03060b';
-  ctx.fillRect(0, 0, w, h);
 
-  ctx.strokeStyle = 'rgba(120, 170, 255, 0.10)';
+  ctx.strokeStyle = cc.gridA;
   ctx.lineWidth = 1;
   for (let i = 1; i < 10; i += 1) {
     const gx = (w * i) / 10;
@@ -398,18 +397,18 @@ function drawSideTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTi
   const xMap = (tt: number) => padL + ((tt - startTime) / tRange) * plotW;
   const yMap = (frac: number) => padT + (1 - frac) * plotH;
 
-  ctx.strokeStyle = 'rgba(180, 220, 255, 0.28)';
+  ctx.strokeStyle = cc.gridB;
   ctx.lineWidth = 1 * dpr;
   ctx.strokeRect(padL, padT, plotW, plotH);
 
   const yTicks = [0, 0.25, 0.5, 0.75, 1];
-  ctx.fillStyle = 'rgba(208, 228, 255, 0.86)';
+  ctx.fillStyle = cc.ink;
   ctx.font = `${10 * dpr}px Avenir Next, Segoe UI, sans-serif`;
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
   for (const tick of yTicks) {
     const y = yMap(tick);
-    ctx.strokeStyle = tick === 0.5 ? 'rgba(180, 220, 255, 0.28)' : 'rgba(150, 190, 255, 0.16)';
+    ctx.strokeStyle = tick === 0.5 ? cc.gridB : cc.gridA;
     ctx.lineWidth = 1 * dpr;
     ctx.beginPath();
     ctx.moveTo(padL, y);
@@ -442,13 +441,13 @@ function drawSideTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTi
   }
 
   if (title.trim()) {
-    ctx.fillStyle = 'rgba(232, 243, 255, 0.92)';
+    ctx.fillStyle = cc.ink;
     ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
   }
 
-  ctx.fillStyle = 'rgba(232, 243, 255, 0.78)';
+  ctx.fillStyle = cc.inkDim;
   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';

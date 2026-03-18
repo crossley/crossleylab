@@ -3,7 +3,8 @@ import {
   DEFAULT_DIFFUSION_SD,
   DEFAULT_NUM_PARTICLES,
   MAX_PARTICLES,
-  SIM_COLORS
+  SIM_COLORS,
+  getCanvasColors,
 } from './sim_shared';
 
 interface SimParams {
@@ -177,6 +178,7 @@ function syncCanvasSize(canvas: HTMLCanvasElement): void {
 }
 
 function drawFrame(canvas: HTMLCanvasElement, state: LiveState, display: DisplayParams): void {
+  const cc = getCanvasColors();
   syncCanvasSize(canvas);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -184,8 +186,6 @@ function drawFrame(canvas: HTMLCanvasElement, state: LiveState, display: Display
   const width = canvas.width;
   const height = canvas.height;
   ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = '#03060b';
-  ctx.fillRect(0, 0, width, height);
 
   const dpr = window.devicePixelRatio || 1;
   const axis = Math.max(1, display.axisLimit);
@@ -194,7 +194,7 @@ function drawFrame(canvas: HTMLCanvasElement, state: LiveState, display: Display
   const sx = width / (2 * axis);
   const sy = height / (2 * axis);
 
-  ctx.strokeStyle = 'rgba(120, 170, 255, 0.12)';
+  ctx.strokeStyle = cc.gridA;
   ctx.lineWidth = 1;
   const gridStep = axis >= 80 ? 20 : axis >= 40 ? 10 : 5;
   for (let g = -Math.floor(axis / gridStep) * gridStep; g <= axis; g += gridStep) {
@@ -210,7 +210,7 @@ function drawFrame(canvas: HTMLCanvasElement, state: LiveState, display: Display
     ctx.stroke();
   }
 
-  ctx.strokeStyle = 'rgba(180, 220, 255, 0.28)';
+  ctx.strokeStyle = cc.gridB;
   ctx.lineWidth = 1.25;
   ctx.beginPath();
   ctx.moveTo(halfW, 0);
@@ -219,7 +219,7 @@ function drawFrame(canvas: HTMLCanvasElement, state: LiveState, display: Display
   ctx.lineTo(width, halfH);
   ctx.stroke();
 
-  ctx.strokeStyle = 'rgba(214, 236, 255, 0.42)';
+  ctx.strokeStyle = cc.gridC;
   ctx.lineWidth = 1.25 * dpr;
   ctx.strokeRect(0.75 * dpr, 0.75 * dpr, width - 1.5 * dpr, height - 1.5 * dpr);
 
@@ -234,7 +234,7 @@ function drawFrame(canvas: HTMLCanvasElement, state: LiveState, display: Display
     ctx.fill();
   }
 
-  ctx.fillStyle = 'rgba(232, 243, 255, 0.92)';
+  ctx.fillStyle = cc.ink;
   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
 }
 

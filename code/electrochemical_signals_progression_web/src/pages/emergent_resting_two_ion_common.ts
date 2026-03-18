@@ -7,7 +7,8 @@ import {
   drawMembraneWall,
   evenlySpacedChannelBounds,
   fieldColor,
-  pointFieldDrift
+  pointFieldDrift,
+  getCanvasColors,
 } from './sim_shared';
 
 type IonType = 0 | 1;
@@ -481,6 +482,7 @@ function computeDynamicTraceLimit(trace: TraceHistory, startTime: number, minLim
 }
 
 function drawTraceCanvas(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: number, traceWindowMs: number, yLimit: number, title: string, variant: VariantConfig): void {
+  const cc = getCanvasColors();
   syncCanvasSize(canvas);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -488,9 +490,7 @@ function drawTraceCanvas(canvas: HTMLCanvasElement, trace: TraceHistory, current
   const h = canvas.height;
   const dpr = window.devicePixelRatio || 1;
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#03060b';
-  ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = 'rgba(120,170,255,0.10)';
+  ctx.strokeStyle = cc.gridA;
   ctx.lineWidth = 1;
   for (let i = 1; i < 10; i += 1) {
     const gx = (w * i) / 10;
@@ -506,7 +506,7 @@ function drawTraceCanvas(canvas: HTMLCanvasElement, trace: TraceHistory, current
   const effectiveYLimit = computeDynamicTraceLimit(trace, startTime, yLimit, showGoldmanTrace);
   const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(traceWindowMs, 1)) * plotW;
   const yMap = (yy: number) => padT + (1 - (yy + effectiveYLimit) / Math.max(1e-6, 2 * effectiveYLimit)) * plotH;
-  ctx.strokeStyle = 'rgba(180,220,255,0.28)';
+  ctx.strokeStyle = cc.gridB;
   ctx.lineWidth = 1 * dpr;
   ctx.strokeRect(padL, padT, plotW, plotH);
   ctx.beginPath(); ctx.moveTo(padL, yMap(0)); ctx.lineTo(padL + plotW, yMap(0)); ctx.stroke();
@@ -533,10 +533,10 @@ function drawTraceCanvas(canvas: HTMLCanvasElement, trace: TraceHistory, current
     if (started) ctx.stroke();
     ctx.restore();
   }
-  ctx.fillStyle = 'rgba(232,243,255,0.92)';
+  ctx.fillStyle = cc.ink;
   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
   ctx.fillText(title, 12 * dpr, 14 * dpr);
-  ctx.fillStyle = 'rgba(232,243,255,0.78)';
+  ctx.fillStyle = cc.inkDim;
   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
   ctx.fillText('time (ms)', padL + plotW - 52 * dpr, h - 6 * dpr);
   ctx.save();
@@ -548,6 +548,7 @@ function drawTraceCanvas(canvas: HTMLCanvasElement, trace: TraceHistory, current
 }
 
 function drawConcentrationCanvas(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: number, traceWindowMs: number): void {
+  const cc = getCanvasColors();
   syncCanvasSize(canvas);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -555,9 +556,7 @@ function drawConcentrationCanvas(canvas: HTMLCanvasElement, trace: TraceHistory,
   const h = canvas.height;
   const dpr = window.devicePixelRatio || 1;
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#03060b';
-  ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = 'rgba(120,170,255,0.10)';
+  ctx.strokeStyle = cc.gridA;
   ctx.lineWidth = 1;
   for (let i = 1; i < 10; i += 1) {
     const gx = (w * i) / 10;
@@ -571,7 +570,7 @@ function drawConcentrationCanvas(canvas: HTMLCanvasElement, trace: TraceHistory,
   const startTime = Math.max(0, currentTime - traceWindowMs);
   const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(traceWindowMs, 1)) * plotW;
   const yMap = (yy: number) => padT + (1 - yy) * plotH;
-  ctx.strokeStyle = 'rgba(180,220,255,0.28)';
+  ctx.strokeStyle = cc.gridB;
   ctx.lineWidth = 1 * dpr;
   ctx.strokeRect(padL, padT, plotW, plotH);
   ctx.beginPath(); ctx.moveTo(padL, yMap(0.5)); ctx.lineTo(padL + plotW, yMap(0.5)); ctx.stroke();
@@ -597,10 +596,10 @@ function drawConcentrationCanvas(canvas: HTMLCanvasElement, trace: TraceHistory,
     if (started) ctx.stroke();
     ctx.restore();
   }
-  ctx.fillStyle = 'rgba(232,243,255,0.92)';
+  ctx.fillStyle = cc.ink;
   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
   ctx.fillText('Na+/K+ concentration fractions', 12 * dpr, 14 * dpr);
-  ctx.fillStyle = 'rgba(232,243,255,0.78)';
+  ctx.fillStyle = cc.inkDim;
   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
   ctx.fillText('time (ms)', padL + plotW - 52 * dpr, h - 6 * dpr);
   ctx.save();
@@ -612,6 +611,7 @@ function drawConcentrationCanvas(canvas: HTMLCanvasElement, trace: TraceHistory,
 }
 
 function drawParticleCanvas(canvas: HTMLCanvasElement, state: LiveState, pointSize: number, variant: VariantConfig, sourceStrength: number): void {
+  const cc = getCanvasColors();
   syncCanvasSize(canvas);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -619,9 +619,7 @@ function drawParticleCanvas(canvas: HTMLCanvasElement, state: LiveState, pointSi
   const h = canvas.height;
   const dpr = window.devicePixelRatio || 1;
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#03060b';
-  ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = 'rgba(120,170,255,0.10)';
+  ctx.strokeStyle = cc.gridA;
   ctx.lineWidth = 1;
   for (let i = 1; i < 10; i += 1) {
     const gx = (w * i) / 10;
@@ -678,7 +676,7 @@ function drawParticleCanvas(canvas: HTMLCanvasElement, state: LiveState, pointSi
     ctx.fillStyle = type === 0 ? SIM_COLORS.ionA : variant.type1Color;
     ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2); ctx.fill();
   }
-  ctx.fillStyle = 'rgba(232,243,255,0.92)';
+  ctx.fillStyle = cc.ink;
   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
   ctx.fillText(variant.title, 12 * dpr, 14 * dpr);
 }

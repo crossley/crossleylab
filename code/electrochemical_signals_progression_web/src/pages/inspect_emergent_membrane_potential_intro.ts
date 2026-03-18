@@ -1,5 +1,7 @@
 import '../style.css';
-import { DEFAULT_DIFFUSION_SD, drawMembraneWall, MAX_PARTICLES, SIM_COLORS } from './sim_shared';
+import { DEFAULT_DIFFUSION_SD, drawMembraneWall, MAX_PARTICLES, SIM_COLORS,
+  getCanvasColors,
+} from './sim_shared';
 
 type IonType = 0 | 1;
 
@@ -222,6 +224,7 @@ function pushTrace(trace: TraceHistory, value: number, time: number, traceWindow
 }
 
 function drawParticles(canvas: HTMLCanvasElement, state: ParticleState, params: SimParams, display: DisplayParams): void {
+  const cc = getCanvasColors();
   syncCanvasSize(canvas);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -233,9 +236,7 @@ function drawParticles(canvas: HTMLCanvasElement, state: ParticleState, params: 
   const toPx = (x: number, y: number): [number, number] => [((x + halfW) / params.boxWidth) * w, h - ((y + halfH) / params.boxHeight) * h];
 
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#03060b';
-  ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = 'rgba(120,170,255,0.10)';
+  ctx.strokeStyle = cc.gridA;
   ctx.lineWidth = 1;
   for (let i = 1; i < 10; i += 1) {
     const gx = (w * i) / 10;
@@ -268,11 +269,12 @@ function drawParticles(canvas: HTMLCanvasElement, state: ParticleState, params: 
     ctx.fill();
   }
 
-  ctx.fillStyle = 'rgba(232,243,255,0.92)';
+  ctx.fillStyle = cc.ink;
   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
 }
 
 function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: number, traceWindowMs: number): void {
+  const cc = getCanvasColors();
   syncCanvasSize(canvas);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -280,8 +282,6 @@ function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: 
   const h = canvas.height;
   const dpr = window.devicePixelRatio || 1;
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#03060b';
-  ctx.fillRect(0, 0, w, h);
   const padL = 36 * dpr;
   const padR = 10 * dpr;
   const padT = 18 * dpr;
@@ -296,7 +296,7 @@ function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: 
   const yLimit = Math.max(1, maxAbs * 1.15);
   const xMap = (t: number) => padL + ((t - startTime) / Math.max(1, traceWindowMs)) * plotW;
   const yMap = (v: number) => padT + (1 - (v + yLimit) / (2 * yLimit)) * plotH;
-  ctx.strokeStyle = 'rgba(180,220,255,0.28)';
+  ctx.strokeStyle = cc.gridB;
   ctx.lineWidth = 1 * dpr;
   ctx.strokeRect(padL, padT, plotW, plotH);
   ctx.beginPath();
@@ -329,7 +329,7 @@ function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: 
     }
   }
   if (started) ctx.stroke();
-  ctx.fillStyle = 'rgba(232,243,255,0.92)';
+  ctx.fillStyle = cc.ink;
 }
 
 const app = getEl<HTMLDivElement>('#app');

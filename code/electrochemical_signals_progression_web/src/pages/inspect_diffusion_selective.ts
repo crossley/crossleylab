@@ -5,7 +5,8 @@ import {
   MAX_PARTICLES,
   SIM_COLORS,
   drawMembraneWall,
-  evenlySpacedChannelBounds
+  evenlySpacedChannelBounds,
+  getCanvasColors,
 } from './sim_shared';
 
 type IonType = 0 | 1;
@@ -378,9 +379,9 @@ function worldToCanvas(x: number, y: number, state: LiveSimState, w: number, h: 
 }
 
 function drawEnvironment(ctx: CanvasRenderingContext2D, state: LiveSimState, w: number, h: number, dpr: number): void {
-  ctx.fillStyle = '#03060b';
-  ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = 'rgba(120, 170, 255, 0.10)';
+  const cc = getCanvasColors();
+  ctx.clearRect(0, 0, w, h);
+  ctx.strokeStyle = cc.gridA;
   ctx.lineWidth = 1;
   for (let i = 1; i < 10; i += 1) {
     const gx = (w * i) / 10;
@@ -415,12 +416,13 @@ function drawEnvironment(ctx: CanvasRenderingContext2D, state: LiveSimState, w: 
   ctx.fillRect(wl, Math.min(t0Top, t0Bottom), membraneWidth, Math.abs(t0Bottom - t0Top));
   ctx.fillStyle = 'rgba(66, 200, 255, 0.5)';
   ctx.fillRect(wl, Math.min(t1Top, t1Bottom), membraneWidth, Math.abs(t1Bottom - t1Top));
-  ctx.strokeStyle = 'rgba(120, 170, 255, 0.2)';
+  ctx.strokeStyle = cc.gridB;
   ctx.lineWidth = 1 * dpr;
   ctx.strokeRect(0.5 * dpr, 0.5 * dpr, w - dpr, h - dpr);
 }
 
 function drawFrame(canvas: HTMLCanvasElement, state: LiveSimState, display: DisplayParams): void {
+  const cc = getCanvasColors();
   syncCanvasSize(canvas);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -437,11 +439,12 @@ function drawFrame(canvas: HTMLCanvasElement, state: LiveSimState, display: Disp
     ctx.arc(px, py, r, 0, Math.PI * 2);
     ctx.fill();
   }
-  ctx.fillStyle = 'rgba(232, 243, 255, 0.92)';
+  ctx.fillStyle = cc.ink;
   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
 }
 
 function drawSideTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: number, traceWindowMs: number): void {
+  const cc = getCanvasColors();
   syncCanvasSize(canvas);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -449,9 +452,7 @@ function drawSideTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTi
   const h = canvas.height;
   const dpr = window.devicePixelRatio || 1;
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#03060b';
-  ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = 'rgba(120, 170, 255, 0.10)';
+  ctx.strokeStyle = cc.gridA;
   ctx.lineWidth = 1;
   for (let i = 1; i < 10; i += 1) {
     const gx = (w * i) / 10;
@@ -474,7 +475,7 @@ function drawSideTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTi
   const startTime = Math.max(0, currentTime - traceWindowMs);
   const xMap = (tt: number) => padL + ((tt - startTime) / Math.max(traceWindowMs, 1)) * plotW;
   const yMap = (frac: number) => padT + (1 - frac) * plotH;
-  ctx.strokeStyle = 'rgba(180, 220, 255, 0.28)';
+  ctx.strokeStyle = cc.gridB;
   ctx.lineWidth = 1 * dpr;
   ctx.strokeRect(padL, padT, plotW, plotH);
   ctx.beginPath();
@@ -508,7 +509,7 @@ function drawSideTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTi
     if (started) ctx.stroke();
     ctx.restore();
   }
-  ctx.fillStyle = 'rgba(232, 243, 255, 0.78)';
+  ctx.fillStyle = cc.inkDim;
   ctx.font = `${11 * dpr}px Avenir Next, Segoe UI, sans-serif`;
   ctx.save();
   ctx.translate(18 * dpr, padT + plotH / 2);
@@ -516,7 +517,7 @@ function drawSideTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTi
   ctx.textAlign = 'center';
   ctx.fillText('fraction in compartment', 0, 0);
   ctx.restore();
-  ctx.fillStyle = 'rgba(232, 243, 255, 0.92)';
+  ctx.fillStyle = cc.ink;
   ctx.font = `${12 * dpr}px Avenir Next, Segoe UI, sans-serif`;
 }
 
