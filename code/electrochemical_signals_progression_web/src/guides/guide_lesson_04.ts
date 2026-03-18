@@ -62,7 +62,8 @@ app.innerHTML = `
           we now define <em>two</em> channel Y-ranges — one for Na⁺ and one for K⁺.
           We will start all particles on the right and let them diffuse leftward.
         </p>
-        <div class="code-block-wrap"><pre><code>import numpy as np
+        <div class="code-block-wrap">
+          <pre class="code-block">import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
@@ -89,7 +90,8 @@ num_na = 100   # number of Na⁺ ions
 num_k  = 100   # number of K⁺ ions
 num_particles = num_na + num_k
 
-diffusion_sd = 1.5   # standard deviation of each random step</code></pre></div>
+diffusion_sd = 1.5   # standard deviation of each random step</pre>
+        </div>
         <p>
           The Na⁺ and K⁺ channels sit at different heights in the wall. A particle
           that reaches the wall at height y will only be allowed to cross if y falls
@@ -108,9 +110,11 @@ diffusion_sd = 1.5   # standard deviation of each random step</code></pre></div>
           <code>num_particles</code> where <code>0</code> means Na⁺ and
           <code>1</code> means K⁺.
         </p>
-        <div class="code-block-wrap"><pre><code># ion_type[i] = 0 → Na⁺,  ion_type[i] = 1 → K⁺
+        <div class="code-block-wrap">
+          <pre class="code-block"># ion_type[i] = 0 → Na⁺,  ion_type[i] = 1 → K⁺
 ion_type = np.zeros(num_particles, dtype=int)
-ion_type[num_na:]  = 1   # last num_k entries are K⁺</code></pre></div>
+ion_type[num_na:]  = 1   # last num_k entries are K⁺</pre>
+        </div>
         <p>
           <code>np.zeros(N, dtype=int)</code> creates an array of <code>N</code> zeros,
           stored as integers. The slice <code>[num_na:]</code> selects every element
@@ -120,8 +124,10 @@ ion_type[num_na:]  = 1   # last num_k entries are K⁺</code></pre></div>
         <p>
           Now we can ask, for every particle, whether it is Na⁺:
         </p>
-        <div class="code-block-wrap"><pre><code>is_na = (ion_type == 0)   # boolean array; True where Na⁺, False where K⁺
-is_k  = (ion_type == 1)   # equivalently: is_k = ~is_na</code></pre></div>
+        <div class="code-block-wrap">
+          <pre class="code-block">is_na = (ion_type == 0)   # boolean array; True where Na⁺, False where K⁺
+is_k  = (ion_type == 1)   # equivalently: is_k = ~is_na</pre>
+        </div>
         <p>
           <code>ion_type == 0</code> compares every element of the array to
           <code>0</code> and returns a boolean array of the same length —
@@ -164,7 +170,8 @@ is_k  = (ion_type == 1)   # equivalently: is_k = ~is_na</code></pre></div>
           <code>np.random.uniform</code> to place them at random positions within the
           right compartment — exactly as in Lesson 2.
         </p>
-        <div class="code-block-wrap"><pre><code>num_steps = 800
+        <div class="code-block-wrap">
+          <pre class="code-block">num_steps = 800
 
 # preallocate position history
 x = np.zeros((num_steps, num_particles))
@@ -172,7 +179,8 @@ y = np.zeros((num_steps, num_particles))
 
 # start all particles randomly on the right side
 x[0] = np.random.uniform(right_wall + 1, box_width / 2 - 1, num_particles)
-y[0] = np.random.uniform(-box_height / 2 + 1, box_height / 2 - 1, num_particles)</code></pre></div>
+y[0] = np.random.uniform(-box_height / 2 + 1, box_height / 2 - 1, num_particles)</pre>
+        </div>
         <p>
           Nothing new here — this is identical to Lesson 2's initialisation. The
           type array handles which particle is which; the positions themselves are all
@@ -190,7 +198,8 @@ y[0] = np.random.uniform(-box_height / 2 + 1, box_height / 2 - 1, num_particles)
           enforce box boundaries, then check whether the particle is trying to cross
           the wall.
         </p>
-        <div class="code-block-wrap"><pre><code>for i in range(1, num_steps):
+        <div class="code-block-wrap">
+          <pre class="code-block">for i in range(1, num_steps):
     # propose random steps
     new_x = x[i-1] + np.random.normal(0, diffusion_sd, num_particles)
     new_y = y[i-1] + np.random.normal(0, diffusion_sd, num_particles)
@@ -200,9 +209,10 @@ y[0] = np.random.uniform(-box_height / 2 + 1, box_height / 2 - 1, num_particles)
     new_y = np.clip(new_y, -box_height / 2, box_height / 2)
 
     # which particles are trying to cross the wall?
-    trying_left  = (x[i-1] <  left_wall) & (new_x >= left_wall)
-    trying_right = (x[i-1] >= right_wall) & (new_x <  right_wall)
-    trying_to_cross = trying_left | trying_right</code></pre></div>
+    trying_left  = (x[i-1] &lt;  left_wall) &amp; (new_x &gt;= left_wall)
+    trying_right = (x[i-1] &gt;= right_wall) &amp; (new_x &lt;  right_wall)
+    trying_to_cross = trying_left | trying_right</pre>
+        </div>
         <p>
           Stop here — we have not yet applied any selectivity. In the next step we
           will build the combined channel check that depends on ion type.
@@ -222,19 +232,23 @@ y[0] = np.random.uniform(-box_height / 2 + 1, box_height / 2 - 1, num_particles)
         <p>
           First, check whether each particle is aligned with its own channel gap:
         </p>
-        <div class="code-block-wrap"><pre><code>    # is each particle inside the Na⁺ channel gap?
-    in_na_channel = (new_y >= na_channel_y_min) & (new_y <= na_channel_y_max)
+        <div class="code-block-wrap">
+          <pre class="code-block">    # is each particle inside the Na⁺ channel gap?
+    in_na_channel = (new_y &gt;= na_channel_y_min) &amp; (new_y &lt;= na_channel_y_max)
 
     # is each particle inside the K⁺ channel gap?
-    in_k_channel  = (new_y >= k_channel_y_min)  & (new_y <= k_channel_y_max)</code></pre></div>
+    in_k_channel  = (new_y &gt;= k_channel_y_min)  &amp; (new_y &lt;= k_channel_y_max)</pre>
+        </div>
         <p>
           Both arrays are <code>num_particles</code> long and contain
           <code>True</code>/<code>False</code> for every particle. But a K⁺ ion
           aligned with the Na⁺ gap should still be blocked. We combine type
           membership with channel alignment:
         </p>
-        <div class="code-block-wrap"><pre><code>    # a particle is in "its" channel only if it matches both type and position
-    in_own_channel = (is_na & in_na_channel) | (is_k & in_k_channel)</code></pre></div>
+        <div class="code-block-wrap">
+          <pre class="code-block">    # a particle is in "its" channel only if it matches both type and position
+    in_own_channel = (is_na &amp; in_na_channel) | (is_k &amp; in_k_channel)</pre>
+        </div>
         <p>
           Read this out loud: "Na⁺ particles that are in the Na⁺ gap, OR K⁺ particles
           that are in the K⁺ gap." Any other combination — a K⁺ ion at the Na⁺ gap
@@ -243,14 +257,16 @@ y[0] = np.random.uniform(-box_height / 2 + 1, box_height / 2 - 1, num_particles)
         <p>
           Finally, reflect the particles that try to cross but are blocked:
         </p>
-        <div class="code-block-wrap"><pre><code>    # blocked = trying to cross AND not in own channel
-    blocked = trying_to_cross & ~in_own_channel
+        <div class="code-block-wrap">
+          <pre class="code-block">    # blocked = trying to cross AND not in own channel
+    blocked = trying_to_cross &amp; ~in_own_channel
 
     # undo the x-move for blocked particles; leave y unchanged
     new_x[blocked] = x[i-1][blocked]
 
     x[i] = new_x
-    y[i] = new_y</code></pre></div>
+    y[i] = new_y</pre>
+        </div>
         <ul class="guided-questions">
           <li>
             A K⁺ particle is at <code>y = 18</code>, which is inside the Na⁺ channel
@@ -293,7 +309,8 @@ y[0] = np.random.uniform(-box_height / 2 + 1, box_height / 2 - 1, num_particles)
           pass boolean masks to <code>ax.scatter</code> so each type gets its own
           colour.
         </p>
-        <div class="code-block-wrap"><pre><code>fig, ax = plt.subplots(figsize=(6, 6))
+        <div class="code-block-wrap">
+          <pre class="code-block">fig, ax = plt.subplots(figsize=(6, 6))
 ax.set_xlim(-box_width  / 2, box_width  / 2)
 ax.set_ylim(-box_height / 2, box_height / 2)
 ax.set_aspect('equal')
@@ -329,7 +346,8 @@ def update(frame):
 
 ani = animation.FuncAnimation(fig, update, frames=num_steps, interval=30, blit=True)
 plt.tight_layout()
-plt.show()</code></pre></div>
+plt.show()</pre>
+        </div>
         <p>
           <code>x[frame][is_na]</code> first selects all x-positions at the current
           frame, then boolean-indexes to keep only those belonging to Na⁺ particles.
@@ -352,14 +370,18 @@ plt.show()</code></pre></div>
           Just as in Lesson 2 we tracked what fraction of particles were on each side,
           we can now do that separately for Na⁺ and K⁺. Add this to the update loop:
         </p>
-        <div class="code-block-wrap"><pre><code># preallocate concentration histories
+        <div class="code-block-wrap">
+          <pre class="code-block"># preallocate concentration histories
 na_left_frac = np.zeros(num_steps)
-k_left_frac  = np.zeros(num_steps)</code></pre></div>
+k_left_frac  = np.zeros(num_steps)</pre>
+        </div>
         <p>
           Inside the loop, after updating positions:
         </p>
-        <div class="code-block-wrap"><pre><code>    na_left_frac[i] = (x[i][is_na] < left_wall).mean()
-    k_left_frac[i]  = (x[i][is_k]  < left_wall).mean()</code></pre></div>
+        <div class="code-block-wrap">
+          <pre class="code-block">    na_left_frac[i] = (x[i][is_na] &lt; left_wall).mean()
+    k_left_frac[i]  = (x[i][is_k]  &lt; left_wall).mean()</pre>
+        </div>
         <p>
           <code>(x[i][is_na] &lt; left_wall)</code> is a boolean array — <code>True</code>
           wherever a Na⁺ particle is on the left. <code>.mean()</code> on a boolean
@@ -369,7 +391,8 @@ k_left_frac  = np.zeros(num_steps)</code></pre></div>
         <p>
           To plot both concentration traces after the animation, add a second subplot:
         </p>
-        <div class="code-block-wrap"><pre><code>fig, (ax_sim, ax_trace) = plt.subplots(1, 2, figsize=(12, 5))
+        <div class="code-block-wrap">
+          <pre class="code-block">fig, (ax_sim, ax_trace) = plt.subplots(1, 2, figsize=(12, 5))
 
 # ... (simulation and animation in ax_sim as before) ...
 
@@ -385,7 +408,8 @@ ax_trace.set_facecolor('#0a0e17')
 ax_trace.tick_params(colors='white')
 ax_trace.yaxis.label.set_color('white')
 ax_trace.xaxis.label.set_color('white')
-ax_trace.title.set_color('white')</code></pre></div>
+ax_trace.title.set_color('white')</pre>
+        </div>
       </div>
     </section>
 
@@ -403,11 +427,13 @@ ax_trace.title.set_color('white')</code></pre></div>
         <p>
           Make the Na⁺ channel very wide and the K⁺ channel very narrow:
         </p>
-        <div class="code-block-wrap"><pre><code>na_channel_y_min =  5
+        <div class="code-block-wrap">
+          <pre class="code-block">na_channel_y_min =  5
 na_channel_y_max =  40   # wide Na⁺ channel
 
 k_channel_y_min  = -15
-k_channel_y_max  = -10   # narrow K⁺ channel</code></pre></div>
+k_channel_y_max  = -10   # narrow K⁺ channel</pre>
+        </div>
         <p>
           Run it and watch the concentration trace. Na⁺ equilibrates quickly; K⁺
           is much slower because its channel is narrow and crossings are rare.
