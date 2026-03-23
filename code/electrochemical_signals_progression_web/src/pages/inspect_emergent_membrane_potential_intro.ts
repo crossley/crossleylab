@@ -43,6 +43,9 @@ interface TraceHistory {
   values: number[];
 }
 
+const VM_SCALE_MV = 80;
+const SURFACE_CHARGE_FULL_SCALE = 200;
+
 class Rng {
   private state: number;
   private spare: number | null = null;
@@ -197,9 +200,12 @@ function computeMembranePotential(state: ParticleState): number {
     else rightCharge += state.charges[i];
   }
 
-  // Teaching proxy: raw net charge difference across the membrane.
-  // This keeps magnitude proportional to ion count (e.g., 10 ions > 5 ions).
-  return rightCharge - leftCharge;
+  // Teaching proxy: only a small membrane-adjacent charge imbalance contributes
+  // to V_m. Neutral bulk pairs do not matter, so we scale a small surface
+  // imbalance to a bounded millivolt range.
+  const imbalance = leftCharge - rightCharge;
+  const normalized = clamp(imbalance / SURFACE_CHARGE_FULL_SCALE, -1, 1);
+  return VM_SCALE_MV * normalized;
 }
 
 function stepState(state: ParticleState, params: SimParams, rng: Rng): void {
@@ -314,7 +320,7 @@ function drawTrace(canvas: HTMLCanvasElement, trace: TraceHistory, currentTime: 
   ctx.translate(12 * dpr, padT + plotH / 2);
   ctx.rotate(-Math.PI / 2);
   ctx.textAlign = 'center';
-  ctx.fillText('Net Charge Difference = Net Charge Right - Net Charge Left', 0, 0);
+  ctx.fillText('Membrane Potential Proxy (mV)', 0, 0);
   ctx.restore();
 
   ctx.strokeStyle = SIM_COLORS.totalTrace;
@@ -349,10 +355,10 @@ app.innerHTML = `
       <h1>Voltage as Charge Separation</h1>
       <p class="teaching-label">Key concepts</p>
       <ul class="key-points">
-        <li>Membrane potential is the net charge difference across the membrane.</li>
+        <li>Membrane potential comes from a small unpaired charge difference across the membrane.</li>
         <li>More positive charge on one side = positive voltage on that side.</li>
         <li>Equal charges on both sides = zero voltage.</li>
-        <li>Voltage is a property of the imbalance, not the absolute number of ions.</li>
+        <li>Only a small unpaired surface charge is needed to generate a large voltage.</li>
       </ul>
       <p class="teaching-label questions">Questions to explore</p>
       <ul class="guided-questions">
