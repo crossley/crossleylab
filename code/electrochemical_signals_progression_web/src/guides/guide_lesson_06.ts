@@ -317,8 +317,9 @@ for i in range(1, num_steps):
       <h2 class="section-title">Step 5 — Animate and observe</h2>
       <div class="guide-step">
         <p>
-          Use the same two-colour scatter animation from Lesson 4. Add a vertical line
-          to mark the anion strip so you can see what the particles are drifting toward.
+          Use the same two-colour scatter animation from Lesson 4, including the
+          visible Na⁺ and K⁺ pore openings. Add a vertical line to mark the anion
+          strip so you can see what the particles are drifting toward.
         </p>
         <div class="code-block-wrap">
           <pre class="code-block">fig, ax = plt.subplots(figsize=(8, 6))
@@ -327,8 +328,20 @@ ax.set_ylim(-box_height / 2, box_height / 2)
 ax.set_aspect('equal')
 ax.set_facecolor('#0a0e17')
 
-# membrane (grey rectangle)
-ax.axvspan(left_wall, right_wall, color='grey', alpha=0.6, zorder=2)
+# draw the membrane with visible Na⁺ and K⁺ pore openings
+wall_segments = [
+    [(-box_height/2, na_channel_y_min), (na_channel_y_max, box_height/2)],
+    [(-box_height/2, k_channel_y_min),  (k_channel_y_max, box_height/2)],
+]
+for y_bot, y_top in wall_segments[0]:
+    ax.plot([left_wall, left_wall],  [y_bot, y_top], color='white', lw=2, zorder=2)
+for y_bot, y_top in wall_segments[1]:
+    ax.plot([right_wall, right_wall], [y_bot, y_top], color='white', lw=2, zorder=2)
+
+ax.plot([left_wall, right_wall], [na_channel_y_min, na_channel_y_min], color='cyan',    lw=1, ls='--', zorder=2)
+ax.plot([left_wall, right_wall], [na_channel_y_max, na_channel_y_max], color='cyan',    lw=1, ls='--', zorder=2)
+ax.plot([left_wall, right_wall], [k_channel_y_min,  k_channel_y_min],  color='magenta', lw=1, ls='--', zorder=2)
+ax.plot([left_wall, right_wall], [k_channel_y_max,  k_channel_y_max],  color='magenta', lw=1, ls='--', zorder=2)
 
 # anion strip marker
 ax.axvline(anion_x, color='yellow', linewidth=1, linestyle='--',

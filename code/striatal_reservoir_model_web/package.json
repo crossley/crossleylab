@@ -1,0 +1,17 @@
+{
+  "name": "striatal-reservoir-model-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "lint": "tsc --noEmit",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "figures": "python scripts/generate_figures.py"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.4.1"
+  }
+}

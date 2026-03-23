@@ -368,7 +368,8 @@ plt.show()</pre>
       <div class="guide-step">
         <p>
           Just as in Lesson 2 we tracked what fraction of particles were on each side,
-          we can now do that separately for Na⁺ and K⁺. Add this to the update loop:
+          we can now do that separately for Na⁺ and K⁺. First preallocate two history
+          arrays before the update loop, alongside <code>x</code> and <code>y</code>:
         </p>
         <div class="code-block-wrap">
           <pre class="code-block"># preallocate concentration histories
@@ -376,7 +377,8 @@ na_left_frac = np.zeros(num_steps)
 k_left_frac  = np.zeros(num_steps)</pre>
         </div>
         <p>
-          Inside the loop, after updating positions:
+          Then, inside the loop, after updating <code>x[i]</code> and <code>y[i]</code>,
+          fill one entry of each history:
         </p>
         <div class="code-block-wrap">
           <pre class="code-block">    na_left_frac[i] = (x[i][is_na] &lt; left_wall).mean()
@@ -389,12 +391,34 @@ k_left_frac  = np.zeros(num_steps)</pre>
           fraction of Na⁺ on the left.
         </p>
         <p>
-          To plot both concentration traces after the animation, add a second subplot:
+          To show both the particle animation and the concentration traces, replace
+          the Step 7 single-axis figure setup with this two-axis version:
         </p>
         <div class="code-block-wrap">
           <pre class="code-block">fig, (ax_sim, ax_trace) = plt.subplots(1, 2, figsize=(12, 5))
 
-# ... (simulation and animation in ax_sim as before) ...
+ax_sim.set_xlim(-box_width  / 2, box_width  / 2)
+ax_sim.set_ylim(-box_height / 2, box_height / 2)
+ax_sim.set_aspect('equal')
+ax_sim.set_facecolor('#0a0e17')
+
+sc_na = ax_sim.scatter(x[0][is_na], y[0][is_na], s=6, color='cyan', label='Na⁺')
+sc_k  = ax_sim.scatter(x[0][is_k],  y[0][is_k],  s=6, color='lime', label='K⁺')
+ax_sim.legend(loc='upper left', fontsize=8)
+
+wall_segments = [
+    [(-box_height/2, na_channel_y_min), (na_channel_y_max, box_height/2)],
+    [(-box_height/2, k_channel_y_min),  (k_channel_y_max, box_height/2)],
+]
+for y_bot, y_top in wall_segments[0]:
+    ax_sim.plot([left_wall, left_wall],  [y_bot, y_top], color='white', lw=2)
+for y_bot, y_top in wall_segments[1]:
+    ax_sim.plot([right_wall, right_wall], [y_bot, y_top], color='white', lw=2)
+
+ax_sim.plot([left_wall, right_wall], [na_channel_y_min, na_channel_y_min], color='cyan', lw=1, ls='--')
+ax_sim.plot([left_wall, right_wall], [na_channel_y_max, na_channel_y_max], color='cyan', lw=1, ls='--')
+ax_sim.plot([left_wall, right_wall], [k_channel_y_min,  k_channel_y_min],  color='lime', lw=1, ls='--')
+ax_sim.plot([left_wall, right_wall], [k_channel_y_max,  k_channel_y_max],  color='lime', lw=1, ls='--')
 
 ax_trace.plot(na_left_frac, color='cyan', label='Na⁺ left')
 ax_trace.plot(k_left_frac,  color='lime', label='K⁺ left')
@@ -408,7 +432,16 @@ ax_trace.set_facecolor('#0a0e17')
 ax_trace.tick_params(colors='white')
 ax_trace.yaxis.label.set_color('white')
 ax_trace.xaxis.label.set_color('white')
-ax_trace.title.set_color('white')</pre>
+ax_trace.title.set_color('white')
+
+def update(frame):
+    sc_na.set_offsets(np.column_stack([x[frame][is_na], y[frame][is_na]]))
+    sc_k.set_offsets(np.column_stack([x[frame][is_k],  y[frame][is_k]]))
+    return sc_na, sc_k
+
+ani = animation.FuncAnimation(fig, update, frames=num_steps, interval=30, blit=True)
+plt.tight_layout()
+plt.show()</pre>
         </div>
       </div>
     </section>
