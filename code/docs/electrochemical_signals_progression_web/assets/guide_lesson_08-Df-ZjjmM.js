@@ -1,11 +1,4 @@
-import '../style.css';
-import { applyStoredTheme, initThemeToggle } from '../theme';
-
-applyStoredTheme();
-
-const app = document.querySelector<HTMLDivElement>('#app')!;
-
-app.innerHTML = `
+import{a as o,i as s}from"./theme-BJJ86vkc.js";o();const n=document.querySelector("#app");n.innerHTML=`
   <div class="site-shell">
     <div class="nav-line">
       <a href="./">← Back to lessons</a>
@@ -233,10 +226,13 @@ print(f"Scenario C (resting-like):     {vm_C:.1f} mV")</pre>
           <pre class="code-block">import matplotlib.pyplot as plt
 
 labels = [
-    'Mostly +\ninside',
+    'Mostly +
+inside',
     'Balanced',
-    'Resting-like\n(-80 mV)',
-    'Mostly +\noutside',
+    'Resting-like
+(-80 mV)',
+    'Mostly +
+outside',
 ]
 
 vms = [
@@ -476,21 +472,4 @@ print(f"V_m = {vm_tiny:.2f} mV")</pre>
     </section>
 
   </div>
-`;
-
-initThemeToggle(document.querySelector<HTMLButtonElement>('#theme-toggle')!);
-
-document.querySelectorAll<HTMLElement>('.code-block-wrap').forEach((wrap) => {
-  const pre = wrap.querySelector('pre');
-  if (!pre) return;
-  const btn = document.createElement('button');
-  btn.className = 'copy-btn';
-  btn.textContent = 'Copy';
-  btn.addEventListener('click', () => {
-    navigator.clipboard.writeText(pre.innerText).then(() => {
-      btn.textContent = 'Copied!';
-      setTimeout(() => { btn.textContent = 'Copy'; }, 1800);
-    });
-  });
-  wrap.appendChild(btn);
-});
+`;s(document.querySelector("#theme-toggle"));document.querySelectorAll(".code-block-wrap").forEach(t=>{const i=t.querySelector("pre");if(!i)return;const e=document.createElement("button");e.className="copy-btn",e.textContent="Copy",e.addEventListener("click",()=>{navigator.clipboard.writeText(i.innerText).then(()=>{e.textContent="Copied!",setTimeout(()=>{e.textContent="Copy"},1800)})}),t.appendChild(e)});

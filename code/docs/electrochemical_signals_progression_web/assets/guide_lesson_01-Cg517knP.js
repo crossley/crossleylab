@@ -1,12 +1,4 @@
-import '../style.css';
-import { applyStoredTheme, initThemeToggle } from '../theme';
-
-applyStoredTheme();
-
-
-const app = document.querySelector<HTMLDivElement>('#app')!;
-
-app.innerHTML = `
+import{a as s,i}from"./theme-BJJ86vkc.js";s();const a=document.querySelector("#app");a.innerHTML=`
 <div class="site-shell">
   <div class="nav-line">
     <a href="./index.html">← Back to simulations</a>
@@ -503,26 +495,4 @@ plt.show()</pre>
   </section>
 
 </div>
-`;
-
-// Theme toggle
-initThemeToggle(document.querySelector<HTMLButtonElement>('#theme-toggle')!);
-
-// Copy buttons on code blocks
-document.querySelectorAll<HTMLPreElement>('.code-block').forEach((pre) => {
-  const wrap = document.createElement('div');
-  wrap.className = 'code-block-wrap';
-  pre.parentNode!.insertBefore(wrap, pre);
-  wrap.appendChild(pre);
-
-  const btn = document.createElement('button');
-  btn.className = 'copy-btn';
-  btn.textContent = 'Copy';
-  btn.addEventListener('click', () => {
-    navigator.clipboard.writeText(pre.textContent ?? '').then(() => {
-      btn.textContent = '✓ Copied';
-      setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
-    });
-  });
-  wrap.appendChild(btn);
-});
+`;i(document.querySelector("#theme-toggle"));document.querySelectorAll(".code-block").forEach(t=>{const o=document.createElement("div");o.className="code-block-wrap",t.parentNode.insertBefore(o,t),o.appendChild(t);const e=document.createElement("button");e.className="copy-btn",e.textContent="Copy",e.addEventListener("click",()=>{navigator.clipboard.writeText(t.textContent??"").then(()=>{e.textContent="✓ Copied",setTimeout(()=>{e.textContent="Copy"},1500)})}),o.appendChild(e)});

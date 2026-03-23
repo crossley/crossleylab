@@ -1,11 +1,4 @@
-import '../style.css';
-import { applyStoredTheme, initThemeToggle } from '../theme';
-
-applyStoredTheme();
-
-const app = document.querySelector<HTMLDivElement>('#app')!;
-
-app.innerHTML = `
+import{a as s,i as o}from"./theme-BJJ86vkc.js";s();const a=document.querySelector("#app");a.innerHTML=`
   <div class="site-shell">
     <div class="nav-line">
       <a href="./">← Back to lessons</a>
@@ -518,21 +511,4 @@ plt.show()</pre>
     </section>
 
   </div>
-`;
-
-initThemeToggle(document.querySelector<HTMLButtonElement>('#theme-toggle')!);
-
-document.querySelectorAll<HTMLElement>('.code-block-wrap').forEach((wrap) => {
-  const pre = wrap.querySelector('pre');
-  if (!pre) return;
-  const btn = document.createElement('button');
-  btn.className = 'copy-btn';
-  btn.textContent = 'Copy';
-  btn.addEventListener('click', () => {
-    navigator.clipboard.writeText(pre.innerText).then(() => {
-      btn.textContent = 'Copied!';
-      setTimeout(() => { btn.textContent = 'Copy'; }, 1800);
-    });
-  });
-  wrap.appendChild(btn);
-});
+`;o(document.querySelector("#theme-toggle"));document.querySelectorAll(".code-block-wrap").forEach(t=>{const i=t.querySelector("pre");if(!i)return;const e=document.createElement("button");e.className="copy-btn",e.textContent="Copy",e.addEventListener("click",()=>{navigator.clipboard.writeText(i.innerText).then(()=>{e.textContent="Copied!",setTimeout(()=>{e.textContent="Copy"},1800)})}),t.appendChild(e)});
