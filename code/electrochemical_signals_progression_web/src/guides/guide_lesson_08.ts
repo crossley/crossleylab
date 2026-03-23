@@ -115,11 +115,19 @@ app.innerHTML = `
       <h2 class="section-title">Step 3 — The formula</h2>
       <div class="guide-step">
         <p>
-          The web simulation uses a teaching proxy for membrane potential. It is
-          not the full biophysical equation (which involves Nernst potentials and
-          ion permeabilities — those come in later lessons), but it captures the
-          essential physics: voltage is proportional to the <em>net charge
-          imbalance at the membrane surface</em>.
+          The web simulation uses a teaching proxy for membrane potential. This
+          proxy is not the Nernst equation and it is not yet the Goldman equation.
+          Those later models use ion concentrations, temperature, valence, and
+          permeability to predict equilibrium voltages. Here we are doing
+          something simpler: isolating the basic physical idea that voltage is
+          proportional to the <em>net charge imbalance at the membrane surface</em>.
+        </p>
+        <p>
+          Step 2 explained <em>why</em> a membrane can hold a voltage: the lipid
+          bilayer behaves like a capacitor. The formula below is a teaching rule
+          for turning that surface charge imbalance into a membrane-potential
+          number you can compute in code before you meet the more complete
+          biophysical equations in Lessons 9 and 10.
         </p>
         <p>Define the following quantities:</p>
         <ul>
@@ -167,9 +175,15 @@ app.innerHTML = `
       <div class="guide-step">
         <p>
           Translate the formula into a Python function, then test it on three
-          biologically motivated scenarios. Add the following to
-          <code>membrane_potential.py</code>:
+          biologically motivated scenarios.
         </p>
+        <p>
+          <strong>Before you run:</strong> create a file called
+          <code>membrane_potential.py</code>, paste in the complete script below,
+          then run <code>python membrane_potential.py</code>. Success looks like
+          three printed membrane potentials: +48.0 mV, 0.0 mV, and −80.0 mV.
+        </p>
+        <p><strong>Runnable checkpoint — full file so far</strong></p>
         <div class="code-block-wrap">
           <pre class="code-block">def clamp(value, low, high):
     return max(low, min(high, value))
@@ -182,7 +196,7 @@ def membrane_potential(
     scale=80,
     surface_charge_scale=200,
 ):
-    net_inside  = inside_pos - inside_neg
+    net_inside = inside_pos - inside_neg
     net_outside = outside_pos - outside_neg
     if surface_charge_scale <= 0:
         return 0.0
@@ -190,24 +204,42 @@ def membrane_potential(
     V_m = scale * clamp(imbalance / surface_charge_scale, -1, 1)
     return V_m
 
-# ── Scenario A: mostly positive inside ───────────────────────────────
-vm_A = membrane_potential(inside_pos=80, inside_neg=20,
-                          outside_pos=20, outside_neg=80)
+# Scenario A: mostly positive inside
+vm_A = membrane_potential(
+    inside_pos=80,
+    inside_neg=20,
+    outside_pos=20,
+    outside_neg=80,
+)
 print(f"Scenario A (mostly + inside):  {vm_A:.1f} mV")
 
-# ── Scenario B: balanced — equal net charge on both sides ─────────────
-vm_B = membrane_potential(inside_pos=60, inside_neg=40,
-                          outside_pos=60, outside_neg=40)
+# Scenario B: balanced
+vm_B = membrane_potential(
+    inside_pos=60,
+    inside_neg=40,
+    outside_pos=60,
+    outside_neg=40,
+)
 print(f"Scenario B (balanced):         {vm_B:.1f} mV")
 
-# ── Scenario C: more negative inside — resting-state-like ────────────
-vm_C = membrane_potential(inside_pos=0, inside_neg=100,
-                          outside_pos=100, outside_neg=0)
+# Scenario C: more negative inside
+vm_C = membrane_potential(
+    inside_pos=0,
+    inside_neg=100,
+    outside_pos=100,
+    outside_neg=0,
+)
 print(f"Scenario C (resting-like):     {vm_C:.1f} mV")</pre>
         </div>
+        <p><strong>Expected console output</strong></p>
+        <div class="code-block-wrap">
+          <pre class="code-block">Scenario A (mostly + inside):  48.0 mV
+Scenario B (balanced):         0.0 mV
+Scenario C (resting-like):     -80.0 mV</pre>
+        </div>
         <p>
-          Run the script. Before you look at the output, predict each result from
-          the formula in Step 3. Then verify:
+          Before you look at the output, predict each result from the formula in
+          Step 3. Then verify:
         </p>
         <ul>
           <li>
@@ -240,37 +272,104 @@ print(f"Scenario C (resting-like):     {vm_C:.1f} mV")</pre>
       <div class="guide-step">
         <p>
           A bar chart makes it easy to compare V<sub>m</sub> across several
-          charge configurations at a glance. Add the following to your script
-          (the <code>membrane_potential</code> function must already be defined
-          above):
+          charge configurations at a glance.
         </p>
+        <p>
+          <strong>What changed from the previous version?</strong> You are keeping
+          the same three scenarios, adding one new scenario where positive charge
+          is concentrated outside, and then plotting all four values.
+        </p>
+        <p>
+          <strong>Before you run:</strong> keep using
+          <code>membrane_potential.py</code>. If needed, install Matplotlib with
+          <code>pip install matplotlib</code>, then replace your file with the full
+          script below and run <code>python membrane_potential.py</code>. Success
+          looks like the same three printed lines as Step 4 plus a bar chart window.
+        </p>
+        <p><strong>Runnable checkpoint — full file so far</strong></p>
         <div class="code-block-wrap">
           <pre class="code-block">import matplotlib.pyplot as plt
 
+def clamp(value, low, high):
+    return max(low, min(high, value))
+
+def membrane_potential(
+    inside_pos,
+    inside_neg,
+    outside_pos,
+    outside_neg,
+    scale=80,
+    surface_charge_scale=200,
+):
+    net_inside = inside_pos - inside_neg
+    net_outside = outside_pos - outside_neg
+    if surface_charge_scale <= 0:
+        return 0.0
+    imbalance = net_inside - net_outside
+    V_m = scale * clamp(imbalance / surface_charge_scale, -1, 1)
+    return V_m
+
+# Scenario A: mostly positive inside
+vm_A = membrane_potential(
+    inside_pos=80,
+    inside_neg=20,
+    outside_pos=20,
+    outside_neg=80,
+)
+print(f"Scenario A (mostly + inside):  {vm_A:.1f} mV")
+
+# Scenario B: balanced
+vm_B = membrane_potential(
+    inside_pos=60,
+    inside_neg=40,
+    outside_pos=60,
+    outside_neg=40,
+)
+print(f"Scenario B (balanced):         {vm_B:.1f} mV")
+
+# Scenario C: more negative inside
+vm_C = membrane_potential(
+    inside_pos=0,
+    inside_neg=100,
+    outside_pos=100,
+    outside_neg=0,
+)
+print(f"Scenario C (resting-like):     {vm_C:.1f} mV")
+
 labels = [
-    'Mostly +\ninside',
-    'Balanced',
-    'Resting-like\n(-80 mV)',
-    'Mostly +\noutside',
+    "Mostly +\ninside",
+    "Balanced",
+    "Resting-like\n(-80 mV)",
+    "Mostly +\noutside",
 ]
 
 vms = [
-    membrane_potential( 80,  20,  20,  80),   # mostly + inside
-    membrane_potential( 60,  40,  60,  40),   # balanced
-    membrane_potential(  0, 100, 100,   0),   # resting-like (-80 mV)
-    membrane_potential( 20,  80,  80,  20),   # mostly + outside
+    membrane_potential(80, 20, 20, 80),
+    membrane_potential(60, 40, 60, 40),
+    membrane_potential(0, 100, 100, 0),
+    membrane_potential(20, 80, 80, 20),
 ]
 
-colours = ['steelblue' if v &gt;= 0 else 'tomato' for v in vms]
+colours = ["steelblue" if v >= 0 else "tomato" for v in vms]
 
 plt.figure(figsize=(8, 4))
-plt.bar(labels, vms, color=colours, edgecolor='black')
-plt.axhline(0, color='black', linewidth=0.8)
-plt.ylabel('Membrane potential (mV)')
-plt.title('V_m for different charge configurations')
+plt.bar(labels, vms, color=colours, edgecolor="black")
+plt.axhline(0, color="black", linewidth=0.8)
+plt.ylabel("Membrane potential (mV)")
+plt.title("V_m for different charge configurations")
 plt.tight_layout()
 plt.show()</pre>
         </div>
+        <p>
+          <strong>Expected result:</strong> the first three scenarios still print
+          +48.0 mV, 0.0 mV, and −80.0 mV. The chart then displays one positive bar,
+          one zero bar, and two negative bars.
+        </p>
+        <p>
+          If no plot window appears, that is usually a local Python-environment
+          issue rather than a logic error in the script. The calculation is still
+          correct if the console output matches Step 4.
+        </p>
         <p>
           Blue bars represent positive membrane potentials; red bars represent
           negative potentials. The balanced scenario sits exactly at zero — no
@@ -293,24 +392,122 @@ plt.show()</pre>
           nothing to V<sub>m</sub>.
         </p>
         <p>
-          Try it in code. Add the following to your script:
+          <strong>What changed from the previous version?</strong> You are keeping
+          the same function and plot, then adding one extra calculation that starts
+          with a million ions on each side and shifts only a tiny fraction.
         </p>
+        <p>
+          <strong>Before you run:</strong> keep using
+          <code>membrane_potential.py</code>, replace it with the complete script
+          below, and run <code>python membrane_potential.py</code>. Success looks
+          like the Step 4 console output, the tiny-imbalance printout, and the same
+          bar chart from Step 5.
+        </p>
+        <p><strong>Runnable checkpoint — full file so far</strong></p>
         <div class="code-block-wrap">
-          <pre class="code-block"># Start with 1 000 000 of each ion type on each side — perfectly balanced
+          <pre class="code-block">import matplotlib.pyplot as plt
+
+def clamp(value, low, high):
+    return max(low, min(high, value))
+
+def membrane_potential(
+    inside_pos,
+    inside_neg,
+    outside_pos,
+    outside_neg,
+    scale=80,
+    surface_charge_scale=200,
+):
+    net_inside = inside_pos - inside_neg
+    net_outside = outside_pos - outside_neg
+    if surface_charge_scale <= 0:
+        return 0.0
+    imbalance = net_inside - net_outside
+    V_m = scale * clamp(imbalance / surface_charge_scale, -1, 1)
+    return V_m
+
+# Scenario A: mostly positive inside
+vm_A = membrane_potential(
+    inside_pos=80,
+    inside_neg=20,
+    outside_pos=20,
+    outside_neg=80,
+)
+print(f"Scenario A (mostly + inside):  {vm_A:.1f} mV")
+
+# Scenario B: balanced
+vm_B = membrane_potential(
+    inside_pos=60,
+    inside_neg=40,
+    outside_pos=60,
+    outside_neg=40,
+)
+print(f"Scenario B (balanced):         {vm_B:.1f} mV")
+
+# Scenario C: more negative inside
+vm_C = membrane_potential(
+    inside_pos=0,
+    inside_neg=100,
+    outside_pos=100,
+    outside_neg=0,
+)
+print(f"Scenario C (resting-like):     {vm_C:.1f} mV")
+
+labels = [
+    "Mostly +\ninside",
+    "Balanced",
+    "Resting-like\n(-80 mV)",
+    "Mostly +\noutside",
+]
+
+vms = [
+    membrane_potential(80, 20, 20, 80),
+    membrane_potential(60, 40, 60, 40),
+    membrane_potential(0, 100, 100, 0),
+    membrane_potential(20, 80, 80, 20),
+]
+
+colours = ["steelblue" if v >= 0 else "tomato" for v in vms]
+
+plt.figure(figsize=(8, 4))
+plt.bar(labels, vms, color=colours, edgecolor="black")
+plt.axhline(0, color="black", linewidth=0.8)
+plt.ylabel("Membrane potential (mV)")
+plt.title("V_m for different charge configurations")
+plt.tight_layout()
+
+# Start with 1 000 000 of each ion type on each side: perfectly balanced
 n = 1_000_000
 
-# Move just 0.01 % of ions to create an imbalance
+# Move just 0.01% of ions to create an imbalance
 imbalance = int(n * 0.0001)   # = 100 ions
 
 vm_tiny = membrane_potential(
-    inside_pos  = n,
-    inside_neg  = n + imbalance,   # tiny excess of negative inside
-    outside_pos = n + imbalance,   # tiny excess of positive outside
-    outside_neg = n,
+    inside_pos=n,
+    inside_neg=n + imbalance,
+    outside_pos=n + imbalance,
+    outside_neg=n,
 )
 print(f"Imbalance of {imbalance} out of {n} ions per side")
-print(f"V_m = {vm_tiny:.2f} mV")</pre>
+print(f"V_m = {vm_tiny:.2f} mV")
+
+plt.show()</pre>
         </div>
+        <p><strong>Expected console output</strong></p>
+        <div class="code-block-wrap">
+          <pre class="code-block">Scenario A (mostly + inside):  48.0 mV
+Scenario B (balanced):         0.0 mV
+Scenario C (resting-like):     -80.0 mV
+Imbalance of 100 out of 1000000 ions per side
+V_m = -80.00 mV</pre>
+        </div>
+        <p>
+          This result makes an important modelling point. In this teaching proxy,
+          a left-right surface-charge difference of 200 reaches the full-scale
+          limit of ±80 mV, so this example hits the negative cap. The qualitative
+          lesson is the important one: a tiny fraction of ions can generate a large
+          membrane voltage.
+        </p>
         <p>
           With one million ions on each side, shifting just 100 ions (0.01%)
           already produces a measurable voltage. This has profound physiological
