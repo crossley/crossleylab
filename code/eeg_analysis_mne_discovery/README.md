@@ -8,8 +8,8 @@ potentials, using one anonymised teaching dataset.
 The data files are gitignored and must be downloaded separately:
 
 ```bash
-rclone copyto "mqsharepoint:PACE/2026/semester_1/lab_data/eeg_data/eeg_1/P662_eeg_1.bdf" teaching_eeg_001.bdf
-rclone copyto "mqsharepoint:PACE/2026/semester_1/lab_data/behavioural_data/eeg_1_beh/sub_662_sess_001_part_001_date_2026_04_29_data.csv" teaching_behaviour_001.csv
+rclone copyto "mqsharepoint:PACE/2026/semester_1/lab_data/teaching/teaching_eeg_001.bdf" teaching_eeg_001.bdf
+rclone copyto "mqsharepoint:PACE/2026/semester_1/lab_data/teaching/teaching_behaviour_001.csv" teaching_behaviour_001.csv
 ```
 
 ## Setup
