@@ -60,7 +60,7 @@ iz_params = np.array([
 n_cells = iz_params.shape[0]
 
 # tonic drives
-E = np.array([0, 0, 0, 300, 260, 500, 0, 0], dtype=float)
+E = np.array([0, 0, 0, 300, 260, 0, 0, 0], dtype=float)
 
 # synapse response
 psp_amp = 1000
@@ -90,6 +90,7 @@ for i in range(1, n_steps):
 
     I_net = W.T @ g[:, i - 1]
     I_net[ctx] += I_in[i - 1]
+    I_net[th] += I_in[i - 1]
     I_net += E
 
     for j in range(n_cells):

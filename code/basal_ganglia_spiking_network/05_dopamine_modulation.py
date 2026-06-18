@@ -61,7 +61,7 @@ iz_params = np.array([
 n_cells = iz_params.shape[0]
 
 # tonic drives
-E = np.array([0, 0, 0, 300, 260, 500, 0, 0], dtype=float)
+E = np.array([0, 0, 0, 300, 260, 0, 0, 0], dtype=float)
 
 # synapse response
 psp_amp = 1000
@@ -77,8 +77,8 @@ W_base[ctx, d2] = 250
 W_base[d2, gpe] = -120
 W_base[gpe, gpi] = -40
 # hyperdirect pathway
-W_base[ctx, stn] = 220
-W_base[stn, gpi] = 80
+W_base[ctx, stn] = 100
+W_base[stn, gpi] = 50
 # STN-GPe loop (stable regime)
 W_base[stn, gpe] = 20
 W_base[gpe, stn] = -50

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "inspect_passive_k",
+    "title": "Passive Potassium Dynamics",
+    "description": "A single passive potassium current relaxes the membrane back toward E_K after current injection.",
+    "htmlPath": "inspect_passive_k.html",
+    "tsEntry": "src/pages/inspect_passive_k.ts",
+    "arc": "conductance_models",
+    "status": "active"
+  },
+  {
+    "id": "inspect_passive_two_ion",
+    "title": "Passive Na + K Dynamics",
+    "description": "Constant Na and K conductances pull voltage toward a weighted balance between E_Na and E_K.",
+    "htmlPath": "inspect_passive_two_ion.html",
+    "tsEntry": "src/pages/inspect_passive_two_ion.ts",
+    "arc": "conductance_models",
+    "status": "active"
+  },
+  {
+    "id": "inspect_smooth_na_conductance",
+    "title": "Smooth Voltage-Dependent Na Conductance",
+    "description": "Na conductance rises smoothly with depolarization, sharpening the response to stronger inputs.",
+    "htmlPath": "inspect_smooth_na_conductance.html",
+    "tsEntry": "src/pages/inspect_smooth_na_conductance.ts",
+    "arc": "conductance_models",
+    "status": "active"
+  },
+  {
+    "id": "inspect_active_na_conductance",
+    "title": "Na Activation + Inactivation",
+    "description": "Sodium activation m and inactivation h create a transient inward current during sustained stimulation.",
+    "htmlPath": "inspect_active_na_conductance.html",
+    "tsEntry": "src/pages/inspect_active_na_conductance.ts",
+    "arc": "conductance_models",
+    "status": "active"
+  },
+  {
+    "id": "inspect_active_na_k_conductance",
+    "title": "Active Na + K Conductance",
+    "description": "Add delayed potassium activation n to create a more spike-like interaction between inward and outward currents.",
+    "htmlPath": "inspect_active_na_k_conductance.html",
+    "tsEntry": "src/pages/inspect_active_na_k_conductance.ts",
+    "arc": "conductance_models",
+    "status": "active"
+  },
+  {
+    "id": "inspect_active_na_k_leak_conductance",
+    "title": "Na + K + Leak Conductance",
+    "description": "A simplified Hodgkin-Huxley-style model with Na, K, and leak conductances produces full action-potential dynamics.",
+    "htmlPath": "inspect_active_na_k_leak_conductance.html",
+    "tsEntry": "src/pages/inspect_active_na_k_leak_conductance.ts",
+    "arc": "conductance_models",
+    "status": "active"
+  }
+]

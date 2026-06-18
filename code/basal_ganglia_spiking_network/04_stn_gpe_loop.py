@@ -62,7 +62,7 @@ iz_params = np.array([
 n_cells = iz_params.shape[0]
 
 # tonic drives
-E = np.array([0, 0, 0, 300, 260, 500, 0, 0], dtype=float)
+E = np.array([0, 0, 0, 300, 260, 0, 0, 0], dtype=float)
 
 # synapse response
 psp_amp = 1000
@@ -79,8 +79,8 @@ def run_simulation(w_stn_gpe, w_gpe_stn):
     W[d2, gpe] = -120
     W[gpe, gpi] = -40
     # hyperdirect pathway
-    W[ctx, stn] = 220
-    W[stn, gpi] = 80
+    W[ctx, stn] = 100
+    W[stn, gpi] = 50
     # STN-GPe reciprocal loop
     W[stn, gpe] = w_stn_gpe
     W[gpe, stn] = -w_gpe_stn
@@ -99,6 +99,7 @@ def run_simulation(w_stn_gpe, w_gpe_stn):
 
         I_net = W.T @ g[:, i - 1]
         I_net[ctx] += I_in[i - 1]
+        I_net[th] += I_in[i - 1]
         I_net += E
 
         for j in range(n_cells):

@@ -60,7 +60,7 @@ iz_params = np.array([
 n_cells = iz_params.shape[0]
 
 # tonic drives
-E = np.array([0, 0, 0, 300, 0, 500, 0, 0], dtype=float)
+E = np.array([0, 0, 0, 300, 0, 0, 0, 0], dtype=float)
 
 # synapse response
 psp_amp = 1000
@@ -79,12 +79,14 @@ g = np.zeros((n_cells, n_steps))
 spike = np.zeros((n_cells, n_steps))
 
 v[:, 0] = iz_params[:, 1] + np.random.rand(n_cells) * 5
+u[:, 0] = iz_params[:, 5] * (v[:, 0] - iz_params[:, 1])
 
 for i in range(1, n_steps):
     dt = t[i] - t[i - 1]
 
     I_net = W.T @ g[:, i - 1]
     I_net[ctx] += I_in[i - 1]
+    I_net[th] += I_in[i - 1]
     I_net += E
 
     for j in range(n_cells):
